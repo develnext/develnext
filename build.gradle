@@ -1,16 +1,41 @@
 apply plugin: 'java'
 apply plugin: 'idea'
 
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+            srcDir 'src/main/java'
+            srcDir 'src/main/php'
+        }
+    }
+}
+
 repositories {
     maven { url 'http://maven.develnext.org/repository/snapshots/' }
     mavenCentral()
 }
 
 dependencies {
-    compile 'ru.regenix:jphp:0.4-SNAPSHOT'
-    compile 'org.develnext:jphp-swing:0.4-SNAPSHOT'
+    compile group: 'ru.regenix', name: 'jphp', version:'0.4-SNAPSHOT', changing: true
+    compile group: 'org.develnext', name: 'jphp-swing', version:'0.4-SNAPSHOT', changing: true
 
     testCompile 'junit:junit:4.+'
 }
 
 sourceCompatibility = 1.6
+
+
+task(start, dependsOn: "classes", type: JavaExec) {
+    description = "Main start"
+    main = "php.runtime.launcher.Launcher"
+    classpath = sourceSets.main.runtimeClasspath
+}

@@ -11,3 +11,6 @@
 *.iml
 *.ipr
 *.iws
+
+out/
+build/
