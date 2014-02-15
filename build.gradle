@@ -1,5 +1,18 @@
-apply plugin: 'java'
-apply plugin: 'idea'
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+
+    group = 'org.develnext.ide'
+    version = '0.1'
+
+    repositories {
+        maven { url 'http://maven.develnext.org/repository/snapshots/' }
+        mavenCentral()
+    }
+}
 
 configurations.all {
     // check for updates every build
@@ -19,20 +32,13 @@ sourceSets {
     }
 }
 
-repositories {
-    maven { url 'http://maven.develnext.org/repository/snapshots/' }
-    mavenCentral()
-}
-
 dependencies {
+    compile project(':ui-syntax-ext')
     compile group: 'ru.regenix', name: 'jphp', version:'0.4-SNAPSHOT', changing: true
     compile group: 'org.develnext', name: 'jphp-swing', version:'0.4-SNAPSHOT', changing: true
 
     testCompile 'junit:junit:4.+'
 }
-
-sourceCompatibility = 1.6
-
 
 task(start, dependsOn: "classes", type: JavaExec) {
     description = "Main start"

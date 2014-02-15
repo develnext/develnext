@@ -1,0 +1,16 @@
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+            srcDir 'src/main/java'
+        }
+    }
+}
+
+dependencies {
+    compile group: 'org.develnext', name: 'jphp-swing', version:'0.4-SNAPSHOT', changing: true
+    compile 'com.fifesoft:rsyntaxtextarea:2.5.0'
+}

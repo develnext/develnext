@@ -17,6 +17,7 @@ namespace {
         $form = $reader->read(new ResourceStream('forms/MainForm.xml'), function(UIElement $e, $var){
 
         });
+
         $form->moveToCenter();
         $form->visible = true;
     });
