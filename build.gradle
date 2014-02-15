@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+repositories {
+    maven { url 'http://maven.develnext.org/repository/snapshots/' }
+    mavenCentral()
+}
+
+dependencies {
+    compile 'ru.regenix:jphp:0.4-SNAPSHOT'
+    compile 'org.develnext:jphp-swing:0.4-SNAPSHOT'
+
+    testCompile 'junit:junit:4.+'
+}
+
+sourceCompatibility = 1.6
