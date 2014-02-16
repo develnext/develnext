@@ -1,5 +1,10 @@
 <ui-form size="500, 500"
-         title="DevelNext 2014" default-close-operation="3" always-on-top="1" resizable="0">
-
-    <ui-syntax-area size="500, 500" syntax-style="text/php" />
+         title="DevelNext 2014" default-close-operation="3">
+    <ui-panel align="top" h="35" />
+    <ui-panel align="client" var="content" layout="grid">
+        <ui-panel var="editor">
+            <ui-button align="bottom" h="30" />
+        </ui-panel>
+        <ui-panel var="console" />
+    </ui-panel>
 </ui-form>

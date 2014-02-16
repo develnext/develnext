@@ -1,2 +1,2 @@
 
-include 'ui-syntax-ext'
+include 'ui-syntax-ext', 'ui-docking-ext'

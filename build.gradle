@@ -10,6 +10,7 @@ allprojects {
 
     repositories {
         maven { url 'http://maven.develnext.org/repository/snapshots/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenCentral()
     }
 }
@@ -34,6 +35,8 @@ sourceSets {
 
 dependencies {
     compile project(':ui-syntax-ext')
+    compile project(':ui-docking-ext')
+
     compile group: 'ru.regenix', name: 'jphp', version:'0.4-SNAPSHOT', changing: true
     compile group: 'org.develnext', name: 'jphp-swing', version:'0.4-SNAPSHOT', changing: true
 
