@@ -7,6 +7,8 @@ import php.runtime.ext.swing.SwingExtension;
 
 public class UIDockingExtension extends SwingExtension {
 
+    public final static String NAMESPACE = "php\\swing\\docking\\";
+
     @Override
     public String getName() {
         return "UI-Docking";

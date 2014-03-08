@@ -10,6 +10,7 @@ import bibliothek.gui.dock.common.theme.CDockThemeFactory;
 import bibliothek.gui.dock.themes.ThemePropertyFactory;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XIO;
+import org.develnext.php.ext.UIDockingExtension;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
 import php.runtime.ext.core.stream.Stream;
@@ -24,7 +25,7 @@ import java.io.*;
 
 import static php.runtime.annotation.Reflection.*;
 
-@Name(SwingExtension.NAMESPACE + "docking\\CControl")
+@Name(UIDockingExtension.NAMESPACE + "CControl")
 public class WrapCControl extends RootObject {
     protected CControl control;
 

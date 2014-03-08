@@ -1,6 +1,6 @@
 package org.develnext.php.ext.classes;
 
-import bibliothek.extension.gui.dock.theme.FlatTheme;
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 
 @ThemeProperties(
@@ -8,7 +8,7 @@ import bibliothek.gui.dock.themes.ThemeProperties;
         descriptionBundle = "theme.develnext.description",
         authors = { "Dmitriy Zayceff" }, webpages = {}
 )
-public class DevelNextTheme extends FlatTheme {
+public class DevelNextTheme extends EclipseTheme {
 
     public DevelNextTheme() {
         super();

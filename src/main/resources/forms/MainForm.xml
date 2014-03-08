@@ -1,5 +1,7 @@
 <ui-form size="500, 500"
          title="DevelNext 2014" default-close-operation="3">
+    <include src="forms/MainMenu.xml" align="top" h="25" />
+
     <ui-panel align="top" h="35" />
     <ui-panel align="client" var="content" layout="grid">
         <ui-panel var="editor">

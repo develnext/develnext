@@ -1,6 +1,7 @@
 package org.develnext.php.ext.classes;
 
 import bibliothek.gui.dock.common.CContentArea;
+import org.develnext.php.ext.UIDockingExtension;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
 import php.runtime.ext.swing.SwingExtension;
@@ -9,7 +10,7 @@ import php.runtime.reflection.ClassEntity;
 
 import static php.runtime.annotation.Reflection.*;
 
-@Name(SwingExtension.NAMESPACE + "docking\\CContentArea")
+@Name(UIDockingExtension.NAMESPACE + "CContentArea")
 public class WrapCContentArea extends UIPanel {
     protected CContentArea component;
 
