@@ -23,32 +23,30 @@ public class DesignContainer extends JComponent {
         super.paintComponent(g);
     }
 
-    public static BufferedImage componentToImage(Component component, Rectangle region)
-    {
+    public static BufferedImage componentToImage(Component component, Rectangle region) {
         BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
         Graphics g = img.getGraphics();
         g.setColor(component.getForeground());
         g.setFont(component.getFont());
         component.paintAll(g);
         g.dispose();
-        if (region == null)
-        {
+        if (region == null) {
             return img;
         }
         return img.getSubimage(region.x, region.y, region.width, region.height);
     }
 
-
     @Override
     protected void addImpl(final Component comp, Object constraints, int index) {
         super.addImpl(comp, constraints, index);
 
-        comp.addMouseListener(new MouseAdapter() {
+        comp.addMouseMotionListener(new MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent e) {
+            public void mouseMoved(MouseEvent e) {
                 lastScreen = componentToImage(comp, new Rectangle(0, 0, comp.getWidth(), comp.getHeight()));
             }
-
+        });
+        comp.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 setBorder(new ResizableBorder(6));

@@ -42,7 +42,7 @@ public class ResizableBorder implements Border {
             og.setColor(Color.GRAY);
 
             Graphics2D g = (Graphics2D)og;
-            Rectangle2D rect = new Rectangle2D.Float(x + dist / 2, y + dist / 2, w - dist, h - dist);
+            Rectangle2D rect = new Rectangle2D.Float(x + dist / 2, y + dist / 2, w - dist - 1, h - dist - 1);
             float[] dash = { 5F, 5F };
             Stroke dashedStroke = new BasicStroke( 1F, BasicStroke.CAP_SQUARE,
                     BasicStroke.JOIN_MITER, 1F, dash, 0F );

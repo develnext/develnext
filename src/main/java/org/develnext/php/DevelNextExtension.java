@@ -25,5 +25,6 @@ public class DevelNextExtension extends SwingExtension {
         registerNativeClass(scope, WrapDesignContainer.class, DesignContainer.class);
 
         registerNativeClass(scope, WrapComponentResizer.class);
+        registerNativeClass(scope, WrapComponentMover.class);
     }
 }

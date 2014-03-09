@@ -1,6 +1,7 @@
 <?php
 namespace DevelNext;
 
+use DevelNext\swing\ComponentMover;
 use DevelNext\swing\ComponentResizer;
 use DevelNext\swing\DesignContainer;
 use DevelNext\swing\ResizableBorder;
@@ -83,11 +84,14 @@ class Manager {
 
         $r = new DesignContainer();
         $r->size = [100, 100];
-        $r->add(new UIButton());
+        $r->add($btn = new UIButton());
+        $btn->text = 'Я кнопка, кнопка, кнопка... я вовсе не медведь';
         $c['area']->add($r);
 
         $cr = new ComponentResizer();
+        $cm = new ComponentMover();
         $cr->registerComponent($r);
+        $cm->registerComponent($r);
 
         //$r->border = new ResizableBorder(6);
 
