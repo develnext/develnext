@@ -5,8 +5,9 @@
     <ui-panel align="top" h="35" />
     <ui-panel align="client" var="content" layout="grid">
         <ui-panel var="editor">
-            <ui-button align="bottom" h="30" />
+
         </ui-panel>
         <ui-panel var="console" />
+        <ui-panel var="area" />
     </ui-panel>
 </ui-form>
