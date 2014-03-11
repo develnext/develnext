@@ -74,9 +74,15 @@ class Manager {
 
 
         $grid = new CGrid($control);
-        $grid->add(1, 1, 3, 3, new SingleCDockable('content', 'content', $c['area']));
+        $grid->add(1, 1, 3, 3, $dContent = new SingleCDockable('content', 'content', $c['area']));
         $grid->add(0, 0, 1, 4, $one = new SingleCDockable('editor', 'editor', $c['editor']));
         $grid->add(1, 3, 3, 1, new SingleCDockable('console', 'console', $c['console']));
+
+        $dContent->closable = false;
+        $dContent->externalizable = false;
+        $dContent->maximizable = false;
+        $dContent->minimizable = false;
+        $dContent->titleShown = false;
 
         $contentArea->deploy($grid);
         $control->setTheme('flat');

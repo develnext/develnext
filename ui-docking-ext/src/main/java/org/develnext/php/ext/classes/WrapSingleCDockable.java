@@ -48,4 +48,28 @@ public class WrapSingleCDockable extends WrapCDockable {
         dockable.setCloseable(args[0].toBoolean());
         return Memory.NULL;
     }
+
+    @Signature(@Arg("value"))
+    public Memory __setExternalizable(Environment env, Memory... args) {
+        dockable.setExternalizable(args[0].toBoolean());
+        return Memory.NULL;
+    }
+
+    @Signature(@Arg("value"))
+    public Memory __setMaximizable(Environment env, Memory... args) {
+        dockable.setMaximizable(args[0].toBoolean());
+        return Memory.NULL;
+    }
+
+    @Signature(@Arg("value"))
+    public Memory __setMinimizable(Environment env, Memory... args) {
+        dockable.setMinimizable(args[0].toBoolean());
+        return Memory.NULL;
+    }
+
+    @Signature(@Arg("value"))
+    public Memory __setTitleShown(Environment env, Memory... args) {
+        dockable.setTitleShown(args[0].toBoolean());
+        return Memory.NULL;
+    }
 }

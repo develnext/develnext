@@ -1,6 +1,8 @@
 <ui-menu-bar>
     <ui-menu text="{File}">
         <ui-menu-item text="{New Project}" />
+        <separator />
+        <ui-menu-item text="{Settings}" />
     </ui-menu>
     <ui-menu text="{Edit}">
         <ui-menu-item text="{Undo}" />
