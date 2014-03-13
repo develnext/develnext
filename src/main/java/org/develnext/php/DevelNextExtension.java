@@ -1,12 +1,14 @@
 package org.develnext.php;
 
+import org.develnext.php.ext.UIDockingExtension;
+import org.develnext.php.ext.UISyntaxExtension;
 import org.develnext.swing.DesignContainer;
 import org.develnext.swing.ResizableContainer;
 import php.runtime.env.CompileScope;
 import php.runtime.ext.swing.SwingExtension;
 
 public class DevelNextExtension extends SwingExtension {
-    public final static String NAMESPACE = "DevelNext\\";
+    public final static String NAMESPACE = "develnext\\";
 
     @Override
     public String getName() {
@@ -16,6 +18,16 @@ public class DevelNextExtension extends SwingExtension {
     @Override
     public String getVersion() {
         return "4.0";
+    }
+
+    @Override
+    public String[] getRequiredExtensions() {
+        return new String[]{
+                SwingExtension.class.getName(),
+                LocalizationExtension.class.getName(),
+                UIDockingExtension.class.getName(),
+                UISyntaxExtension.class.getName()
+        };
     }
 
     @Override

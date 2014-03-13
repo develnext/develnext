@@ -5,7 +5,18 @@
     <ui-panel align="top" h="35" />
     <ui-panel align="client" var="content" layout="grid">
         <ui-panel var="editor">
-
+            <ui-tree align="client" root-visible="0" expanded="1" border="empty">
+                <item text="USA">
+                    <item text="New York">
+                        <item text="One" />
+                        <item text="Two" />
+                    </item>
+                    <item text="Washington" />
+                </item>
+                <item text="England">
+                    <item text="London" />
+                </item>
+            </ui-tree>
         </ui-panel>
         <ui-panel var="console" />
         <ui-panel var="area" />

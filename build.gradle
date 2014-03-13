@@ -13,27 +13,28 @@ allprojects {
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenCentral()
     }
-}
 
-configurations.all {
-    // check for updates every build
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
-
-sourceSets {
-    main {
-        java {
-            srcDir 'src/main/java'
-        }
-        resources {
-            srcDir 'src/main/resources'
-            srcDir 'src/main/java'
-            srcDir 'src/main/php'
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+            }
+            resources {
+                srcDir 'src/main/resources'
+                srcDir 'src/main/java'
+                srcDir 'src/main/php'
+            }
         }
     }
 }
 
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 300, 'seconds'
+}
+
 dependencies {
+    compile project(':localization-ext')
     compile project(':ui-syntax-ext')
     compile project(':ui-docking-ext')
     compile project(':ui-weblaf-ext')

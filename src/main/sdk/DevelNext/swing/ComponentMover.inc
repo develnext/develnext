@@ -5,7 +5,7 @@ use php\swing\UIElement;
 
 /**
  * Class ComponentResizer
- * @package DevelNext\swing
+ * @package develnext\swing
  */
 class ComponentMover {
 

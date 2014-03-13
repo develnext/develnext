@@ -5,7 +5,7 @@ use php\swing\UIContainer;
 
 /**
  * Class ResizableContainer
- * @package DevelNext\swing
+ * @package develnext\swing
  */
 class ResizableContainer extends UIContainer {
 

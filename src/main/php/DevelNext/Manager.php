@@ -1,18 +1,16 @@
 <?php
-namespace DevelNext;
+namespace develnext;
 
+use develnext\localization\Localizator;
 use DevelNext\swing\ComponentMover;
 use DevelNext\swing\ComponentResizer;
 use DevelNext\swing\DesignContainer;
-use DevelNext\swing\ResizableBorder;
-use DevelNext\swing\ResizableContainer;
 use php\io\Stream;
 use php\swing\docking\CControl;
 use php\swing\docking\CGrid;
 use php\swing\docking\SingleCDockable;
 use php\swing\UIButton;
 use php\swing\UIElement;
-use php\swing\UIPanel;
 use php\swing\UIReader;
 use php\swing\UIWindow;
 
@@ -20,11 +18,17 @@ class Manager {
     /** @var UIReader */
     protected $uiReader;
 
+    /** @var Localizator */
+    protected $localizator;
+
     /** @var UIWindow[] */
     protected $forms;
 
     public function __construct() {
         $this->uiReader = new UIReader();
+        $this->localizator = new Localizator();
+
+        $this->uiReader->onTranslate($this->localizator);
     }
 
     public function showSplash() {

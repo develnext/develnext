@@ -1,0 +1,5 @@
+
+
+dependencies {
+    compile group: 'ru.regenix', name: 'jphp-core', version:'0.4-SNAPSHOT', changing: true
+}

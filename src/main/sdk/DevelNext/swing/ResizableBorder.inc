@@ -5,7 +5,7 @@ use php\swing\Border;
 
 /**
  * Class ResizableBorder
- * @package DevelNext\swing
+ * @package develnext\swing
  */
 class ResizableBorder extends Border {
 

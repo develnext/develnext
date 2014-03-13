@@ -1,16 +1,19 @@
 <?php
 namespace {
 
+    use develnext\Manager;
+    use php\io\IOException;
     use php\io\Stream;
     use php\swing\SwingUtilities;
     use php\swing\Timer;
+    use php\swing\UIDialog;
     use php\swing\UIManager;
-    use DevelNext\Manager;
 
     UIManager::setLookAndFeel('com.alee.laf.WebLookAndFeel');
 
     spl_autoload_register(function($className){
-        import(Stream::create('res://DevelNext/Manager.php'), 'DevelNext/Manager.php');
+        $name = implode('/', explode('\\', $className)) . '.php';
+        import(Stream::create('res://' . $name), $name);
     });
 
     SwingUtilities::invokeLater(function(){
