@@ -1,26 +1,24 @@
 <?php
 namespace develnext;
 
+use develnext\lang\Singleton;
 use develnext\localization\Localizator;
-use DevelNext\swing\ComponentMover;
-use DevelNext\swing\ComponentResizer;
-use DevelNext\swing\DesignContainer;
+use develnext\project\ProjectManager;
+use develnext\project\type\GuiProjectType;
 use develnext\util\Config;
 use php\io\File;
 use php\io\FileStream;
+use php\io\IOException;
 use php\io\Stream;
 use php\lang\System;
 use php\lib\str;
-use php\swing\docking\CControl;
-use php\swing\docking\CGrid;
-use php\swing\docking\SingleCDockable;
-use php\swing\UIButton;
 use php\swing\UIDialog;
 use php\swing\UIElement;
 use php\swing\UIReader;
-use php\swing\UIWindow;
 
 class Manager {
+
+    use Singleton;
 
     /** @var UIReader */
     protected $uiReader;
@@ -28,7 +26,7 @@ class Manager {
     /** @var Localizator */
     protected $localizator;
 
-    /** @var UIWindow[] */
+    /** @var IDEForm[] */
     protected $forms;
 
     /** @var File */
@@ -40,7 +38,10 @@ class Manager {
     /** @var Config */
     public $config;
 
-    public function __construct() {
+    /** @var ProjectManager */
+    public $projectManager;
+
+    protected function __construct() {
         $this->uiReader = new UIReader();
         $this->localizator = new Localizator();
 
@@ -54,8 +55,7 @@ class Manager {
         }
 
         $this->config = $this->getConfig('application');
-
-        dump($this->config->getKeys());
+        $this->projectManager = ProjectManager::getInstance();
     }
 
     public function __destruct() {
@@ -64,6 +64,8 @@ class Manager {
 
     public function showSplash() {
         $form = $this->getSystemForm('SplashForm.xml');
+        $form = $form->getWindow();
+
         $form->getComponent(0)->on('click', function() use ($form) {
             $form->visible = false;
         });
@@ -77,22 +79,24 @@ class Manager {
 
     /**
      * @param string $path
-     * @param null $vars
-     * @return UIWindow
+     * @return IDEForm
      */
-    public function getSystemForm($path, &$vars = NULL) {
+    public function getSystemForm($path) {
         if ($form = $this->forms[str::lower($path)])
             return $form;
 
-        if ($vars == null)
-            $this->uiReader->onRead(null);
-        else {
-            $this->uiReader->onRead(function(UIElement $e, $var) use (&$vars) {
-                $vars[$var] = $e;
-            });
+        $vars = array();
+        $this->uiReader->onRead(function(UIElement $e, $var) use (&$vars) {
+            $vars[$var] = $e;
+        });
+
+        $window = $this->uiReader->read(Stream::of('res://forms/' . $path));
+        try {
+            $form = new IDEForm($window, Stream::of('res://forms/' . $path . '.php'), $vars);
+        } catch (IOException $e) {
+            $form = new IDEForm($window, null, $vars);
         }
 
-        $form = $this->uiReader->read(Stream::of('res://forms/' . $path));
         $this->forms[ str::lower($path) ] = $form;
         return $form;
     }
@@ -106,50 +110,20 @@ class Manager {
         return new Config($stream);
     }
 
+    /**
+     * @param $fileName
+     * @return File
+     */
+    public function getConfigFile($fileName) {
+        return new File($this->settingsDirectory->getPath() . $fileName);
+    }
+
     public function start() {
-        $c = [];
-        $form = $this->getSystemForm('MainForm.xml', $c);
+        $form = $this->getSystemForm('MainForm.xml');
 
-        $control = new CControl($form);
-        $contentArea = $control->getContentArea();
+        //$project = $this->projectManager->createProject(new GuiProjectType(), new File("d:/gui_project/"));
 
-        $c['content']->add($contentArea);
-        //$work = $control->createWorkingArea('work');
-
-
-        $grid = new CGrid($control);
-        $grid->add(1, 1, 3, 3, $dContent = new SingleCDockable('content', 'content', $c['area']));
-        $grid->add(0, 0, 1, 4, $one = new SingleCDockable('editor', 'editor', $c['editor']));
-        $grid->add(1, 3, 3, 1, new SingleCDockable('console', 'console', $c['console']));
-
-        $dContent->closable = false;
-        $dContent->externalizable = false;
-        $dContent->maximizable = false;
-        $dContent->minimizable = false;
-        $dContent->titleShown = false;
-
-        $contentArea->deploy($grid);
-        $control->setTheme('flat');
-
-
-        $r = new DesignContainer();
-        $r->size = [100, 100];
-        $r->add($btn = new UIButton());
-        $btn->text = 'Я кнопка, кнопка, кнопка... я вовсе не медведь';
-        $c['area']->add($r);
-
-        $cr = new ComponentResizer();
-        $cm = new ComponentMover();
-        $cr->registerComponent($r);
-        $cm->registerComponent($r);
-
-        //$r->border = new ResizableBorder(6);
-
-        /*$button = new UIButton();
-        $button->size = [100, 100];
-        $work->getComponent()->add($button);*/
-
-        $form->moveToCenter();
-        $form->visible = true;
+        $form->getWindow()->moveToCenter();
+        $form->getWindow()->visible = true;
     }
 }

@@ -22,7 +22,7 @@ namespace {
     });
 
     SwingUtilities::invokeLater(function(){
-        $initializer = new Manager();
+        $initializer = Manager::getInstance();
         $initializer->showSplash();
         $initializer->start();
 
