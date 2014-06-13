@@ -2,10 +2,10 @@ package org.develnext.php.ext.classes;
 
 import bibliothek.gui.dock.common.CGridArea;
 import bibliothek.gui.dock.common.intern.CDockable;
+import org.develnext.jphp.swing.classes.components.support.UIElement;
 import org.develnext.php.ext.UIDockingExtension;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
-import php.runtime.ext.swing.classes.components.support.UIElement;
 import php.runtime.memory.ObjectMemory;
 import php.runtime.reflection.ClassEntity;
 

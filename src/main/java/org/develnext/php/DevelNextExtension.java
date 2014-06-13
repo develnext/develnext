@@ -1,11 +1,9 @@
 package org.develnext.php;
 
+import org.develnext.jphp.swing.SwingExtension;
 import org.develnext.php.ext.UIDockingExtension;
 import org.develnext.php.ext.UISyntaxExtension;
-import org.develnext.swing.DesignContainer;
-import org.develnext.swing.ResizableContainer;
 import php.runtime.env.CompileScope;
-import php.runtime.ext.swing.SwingExtension;
 
 public class DevelNextExtension extends SwingExtension {
     public final static String NAMESPACE = "develnext\\";
@@ -33,8 +31,8 @@ public class DevelNextExtension extends SwingExtension {
     @Override
     public void onRegister(CompileScope scope) {
         registerNativeClass(scope, WrapResizableBorder.class);
-        registerNativeClass(scope, WrapResizableContainer.class, ResizableContainer.class);
-        registerNativeClass(scope, WrapDesignContainer.class, DesignContainer.class);
+        registerNativeClass(scope, WrapResizableContainer.class);
+        registerNativeClass(scope, WrapDesignContainer.class);
 
         registerNativeClass(scope, WrapComponentResizer.class);
         registerNativeClass(scope, WrapComponentMover.class);

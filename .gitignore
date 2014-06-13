@@ -12,6 +12,8 @@
 *.ipr
 *.iws
 
+/jphp
+
 out/
 build/
 classes/

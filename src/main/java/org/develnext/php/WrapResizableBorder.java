@@ -1,9 +1,9 @@
 package org.develnext.php;
 
+import org.develnext.jphp.swing.classes.WrapBorder;
 import org.develnext.swing.ResizableBorder;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
-import php.runtime.ext.swing.classes.WrapBorder;
 import php.runtime.reflection.ClassEntity;
 
 import static php.runtime.annotation.Reflection.*;

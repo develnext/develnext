@@ -1,13 +1,14 @@
 package org.develnext.php.ext.classes;
 
+import org.develnext.jphp.swing.support.JScrollableComponent;
+import org.develnext.jphp.swing.support.RootTextElement;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import php.runtime.ext.swing.support.JScrollableComponent;
-import php.runtime.ext.swing.support.RootTextElement;
 
 import java.awt.*;
 import java.awt.print.PrinterException;
 
-public class RSyntaxTextAreaEx extends JScrollableComponent<RSyntaxTextArea> implements RootTextElement {
+public class RSyntaxTextAreaEx extends JScrollableComponent<RSyntaxTextArea>
+        implements RootTextElement {
     private String syntaxEditingStyle;
 
     @Override

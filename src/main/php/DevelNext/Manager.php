@@ -5,16 +5,23 @@ use develnext\localization\Localizator;
 use DevelNext\swing\ComponentMover;
 use DevelNext\swing\ComponentResizer;
 use DevelNext\swing\DesignContainer;
+use develnext\util\Config;
+use php\io\File;
+use php\io\FileStream;
 use php\io\Stream;
+use php\lang\System;
+use php\lib\str;
 use php\swing\docking\CControl;
 use php\swing\docking\CGrid;
 use php\swing\docking\SingleCDockable;
 use php\swing\UIButton;
+use php\swing\UIDialog;
 use php\swing\UIElement;
 use php\swing\UIReader;
 use php\swing\UIWindow;
 
 class Manager {
+
     /** @var UIReader */
     protected $uiReader;
 
@@ -24,11 +31,35 @@ class Manager {
     /** @var UIWindow[] */
     protected $forms;
 
+    /** @var File */
+    protected $userDirectory;
+
+    /** @var File */
+    protected $settingsDirectory;
+
+    /** @var Config */
+    public $config;
+
     public function __construct() {
         $this->uiReader = new UIReader();
         $this->localizator = new Localizator();
 
         $this->uiReader->onTranslate($this->localizator);
+
+        $this->userDirectory = new File(System::getProperty('user.home', './'));
+        $this->settingsDirectory = new File($this->userDirectory->getPath() . '/DevelNext_A1');
+
+        if (!$this->settingsDirectory->exists()) {
+            $this->settingsDirectory->mkdirs();
+        }
+
+        $this->config = $this->getConfig('application');
+
+        dump($this->config->getKeys());
+    }
+
+    public function __destruct() {
+        $this->config->save();
     }
 
     public function showSplash() {
@@ -50,7 +81,7 @@ class Manager {
      * @return UIWindow
      */
     public function getSystemForm($path, &$vars = NULL) {
-        if ($form = $this->forms[strtolower($path)])
+        if ($form = $this->forms[str::lower($path)])
             return $form;
 
         if ($vars == null)
@@ -61,9 +92,18 @@ class Manager {
             });
         }
 
-        $form = $this->uiReader->read(Stream::create('res://forms/' . $path));
-        $this->forms[ strtolower($path) ] = $form;
+        $form = $this->uiReader->read(Stream::of('res://forms/' . $path));
+        $this->forms[ str::lower($path) ] = $form;
         return $form;
+    }
+
+    /**
+     * @param $name
+     * @return Config
+     */
+    public function getConfig($name) {
+        $stream = new FileStream($this->settingsDirectory->getPath() . "/$name.conf", "r+");
+        return new Config($stream);
     }
 
     public function start() {

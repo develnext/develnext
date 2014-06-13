@@ -1,9 +1,8 @@
 package org.develnext.php.ext;
 
-import bibliothek.gui.dock.common.CContentArea;
+import org.develnext.jphp.swing.SwingExtension;
 import org.develnext.php.ext.classes.*;
 import php.runtime.env.CompileScope;
-import php.runtime.ext.swing.SwingExtension;
 
 public class UIDockingExtension extends SwingExtension {
 
@@ -26,7 +25,7 @@ public class UIDockingExtension extends SwingExtension {
 
         registerNativeClass(scope, WrapCDockable.class);
         registerNativeClass(scope, WrapSingleCDockable.class);
-        registerNativeClass(scope, WrapCContentArea.class, CContentArea.class);
+        registerNativeClass(scope, WrapCContentArea.class);
         registerNativeClass(scope, WrapCGridArea.class);
     }
 }

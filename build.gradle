@@ -14,6 +14,8 @@ allprojects {
         mavenCentral()
     }
 
+    project.ext.isSnapshot = true;
+
     sourceSets {
         main {
             java {
@@ -26,6 +28,10 @@ allprojects {
             }
         }
     }
+
+    task buildPortableDef(overwrite: true) {
+        // nop
+    }
 }
 
 configurations.all {
@@ -34,13 +40,13 @@ configurations.all {
 }
 
 dependencies {
+    compile project(':jphp-core')
+    compile project(':jphp-swing-ext')
+
     compile project(':localization-ext')
     compile project(':ui-syntax-ext')
     compile project(':ui-docking-ext')
     compile project(':ui-weblaf-ext')
-
-    compile group: 'ru.regenix', name: 'jphp', version:'0.4-SNAPSHOT', changing: true
-    compile group: 'org.develnext', name: 'jphp-swing', version:'0.4-SNAPSHOT', changing: true
 
     testCompile 'junit:junit:4.+'
 }

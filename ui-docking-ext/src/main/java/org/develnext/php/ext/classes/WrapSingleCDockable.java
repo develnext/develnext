@@ -2,11 +2,11 @@ package org.develnext.php.ext.classes;
 
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.intern.CDockable;
+import org.develnext.jphp.swing.SwingExtension;
+import org.develnext.jphp.swing.classes.components.support.UIElement;
 import org.develnext.php.ext.UIDockingExtension;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
-import php.runtime.ext.swing.SwingExtension;
-import php.runtime.ext.swing.classes.components.support.UIElement;
 import php.runtime.reflection.ClassEntity;
 
 import static php.runtime.annotation.Reflection.*;

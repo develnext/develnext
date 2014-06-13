@@ -1,10 +1,10 @@
 package org.develnext.php.ext.classes;
 
+import org.develnext.jphp.swing.SwingExtension;
+import org.develnext.jphp.swing.classes.components.UITextElement;
+import org.develnext.jphp.swing.support.RootTextElement;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
-import php.runtime.ext.swing.SwingExtension;
-import php.runtime.ext.swing.classes.components.UITextElement;
-import php.runtime.ext.swing.support.RootTextElement;
 import php.runtime.memory.StringMemory;
 import php.runtime.reflection.ClassEntity;
 

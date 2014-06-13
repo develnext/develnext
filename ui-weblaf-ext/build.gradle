@@ -1,6 +1,6 @@
 
 
 dependencies {
-    compile group: 'org.develnext', name: 'jphp-swing', version:'0.4-SNAPSHOT', changing: true
+    compile project(':jphp-swing-ext')
     compile files('libs/weblaf-1.26.jar')
 }

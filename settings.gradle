@@ -1,2 +1,27 @@
+rootProject.name = 'DevelNext'
 
-include 'localization-ext', 'ui-syntax-ext', 'ui-docking-ext', 'ui-weblaf-ext'
+def jphpDir = new File(rootDir, '/jphp');
+def isSnapshot = false;
+
+include 'localization-ext',
+        'ui-syntax-ext',
+        'ui-docking-ext',
+        'ui-weblaf-ext';
+
+// JPHP
+
+include 'jphp'
+project(':jphp').projectDir = jphpDir;
+
+include 'jphp-core'
+project(':jphp-core').projectDir = new File(jphpDir, "/jphp-core");
+
+include 'jphp-swing-ext'
+project(':jphp-swing-ext').projectDir = new File(jphpDir, "/jphp-swing-ext");
+
+include 'jphp-zend-ext'
+project(':jphp-zend-ext').projectDir = new File(jphpDir, "/jphp-zend-ext");
+
+include 'jphp-json-ext'
+project(':jphp-json-ext').projectDir = new File(jphpDir, "/jphp-json-ext");
+

@@ -1,11 +1,10 @@
 package org.develnext.php;
 
+import org.develnext.jphp.swing.classes.components.support.RootObject;
+import org.develnext.jphp.swing.classes.components.support.UIElement;
 import org.develnext.swing.ComponentResizer;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
-import php.runtime.ext.swing.SwingExtension;
-import php.runtime.ext.swing.classes.components.support.RootObject;
-import php.runtime.ext.swing.classes.components.support.UIElement;
 import php.runtime.reflection.ClassEntity;
 
 import java.awt.*;
@@ -32,7 +31,7 @@ public class WrapComponentResizer extends RootObject {
         return Memory.NULL;
     }
 
-    @Signature(@Arg(value = "component", typeClass = SwingExtension.NAMESPACE + "UIElement"))
+    @Signature(@Arg(value = "component", nativeType = UIElement.class))
     public Memory registerComponent(Environment env, Memory... args) {
         resizer.registerComponent(args[0].toObject(UIElement.class).getComponent());
         return Memory.NULL;

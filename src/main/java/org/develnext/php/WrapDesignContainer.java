@@ -1,9 +1,9 @@
 package org.develnext.php;
 
+import org.develnext.jphp.swing.classes.components.support.UIContainer;
 import org.develnext.swing.DesignContainer;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
-import php.runtime.ext.swing.classes.components.support.UIContainer;
 import php.runtime.reflection.ClassEntity;
 
 import java.awt.*;

@@ -1,9 +1,9 @@
 package org.develnext.php.ext.classes;
 
+import org.develnext.jphp.swing.loader.support.PropertyReader;
+import org.develnext.jphp.swing.loader.support.Value;
+import org.develnext.jphp.swing.loader.support.propertyreaders.PropertyReaders;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import php.runtime.ext.swing.loader.support.PropertyReader;
-import php.runtime.ext.swing.loader.support.Value;
-import php.runtime.ext.swing.loader.support.propertyreaders.PropertyReaders;
 
 import java.util.HashMap;
 import java.util.Map;

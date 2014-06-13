@@ -1,11 +1,11 @@
 package org.develnext.php.ext.classes;
 
+import org.develnext.jphp.swing.loader.UIReader;
+import org.develnext.jphp.swing.loader.support.BaseTag;
+import org.develnext.jphp.swing.loader.support.ElementItem;
+import org.develnext.jphp.swing.loader.support.Tag;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.w3c.dom.Node;
-import php.runtime.ext.swing.loader.UIReader;
-import php.runtime.ext.swing.loader.support.BaseTag;
-import php.runtime.ext.swing.loader.support.ElementItem;
-import php.runtime.ext.swing.loader.support.Tag;
 
 @Tag("ui-syntax-area")
 public class UISyntaxTextAreaTag extends BaseTag<RSyntaxTextArea> {

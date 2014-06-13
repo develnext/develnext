@@ -1,11 +1,11 @@
 package org.develnext.php.ext.classes;
 
 import bibliothek.gui.dock.common.CGrid;
+import org.develnext.jphp.swing.SwingExtension;
+import org.develnext.jphp.swing.classes.components.support.RootObject;
 import org.develnext.php.ext.UIDockingExtension;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
-import php.runtime.ext.swing.SwingExtension;
-import php.runtime.ext.swing.classes.components.support.RootObject;
 import php.runtime.reflection.ClassEntity;
 
 import static php.runtime.annotation.Reflection.*;
