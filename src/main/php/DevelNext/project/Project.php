@@ -69,4 +69,16 @@ class Project {
     public function getDependencies() {
         return $this->dependencies;
     }
+
+    /**
+     * @param $path
+     * @return File
+     */
+    public function getFile($path) {
+        return new File($this->getPath($path));
+    }
+
+    public function getPath($path) {
+        return $this->directory->getPath() . "/$path";
+    }
 }

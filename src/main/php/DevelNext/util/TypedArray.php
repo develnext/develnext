@@ -100,6 +100,13 @@ class TypedArray implements \Iterator {
         return new TypedArray((array)$this->data[$name]);
     }
 
+    /**
+     * @return array
+     */
+    public function all() {
+        return $this->data;
+    }
+
     public function current(){
         return current($this->data);
     }

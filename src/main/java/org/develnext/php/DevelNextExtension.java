@@ -5,6 +5,8 @@ import org.develnext.php.ext.UIDockingExtension;
 import org.develnext.php.ext.UISyntaxExtension;
 import php.runtime.env.CompileScope;
 
+import javax.swing.*;
+
 public class DevelNextExtension extends SwingExtension {
     public final static String NAMESPACE = "develnext\\";
 
@@ -36,5 +38,12 @@ public class DevelNextExtension extends SwingExtension {
 
         registerNativeClass(scope, WrapComponentResizer.class);
         registerNativeClass(scope, WrapComponentMover.class);
+
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 }

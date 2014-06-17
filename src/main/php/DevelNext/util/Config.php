@@ -20,7 +20,7 @@ class Config extends TypedArray {
 
             list($key, $value) = str::split($line, '=', 2);
 
-            $this->data[str::trim($key)] = $value;
+            $this->data[str::trim($key)] = str::trim($value);
         }
     }
 
@@ -36,7 +36,7 @@ class Config extends TypedArray {
         $this->stream->seek(0);
 
         foreach($this->data as $key => $value) {
-            $this->stream->write("$key = $value\n");
+            $this->stream->write("$key = $value\r\n");
         }
 
         $this->stream->seek(0);

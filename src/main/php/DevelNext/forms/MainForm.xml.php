@@ -1,26 +1,25 @@
 <?php
 
-use DevelNext\swing\ComponentMover;
-use DevelNext\swing\ComponentResizer;
-use DevelNext\swing\DesignContainer;
 use php\swing\docking\CControl;
 use php\swing\docking\CGrid;
 use php\swing\docking\SingleCDockable;
-use php\swing\UIButton;
+use develnext\Manager;
+use php\swing\UIDialog;
+
+$manager = Manager::getInstance();
 
 /** @var \develnext\IDEForm $form */
 $control = new CControl($form->getWindow());
 $contentArea = $control->getContentArea();
 
-$c['content']->add($contentArea);
+$form->get('content')->add($contentArea);
 //$work = $control->createWorkingArea('work');
 
 $grid = new CGrid($control);
-$grid->add(1, 1, 3, 3, $dContent = new SingleCDockable('content', 'content', $c['area']));
-$grid->add(0, 0, 1, 4, $one = new SingleCDockable('editor', 'editor', $c['editor']));
-$grid->add(1, 3, 3, 1, new SingleCDockable('console', 'console', $c['console']));
+$grid->add(1, 1, 3, 3, $dContent = new SingleCDockable('content', 'content', $form->get('area')));
+$grid->add(0, 0, 1, 4, $one = new SingleCDockable('editor', 'editor', $form->get('editor')));
+$grid->add(1, 3, 3, 1, new SingleCDockable('console', 'console', $form->get('console')));
 
-$control->readXml($this->getConfigFile('dock.xml'));
 
 $dContent->closable = false;
 $dContent->externalizable = false;
@@ -31,19 +30,38 @@ $dContent->titleShown = false;
 $contentArea->deploy($grid);
 $control->setTheme('flat');
 
-$r = new DesignContainer();
+$configFile = $manager->getConfigFile('dock.xml');
+if ($configFile->exists()) {
+    $control->readXml($configFile);
+}
+
+$form->loadFromFile($manager->getConfigFile('MainForm.cfg'));
+
+/*$r = new DesignContainer();
 $r->size = [100, 100];
-$r->add($btn = new UIButton());
-$btn->text = 'Я кнопка, кнопка, кнопка... я вовсе не медведь';
-$c['area']->add($r);
+$r->add($btn = new \php\swing\UIProgress());
+$btn->value = 50;
+
+$form->get('area')->add($r);
 
 $cr = new ComponentResizer();
 $cm = new ComponentMover();
 $cr->registerComponent($r);
-$cm->registerComponent($r);
+$cm->registerComponent($r);*/
 
 //$r->border = new ResizableBorder(6);
 
 /*$button = new UIButton();
 $button->size = [100, 100];
 $work->getComponent()->add($button);*/
+
+
+$form->get('menu-new-project')->on('click', function(){
+    $manager = Manager::getInstance();
+    $manager->getSystemForm('project/NewProject.xml')->showModal();
+});
+
+$form->getWindow()->on('windowClosing', function() use ($control, $configFile, $form, $manager) {
+    $control->writeXml($configFile);
+    $form->saveToFile($manager->getConfigFile('MainForm.cfg'));
+});

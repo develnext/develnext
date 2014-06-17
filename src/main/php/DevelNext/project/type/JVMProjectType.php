@@ -16,6 +16,19 @@ abstract class JVMProjectType extends ProjectType {
 
     function onCreateProject(Project $project) {
         $this->updatePom($project);
+
+        $project->getFile('src/main/php')->mkdirs();
+        $project->getFile('src/main/resources/JPHP-INF')->mkdirs();
+
+        $bootstrap = new FileStream($project->getPath('src/main/php/bootstrap.php'), 'w+');
+        $bootstrap->write('<?php ');
+        $bootstrap->close();
+
+        $conf = new FileStream($project->getPath('src/main/resources/JPHP-INF/launcher.conf'), 'w+');
+        $conf->write("env.debug = 0\n\n");
+        $conf->write("env.extensions = spl, org.develnext.jphp.swing.SwingExtension\n\n");
+        $conf->write("bootstrap.file = bootstrap.php\n\n");
+        $conf->close();
     }
 
     function onUpdateProject(Project $project) {

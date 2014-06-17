@@ -1,11 +1,18 @@
 <ui-menu-bar>
-    <ui-menu text="File">
-        <ui-menu-item text="New Project" />
+    <ui-menu text="{File}" var="file-menu">
+        <ui-menu-item icon="images/icons/project16.png" text="{New Project}" var="menu-new-project" />
+        <ui-menu-item text="{Open Project}" var="menu-open-project" />
         <separator />
-        <ui-menu-item text="Settings" />
+        <ui-menu-item icon="images/icons/settings16.png" text="{Settings}" />
     </ui-menu>
-    <ui-menu text="Edit">
-        <ui-menu-item text="Undo" />
-        <ui-menu-item text="Redo" />
+    <ui-menu text="{Edit}">
+        <ui-menu-item text="{Undo}" />
+        <ui-menu-item text="{Redo}" />
+    </ui-menu>
+    <ui-menu text="{Build}">
+        <ui-menu-item text="{Run}" />
+    </ui-menu>
+    <ui-menu text="{Tools}">
+        <ui-menu-item text="{Simple tool}" />
     </ui-menu>
 </ui-menu-bar>

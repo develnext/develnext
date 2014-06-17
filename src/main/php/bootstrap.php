@@ -21,9 +21,13 @@ namespace {
         $module->call();
     });
 
+    set_exception_handler(function(\Exception $e){
+        UIDialog::message('Exception', $e->getTraceAsString(), UIDialog::ERROR_MESSAGE);
+    });
+
     SwingUtilities::invokeLater(function(){
         $initializer = Manager::getInstance();
-        $initializer->showSplash();
+        //$initializer->showSplash();
         $initializer->start();
 
         $t = new Timer(2000, function() use ($initializer) {

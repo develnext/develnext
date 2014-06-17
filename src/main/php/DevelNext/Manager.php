@@ -1,8 +1,8 @@
 <?php
 namespace develnext;
 
+use develnext\i18n\Localizator;
 use develnext\lang\Singleton;
-use develnext\localization\Localizator;
 use develnext\project\ProjectManager;
 use develnext\project\type\GuiProjectType;
 use develnext\util\Config;
@@ -10,6 +10,7 @@ use php\io\File;
 use php\io\FileStream;
 use php\io\IOException;
 use php\io\Stream;
+use php\lang\Module;
 use php\lang\System;
 use php\lib\str;
 use php\swing\UIDialog;
@@ -22,9 +23,6 @@ class Manager {
 
     /** @var UIReader */
     protected $uiReader;
-
-    /** @var Localizator */
-    protected $localizator;
 
     /** @var IDEForm[] */
     protected $forms;
@@ -41,11 +39,11 @@ class Manager {
     /** @var ProjectManager */
     public $projectManager;
 
+    /** @var Localizator */
+    public $localizator;
+
     protected function __construct() {
         $this->uiReader = new UIReader();
-        $this->localizator = new Localizator();
-
-        $this->uiReader->onTranslate($this->localizator);
 
         $this->userDirectory = new File(System::getProperty('user.home', './'));
         $this->settingsDirectory = new File($this->userDirectory->getPath() . '/DevelNext_A1');
@@ -55,6 +53,13 @@ class Manager {
         }
 
         $this->config = $this->getConfig('application');
+
+        // localization
+        $this->localizator = new Localizator($this->config->get('lang', 'en'));
+        $this->localizator->append(
+            Stream::of('./system/languages/'.$this->localizator->getLang().'/messages.properties')
+        );
+
         $this->projectManager = ProjectManager::getInstance();
     }
 
@@ -90,9 +95,18 @@ class Manager {
             $vars[$var] = $e;
         });
 
+        $this->uiReader->onTranslate(function(UIElement $e, $text) {
+            if (str::startsWith($text, '{') && str::endsWith($text, '}')) {
+                $code = str::sub($text, 1, str::length($text) - 1);
+                return $this->localizator->translate($code);
+            }
+
+            return $text;
+        });
+
         $window = $this->uiReader->read(Stream::of('res://forms/' . $path));
         try {
-            $form = new IDEForm($window, Stream::of('res://forms/' . $path . '.php'), $vars);
+            $form = new IDEForm($window, new Module(Stream::of('res://develnext/forms/' . $path . '.php')), $vars);
         } catch (IOException $e) {
             $form = new IDEForm($window, null, $vars);
         }
@@ -115,13 +129,13 @@ class Manager {
      * @return File
      */
     public function getConfigFile($fileName) {
-        return new File($this->settingsDirectory->getPath() . $fileName);
+        return new File($this->settingsDirectory->getPath() .'/'. $fileName);
     }
 
     public function start() {
         $form = $this->getSystemForm('MainForm.xml');
 
-        //$project = $this->projectManager->createProject(new GuiProjectType(), new File("d:/gui_project/"));
+        $project = $this->projectManager->createProject(new GuiProjectType(), new File("d:/gui_project/"));
 
         $form->getWindow()->moveToCenter();
         $form->getWindow()->visible = true;
