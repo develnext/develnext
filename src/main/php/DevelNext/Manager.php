@@ -120,7 +120,7 @@ class Manager {
      * @return Config
      */
     public function getConfig($name) {
-        $stream = new FileStream($this->settingsDirectory->getPath() . "/$name.conf", "r+");
+        $stream = new FileStream($this->settingsDirectory->getPath() . "/$name.conf", "w+");
         return new Config($stream);
     }
 
