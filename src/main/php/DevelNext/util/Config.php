@@ -10,17 +10,21 @@ class Config extends TypedArray {
     /** @var Stream */
     protected $stream;
 
-    public function __construct(Stream $stream) {
+    public function __construct(Stream $stream, $encoding = 'UTF-8') {
         $this->stream = $stream;
-        $this->data = array();
-        $scanner = new Scanner($stream, 'UTF-8');
+        $this->data = [];
+        $scanner = new Scanner($stream, $encoding);
 
         while($scanner->hasNextLine()) {
             $line = $scanner->nextLine();
-
             list($key, $value) = str::split($line, '=', 2);
 
-            $this->data[str::trim($key)] = str::trim($value);
+            $key = str::trim($key);
+
+            if ($key) {
+                $value = str::trim($value);
+                $this->data[$key] = $value;
+            }
         }
     }
 

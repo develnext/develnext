@@ -1,0 +1,6 @@
+<ui-dialog undecorated="1" h="80" always-on-top="1">
+  <ui-panel align="client" background="#8E8E8E">
+      <ui-panel align="left" background="0, 0, 0, 0" w="40" />
+      <ui-label align="left" w="900" ver-align="0" var="message" font="Tahoma 20" foreground="#FFFFFF" />
+  </ui-panel>
+</ui-dialog>

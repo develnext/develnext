@@ -1,4 +1,4 @@
 <ui-dialog size="500, 300"
-         title="New Project">
+         title="{New Project}">
 
 </ui-dialog>

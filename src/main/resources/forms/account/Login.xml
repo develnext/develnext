@@ -1,0 +1,44 @@
+<ui-dialog size="600, 320"
+           title="DevelNext IDE" resizable="0">
+
+  <ui-panel align="left" w="150" background="#FFFFFF">
+    <ui-panel align="top" h="15" background="0, 0, 0, 0" />
+    <ui-image image="images/icons/account_card96.png" align="top" h="120" centred="1" />
+
+    <ui-label align="top" h="40" font="Tahoma 17" foreground="#1C2AA7" hor-align="0"><![CDATA[<html>
+      <center><b>DevelNext</b><br> Network</center>
+    </html>]]></ui-label>
+
+  </ui-panel>
+  <ui-panel align="left" w="30" />
+
+  <ui-panel align="right" w="30" />
+  <ui-panel align="bottom" h="25" />
+
+  <ui-panel align="client">
+      <ui-panel align="top" h="25" />
+
+      <ui-label text="{Login or Email:}" h="25" align="top" />
+      <ui-edit h="35" align="top" font="Tahoma 16" />
+
+      <ui-panel align="top" h="5" />
+
+      <ui-label text="{Password:}" h="25" align="top" />
+      <ui-password-edit h="35" align="top" font="Tahoma 16" />
+
+      <ui-panel align="top" h="10" />
+
+      <ui-checkbox text="{Save session}" align="top" h="25" />
+
+      <ui-panel align="top" h="20" />
+      <ui-panel align="top" h="1" border="line" />
+      <ui-panel align="top" h="20" />
+      <ui-panel align="client">
+          <ui-button text="{Login}" font="Tahoma bold"
+                     w="100" align="right" icon="images/icons/ok16.png" cursor="hand" var="btn-login" />
+          <ui-panel align="right" w="10" />
+          <ui-button text="{Exit}" w="100" align="right" icon="images/icons/cancel16.png" cursor="hand" var="btn-exit" />
+      </ui-panel>
+  </ui-panel>
+
+</ui-dialog>

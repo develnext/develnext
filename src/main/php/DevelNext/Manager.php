@@ -13,12 +13,13 @@ use php\io\Stream;
 use php\lang\Module;
 use php\lang\System;
 use php\lib\str;
+use php\swing\SwingUtilities;
+use php\swing\Timer;
 use php\swing\UIDialog;
 use php\swing\UIElement;
 use php\swing\UIReader;
 
 class Manager {
-
     use Singleton;
 
     /** @var UIReader */
@@ -57,7 +58,7 @@ class Manager {
         // localization
         $this->localizator = new Localizator($this->config->get('lang', 'en'));
         $this->localizator->append(
-            Stream::of('./system/languages/'.$this->localizator->getLang().'/messages.properties')
+            Stream::of('./system/languages/'.$this->localizator->getLang().'/messages')
         );
 
         $this->projectManager = ProjectManager::getInstance();
@@ -76,10 +77,16 @@ class Manager {
         });
         $form->moveToCenter();
         $form->visible = true;
+
+        $timer = new Timer(3000, function() use ($form) {
+             $form->visible = false;
+        });
+        $timer->repeat = false;
+        $timer->start();
     }
 
     public function hideSplash() {
-        $this->getSystemForm('SplashForm.xml')->visible = false;
+        $this->getSystemForm('SplashForm.xml')->hide();
     }
 
     /**
@@ -120,7 +127,11 @@ class Manager {
      * @return Config
      */
     public function getConfig($name) {
-        $stream = new FileStream($this->settingsDirectory->getPath() . "/$name.conf", "w+");
+        $file = new File($this->settingsDirectory->getPath() . "/$name.conf");
+        if (!$file->exists())
+            $file->createNewFile();
+
+        $stream = new FileStream($file, "r+");
         return new Config($stream);
     }
 
@@ -132,12 +143,47 @@ class Manager {
         return new File($this->settingsDirectory->getPath() .'/'. $fileName);
     }
 
+    public function flash($text, $max = 0.7, $delay = 500) {
+        $screenSize = SwingUtilities::getScreenSize();
+
+        $status = $this->getSystemForm('misc/StatusBar.xml');
+        $status->get('message')->text = $text;
+
+        $status->getWindow()->w = $screenSize[0];
+        $status->getWindow()->position = [0, 0];
+        $status->getWindow()->opacity = 0;
+
+        $timer = null;
+        $tick = (100 * 30 / $delay) / 100;
+
+        $timer = new Timer(30, function(Timer $timer) use ($status, $tick, $max) {
+            if ($status->getWindow()->opacity >= $max) {
+                /** @var Timer $timer */
+                $timer->stop();
+            } else {
+                $status->getWindow()->opacity += $tick;
+            }
+        });
+        $timer->repeat = true;
+        $timer->start();
+        $status->show(false);
+
+        $tm = new Timer(4000, function() use ($status) {
+             $status->hide();
+        });
+        $tm->repeat = false;
+        $tm->start();
+    }
+
     public function start() {
         $form = $this->getSystemForm('MainForm.xml');
+        $loginForm = $this->getSystemForm('account/Login.xml');
 
-        $project = $this->projectManager->createProject(new GuiProjectType(), new File("d:/gui_project/"));
-
-        $form->getWindow()->moveToCenter();
-        $form->getWindow()->visible = true;
+        if ($loginForm->showModal()) {
+            //$project = $this->projectManager->createProject(new GuiProjectType(), new File("d:/gui_project/"));
+            $this->flash($this->localizator->translate('You are welcome to DevelNext!'));
+            $form->show();
+        } else
+            System::halt(0);
     }
 }
