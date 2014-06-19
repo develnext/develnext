@@ -1,3 +1,3 @@
-<ui-form undecorated="1" size="610, 366" title="DevelNext" always-on-top="1">
-    <ui-image image="images/splash.png" align="client"  border="line, size:1" />
+<ui-form undecorated="1" size="610, 388" title="DevelNext" always-on-top="1">
+    <ui-image image="images/splash.png" align="client" />
 </ui-form>

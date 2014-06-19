@@ -103,12 +103,7 @@ class Manager {
         });
 
         $this->uiReader->onTranslate(function(UIElement $e, $text) {
-            if (str::startsWith($text, '{') && str::endsWith($text, '}')) {
-                $code = str::sub($text, 1, str::length($text) - 1);
-                return $this->localizator->translate($code);
-            }
-
-            return $text;
+            return $this->localizator->translate($text);
         });
 
         $window = $this->uiReader->read(Stream::of('res://forms/' . $path));

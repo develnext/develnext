@@ -15,10 +15,19 @@ Run = Запустить
 Tools = Инструменты
 
 
-Login or Email: = Логин или Email:
-Password: = Пароль:
+Login or Email = Логин или Email
+Password = Пароль
 
 Save session = Сохранять сессию
 Login = Войти
 
 You are welcome to DevelNext! = Добро пожаловать в DevelNext
+
+Registration = Регистрация
+New Account = Новый аккаунт
+Nick = Логин
+To use DevelNext IDE, you need to login via your account = Для работы с DevelNext IDE вам необходимо войти под своим аккаунтом
+
+All fields are required = Все поля обязательны для заполнения
+Next = Далее
+Cancel = Отмена

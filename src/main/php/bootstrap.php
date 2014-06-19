@@ -23,7 +23,7 @@ namespace {
 
     SwingUtilities::invokeLater(function(){
         $initializer = Manager::getInstance();
-        //$initializer->showSplash();
+        $initializer->showSplash();
         $initializer->start();
 
         $t = new Timer(2000, function() use ($initializer) {

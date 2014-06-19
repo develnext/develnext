@@ -25,3 +25,6 @@ project(':jphp-zend-ext').projectDir = new File(jphpDir, "/jphp-zend-ext");
 include 'jphp-json-ext'
 project(':jphp-json-ext').projectDir = new File(jphpDir, "/jphp-json-ext");
 
+include 'jphp-http-ext'
+project(':jphp-http-ext').projectDir = new File(jphpDir, "/jphp-http-ext");
+

@@ -1,6 +1,9 @@
 DevelNext - IDE for PHP
 =======================
 
+![DevelNext](src/main/resources/images/splash.png)
+
+
 ### How to build and start?
 
 1. Get the sources from the JPHP repository to a directory, e.g: `path/to/jphp`.

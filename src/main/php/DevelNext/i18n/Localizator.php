@@ -6,6 +6,7 @@ use php\io\Stream;
 use php\lib\items;
 use php\lib\str;
 use php\util\Flow;
+use php\util\Regex;
 
 class Localizator {
     protected $lang;
@@ -31,12 +32,21 @@ class Localizator {
         return $string;
     }
 
-    public function translate($code, array $args = []) {
+    public function get($code, array $args = []) {
         $text = $this->messages[$code];
         if (!$text)
             return $code;
 
         return self::format($text, $args);
+    }
+
+    public function translate($string) {
+        return Regex::of('(\{.+?\})')->with($string)->replaceWithCallback(function(Regex $self){
+            $code = str::sub($self->group(), 1);
+            $code = str::sub($code, 0, str::length($code) - 1);
+
+            return $this->get($code);
+        });
     }
 
     public function getLang() {

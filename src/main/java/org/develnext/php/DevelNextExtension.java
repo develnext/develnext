@@ -1,5 +1,6 @@
 package org.develnext.php;
 
+import org.develnext.jphp.http.HttpExtension;
 import org.develnext.jphp.swing.SwingExtension;
 import org.develnext.php.ext.UIDockingExtension;
 import org.develnext.php.ext.UISyntaxExtension;
@@ -22,6 +23,7 @@ public class DevelNextExtension extends SwingExtension {
     public String[] getRequiredExtensions() {
         return new String[]{
                 SwingExtension.class.getName(),
+                HttpExtension.class.getName(),
                 LocalizationExtension.class.getName(),
                 UIDockingExtension.class.getName(),
                 UISyntaxExtension.class.getName()

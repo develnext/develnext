@@ -1,0 +1,11 @@
+<ui-panel align="left" w="150" background="#FFFFFF">
+  <ui-panel align="top" h="20" background="0, 0, 0, 0" />
+  <ui-image image="images/icons/account_card96.png" align="top" h="90" centred="1" />
+
+  <ui-label align="top" h="40" font="Tahoma 17" foreground="#25649C" hor-align="0"><![CDATA[<html>
+      <center><b>DevelNext</b><br> Social</center>
+    </html>]]></ui-label>
+
+  <ui-label align="bottom" h="50" text="2014, OpenSource" foreground="#8B8B8B" hor-align="0" />
+
+</ui-panel>

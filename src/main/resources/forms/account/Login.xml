@@ -1,15 +1,14 @@
-<ui-dialog size="600, 320"
+<ui-dialog size="600, 370"
            title="DevelNext IDE" resizable="0">
 
-  <ui-panel align="left" w="150" background="#FFFFFF">
-    <ui-panel align="top" h="15" background="0, 0, 0, 0" />
-    <ui-image image="images/icons/account_card96.png" align="top" h="120" centred="1" />
-
-    <ui-label align="top" h="40" font="Tahoma 17" foreground="#1C2AA7" hor-align="0"><![CDATA[<html>
-      <center><b>DevelNext</b><br> Network</center>
-    </html>]]></ui-label>
-
+  <ui-panel align="bottom" h="50" background="#E2E2E2">
+    <ui-panel align="left" w="20" background="0,0,0,0" />
+    <ui-label align="client" h="30" foreground="#8B8B8B"
+              text="{To use DevelNext IDE, you need to login via your account}" ver-align="0" />
   </ui-panel>
+  <ui-panel align="bottom" h="1" background="#FFFFFF" />
+
+  <include src="forms/account/.panel.xml" />
   <ui-panel align="left" w="30" />
 
   <ui-panel align="right" w="30" />
@@ -18,12 +17,12 @@
   <ui-panel align="client">
       <ui-panel align="top" h="25" />
 
-      <ui-label text="{Login or Email:}" h="25" align="top" />
+      <ui-label text="{Login or Email}:" h="25" align="top" />
       <ui-edit h="35" align="top" font="Tahoma 16" />
 
       <ui-panel align="top" h="5" />
 
-      <ui-label text="{Password:}" h="25" align="top" />
+      <ui-label text="{Password}:" h="25" align="top" />
       <ui-password-edit h="35" align="top" font="Tahoma 16" />
 
       <ui-panel align="top" h="10" />
@@ -34,10 +33,12 @@
       <ui-panel align="top" h="1" border="line" />
       <ui-panel align="top" h="20" />
       <ui-panel align="client">
+          <ui-button text="{Registration}" w="130" align="right" cursor="hand" var="btn-reg" icon="images/icons/sun16.png" />
+
           <ui-button text="{Login}" font="Tahoma bold"
-                     w="100" align="right" icon="images/icons/ok16.png" cursor="hand" var="btn-login" />
-          <ui-panel align="right" w="10" />
-          <ui-button text="{Exit}" w="100" align="right" icon="images/icons/cancel16.png" cursor="hand" var="btn-exit" />
+                     w="90" align="left" icon="images/icons/ok16.png" cursor="hand" var="btn-login" />
+          <ui-panel align="left" w="10" />
+          <ui-button text="{Exit}" w="90" align="left" cursor="hand" var="btn-exit" />
       </ui-panel>
   </ui-panel>
 

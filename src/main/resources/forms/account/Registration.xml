@@ -1,0 +1,36 @@
+<ui-dialog size="500, 380"
+           title="{Registration}" resizable="0">
+
+  <include src="forms/account/.panel.xml" />
+  <ui-panel align="left" w="30" />
+
+  <ui-panel align="client">
+      <ui-label text="{New Account}" align="top" h="50" ver-align="0" font="Tahoma 19" foreground="#25649C" />
+      <ui-panel h="1" align="top" background="#FFFFFF" />
+
+      <ui-panel align="right" w="25" />
+
+      <ui-panel align="top" h="15" />
+      <ui-label align="top" text="{Nick}:" ver-align="0" h="25" />
+      <ui-edit align="top" h="30" font="Tahoma 15" var="f-nick" />
+
+      <ui-panel align="top" h="5" />
+
+      <ui-label align="top" text="{Email}:" ver-align="0" h="25" />
+      <ui-edit align="top" h="30" font="Tahoma 15" var="f-email" />
+
+      <ui-panel align="top" h="5" />
+
+      <ui-label align="top" text="{Password}:" ver-align="0" h="25" />
+      <ui-edit align="top" h="30" font="Tahoma 15" var="f-password" />
+
+      <ui-label align="top" h="40" font="Tahoma 11" foreground="#EB0606" text="* {All fields are required}" ver-align="0" />
+
+      <ui-panel align="bottom" h="20" />
+      <ui-panel align="bottom" h="40">
+          <ui-button text="{Next}" align="right" w="100" font="Tahoma bold" cursor="hand" icon="images/icons/ok16.png" var="btn-next" />
+          <ui-panel align="right" w="10" />
+          <ui-button text="{Cancel}" align="right" w="100" cursor="hand" icon="images/icons/cancel16.png" var="btn-cancel" />
+      </ui-panel>
+  </ui-panel>
+</ui-dialog>
