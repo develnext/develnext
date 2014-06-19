@@ -8,17 +8,19 @@ abstract class AsyncTask {
 
     protected $thread;
 
-    public function execute(array $args = []) {
+    public function execute(callable $callback = null, array $args = []) {
         $this->onPreExecute();
-        $this->thread = new Thread(function() use ($args) {
+        $this->thread = new Thread(function() use ($args, $callback) {
             $this->doInBackground($args);
-            SwingUtilities::invokeLater(function(){
+            SwingUtilities::invokeLater(function() use ($callback) {
+                if ($callback)
+                    $callback();
+
                 $this->onPostExecute();
             });
         });
         $this->thread->start();
     }
-
 
     /**
      *

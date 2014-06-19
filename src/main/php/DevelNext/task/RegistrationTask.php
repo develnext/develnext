@@ -1,8 +1,10 @@
 <?php
 namespace develnext\task;
 
+use develnext\Manager;
 use develnext\util\AsyncTask;
 use php\net\HttpClient;
+use php\net\HttpEntity;
 use php\net\HttpResponse;
 
 class RegistrationTask extends AsyncTask {
@@ -14,10 +16,13 @@ class RegistrationTask extends AsyncTask {
      */
     public function doInBackground(array $args = []) {
         $client = new HttpClient();
-        $this->response = $client->get('http://ya.ru')->execute();
+        $client->setHeaders(['Content-Type' => 'application/json']);
+
+        $this->response = $client->post('http://third.muloqot.uz:8080/api/other/stats/subscribers')
+            ->execute(new HttpEntity('{"max": 10, "tag": "Gap"}'));
     }
 
     public function onPostExecute() {
-        dump($this->response->getEntity()->toString());
+        Manager::getInstance()->flash($this->response->getEntity()->toString());
     }
 }
