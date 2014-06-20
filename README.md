@@ -16,7 +16,7 @@ Install Gradle and use the command `start`:
     gradle start
 
 This command will start the IDE by default.
-If you want open our project in IDEA, use the command `idea`
+If you want open our project in IDEA, use the command `idea` to generate project files for IDEA
 
     gradle idea
 
@@ -32,6 +32,6 @@ If you want open our project in IDEA, use the command `idea`
     gradle start
 
 Эта комманда запустит IDE по-умолчанию.
-Если вы хотите открыть наш проект в среде IDEA, используйте команду `idea`
+Если вы хотите открыть наш проект в среде IDEA, используйте команду `idea` чтобы получить проект для IDEA
 
     gradle idea
