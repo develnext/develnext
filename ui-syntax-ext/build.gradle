@@ -5,3 +5,7 @@ dependencies {
 
     compile 'com.fifesoft:rsyntaxtextarea:2.5.0'
 }
+
+task dist(dependsOn: buildPortableDef) {
+    // ...
+}

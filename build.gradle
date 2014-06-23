@@ -29,8 +29,26 @@ allprojects {
         }
     }
 
-    task buildPortableDef(overwrite: true) {
-        // nop
+    // dist
+    ext.distPath = "$rootProject.buildDir/dist-" + project.version
+
+    task collectJars(type: Copy){
+        into "$project.ext.distPath/libs"
+        from configurations.runtime
+        exclude "jphp-*"
+    }
+
+    task copyRuntimeLibs(type: Copy, dependsOn: "jar") {
+        into "$project.ext.distPath/libs"
+        from "$libsDir/" + jar.archiveName
+        rename jar.archiveName, "$jar.baseName." + jar.extension
+    }
+
+    task buildPortableDef(dependsOn: [copyRuntimeLibs, collectJars], overwrite: true) {
+        copy {
+            from "sdk/"
+            into "$project.ext.distPath/sdk"
+        }
     }
 }
 
@@ -53,8 +71,29 @@ dependencies {
     testCompile 'junit:junit:4.+'
 }
 
+task dist(dependsOn: [buildPortableDef]) {
+    copy {
+        from "system/"
+        into "$project.ext.distPath/system"
+    }
+
+    copy {
+        from "launcher/"
+        into "$project.ext.distPath"
+        exclude "*.log"
+        exclude "*.xml"
+        exclude "*.ico"
+    }
+}
+
 task(start, dependsOn: "classes", type: JavaExec) {
     description = "Main start"
     main = "php.runtime.launcher.Launcher"
     classpath = sourceSets.main.runtimeClasspath
+}
+
+task distZip (type: Zip) {
+    archiveName "dist-" + version + ".zip"
+    from project.ext.distPath
+    destinationDir buildDir
 }

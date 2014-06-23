@@ -4,3 +4,7 @@ dependencies {
     compile project(':jphp-swing-ext')
     compile files('libs/weblaf-1.26.jar')
 }
+
+task dist(dependsOn: buildPortableDef) {
+    // ...
+}
