@@ -3,8 +3,7 @@ rootProject.name = 'DevelNext'
 def jphpDir = new File(rootDir, '/jphp');
 def isSnapshot = false;
 
-include 'localization-ext',
-        'ui-syntax-ext',
+include 'ui-syntax-ext',
         'ui-docking-ext',
         'ui-weblaf-ext';
 

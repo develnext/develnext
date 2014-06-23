@@ -26,7 +26,6 @@ public class DevelNextExtension extends SwingExtension {
                 SwingExtension.class.getName(),
                 HttpExtension.class.getName(),
                 JsonExtension.class.getName(),
-                LocalizationExtension.class.getName(),
                 UIDockingExtension.class.getName(),
                 UISyntaxExtension.class.getName()
         };

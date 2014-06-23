@@ -63,7 +63,6 @@ dependencies {
     compile project(':jphp-http-ext')
     compile project(':jphp-json-ext')
 
-    compile project(':localization-ext')
     compile project(':ui-syntax-ext')
     compile project(':ui-docking-ext')
     compile project(':ui-weblaf-ext')
