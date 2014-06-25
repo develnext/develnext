@@ -17,8 +17,8 @@ $form->get('content')->add($contentArea);
 
 $grid = new CGrid($control);
 $grid->add(1, 1, 3, 3, $dContent = new SingleCDockable('content', 'content', $form->get('area')));
-$grid->add(0, 0, 1, 4, $one = new SingleCDockable('editor', 'editor', $form->get('editor')));
-$grid->add(1, 3, 3, 1, new SingleCDockable('console', 'console', $form->get('console')));
+$grid->add(0, 0, 1, 4, $one = new SingleCDockable('editor', 'File Tree', $form->get('fileTreePanel')));
+$grid->add(1, 3, 3, 1, new SingleCDockable('console', 'Console', $form->get('console')));
 
 
 $dContent->closable = false;

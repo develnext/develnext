@@ -8,9 +8,9 @@ include 'ui-syntax-ext',
         'ui-weblaf-ext';
 
 // JPHP
-
+/*
 include 'jphp'
-project(':jphp').projectDir = jphpDir;
+project(':jphp').projectDir = jphpDir;*/
 
 include 'jphp-core'
 project(':jphp-core').projectDir = new File(jphpDir, "/jphp-core");

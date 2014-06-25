@@ -3,10 +3,18 @@ namespace develnext\project\type;
 
 use develnext\project\dependency\MavenProjectDependency;
 use develnext\project\Project;
+use develnext\project\ProjectFile;
 use develnext\project\ProjectType;
 use php\io\FileStream;
 
 abstract class JVMProjectType extends ProjectType {
+
+    protected static $specialPaths = [
+        '/src' => ['Sources', 'images/icons/filetype/sources.png'],
+        '/resources' => ['Resources', 'images/icons/filetype/resources.png'],
+        '/resources/forms' => [null, 'images/icons/filetype/forms.png'],
+        '/resources/images' => [null, 'images/icons/filetype/images.png'],
+    ];
 
     function getDefaultDependencies() {
         return [
@@ -17,14 +25,18 @@ abstract class JVMProjectType extends ProjectType {
     function onCreateProject(Project $project) {
         $this->updatePom($project);
 
-        $project->getFile('src/main/php')->mkdirs();
-        $project->getFile('src/main/resources/JPHP-INF')->mkdirs();
+        $project->getFile('src/')->mkdirs();
 
-        $bootstrap = new FileStream($project->getPath('src/main/php/bootstrap.php'), 'w+');
+        $project->getFile('resources/forms')->mkdirs();
+        $project->getFile('resources/images')->mkdirs();
+
+        $project->getFile('resources/JPHP-INF')->mkdirs();
+
+        $bootstrap = new FileStream($project->getPath('src/bootstrap.php'), 'w+');
         $bootstrap->write('<?php ');
         $bootstrap->close();
 
-        $conf = new FileStream($project->getPath('src/main/resources/JPHP-INF/launcher.conf'), 'w+');
+        $conf = new FileStream($project->getPath('resources/JPHP-INF/launcher.conf'), 'w+');
         $conf->write("env.debug = 0\n\n");
         $conf->write("env.extensions = spl, org.develnext.jphp.swing.SwingExtension\n\n");
         $conf->write("bootstrap.file = bootstrap.php\n\n");
@@ -34,6 +46,18 @@ abstract class JVMProjectType extends ProjectType {
     function onUpdateProject(Project $project) {
         $this->updatePom($project);
     }
+
+    function onRenderFileInTree(ProjectFile $file) {
+        $relPath = $file->getRelPath();
+        $info = self::$specialPaths[$relPath];
+
+        if ($info) {
+            return $file->duplicate($info[0], $info[1]);
+        }
+
+        return $file;
+    }
+
 
     protected function updatePom(Project $project) {
         $out = new FileStream($project->getDirectory()->getPath() . '/pom.xml', 'w+');

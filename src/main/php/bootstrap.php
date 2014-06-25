@@ -1,7 +1,13 @@
 <?php
 namespace {
 
+    use develnext\filetype\PhpFileType;
+    use develnext\filetype\SwingFormFileType;
     use develnext\Manager;
+    use develnext\filetype\TextFileType;
+    use develnext\filetype\DirectoryFileType;
+    use develnext\filetype\UnknownFileType;
+
     use php\io\Stream;
     use php\lang\Module;
     use php\lib\str;
@@ -23,6 +29,14 @@ namespace {
 
     SwingUtilities::invokeLater(function(){
         $initializer = Manager::getInstance();
+
+        // file types
+        $initializer->registerFileType(new UnknownFileType());
+        $initializer->registerFileType(new DirectoryFileType());
+        $initializer->registerFileType(new TextFileType());
+        $initializer->registerFileType(new PhpFileType());
+        $initializer->registerFileType(new SwingFormFileType());
+
         $initializer->showSplash();
         $initializer->start();
 

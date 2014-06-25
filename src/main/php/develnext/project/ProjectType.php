@@ -37,4 +37,8 @@ abstract class ProjectType {
     function onUpdateProject(Project $project) {
         // nop
     }
+
+    function onRenderFileInTree(ProjectFile $file) {
+        return $file;
+    }
 }

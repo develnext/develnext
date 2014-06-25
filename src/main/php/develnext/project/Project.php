@@ -2,6 +2,8 @@
 namespace develnext\project;
 
 use php\io\File;
+use php\swing\UIContainer;
+use php\swing\UITree;
 
 /**
  * Class Project
@@ -20,10 +22,18 @@ class Project {
     /** @var ProjectDependency */
     protected $dependencies = array();
 
+    /** @var FileTreeManager */
+    protected $fileTree;
+
+    /** @var EditorManager */
+    protected $editorManager;
+
     function __construct(ProjectType $type, File $directory) {
         $this->type = $type;
         $this->directory = $directory;
         $this->name = $directory->getName();
+        $this->fileTree = new FileTreeManager($this);
+        $this->editorManager = new EditorManager($this);
     }
 
     /**
@@ -80,5 +90,16 @@ class Project {
 
     public function getPath($path) {
         return $this->directory->getPath() . "/$path";
+    }
+
+    public function updateTree() {
+        $this->fileTree->updateAll();
+    }
+
+    public function setGuiElements(UIContainer $editorContainer, UITree $fileTree) {
+        $this->fileTree->setTree($fileTree);
+        $this->editorManager->setArea($editorContainer);
+
+        $this->fileTree->setEditorManager($this->editorManager);
     }
 }

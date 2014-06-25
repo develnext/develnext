@@ -1,8 +1,10 @@
 <?php
 namespace develnext;
 
+use develnext\filetype\FileType;
 use develnext\i18n\Localizator;
 use develnext\lang\Singleton;
+use develnext\project\Project;
 use develnext\project\ProjectManager;
 use develnext\project\type\GuiProjectType;
 use develnext\util\Config;
@@ -42,6 +44,9 @@ class Manager {
 
     /** @var Localizator */
     public $localizator;
+
+    /** @var FileType[] */
+    public $fileTypes;
 
     protected function __construct() {
         $this->uiReader = new UIReader();
@@ -138,6 +143,24 @@ class Manager {
         return new File($this->settingsDirectory->getPath() .'/'. $fileName);
     }
 
+    public function registerFileType(FileType $fileType) {
+        $this->fileTypes[] = $fileType;
+    }
+
+    /**
+     * @param File $file
+     * @param Project $project
+     * @return FileType|null
+     */
+    public function getFileTypeOf(File $file, Project $project = null) {
+        $result = null;
+        foreach ($this->fileTypes as $type) {
+            if ($type->onDetect($file, $project))
+                $result = $type;
+        }
+        return $result;
+    }
+
     public function flash($text, $max = 0.7, $delay = 500) {
         $screenSize = SwingUtilities::getScreenSize();
 
@@ -175,7 +198,11 @@ class Manager {
         $loginForm = $this->getSystemForm('account/Login.xml');
 
         if ($loginForm->showModal()) {
-            //$project = $this->projectManager->createProject(new GuiProjectType(), new File("d:/gui_project/"));
+            $project = $this->projectManager->createProject(new GuiProjectType(), new File("d:/gui_project/"));
+            $project->setGuiElements($form->get('area'), $form->get('fileTree'));
+
+            $project->updateTree();
+
             $this->flash($this->localizator->translate('You are welcome to DevelNext!'));
             $form->show();
         } else
