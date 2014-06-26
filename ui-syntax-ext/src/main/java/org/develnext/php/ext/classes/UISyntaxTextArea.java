@@ -5,7 +5,9 @@ import org.develnext.jphp.swing.classes.components.UITextElement;
 import org.develnext.jphp.swing.support.RootTextElement;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
+import php.runtime.memory.LongMemory;
 import php.runtime.memory.StringMemory;
+import php.runtime.memory.TrueMemory;
 import php.runtime.reflection.ClassEntity;
 
 import java.awt.*;
@@ -48,6 +50,39 @@ public class UISyntaxTextArea extends UITextElement {
     @Signature(@Arg("value"))
     protected Memory __setSyntaxStyle(Environment env, Memory... args) {
         component.setSyntaxEditingStyle(args[0].toString());
+        return Memory.NULL;
+    }
+
+    @Signature
+    protected Memory __getTabSize(Environment env, Memory... args) {
+        return LongMemory.valueOf(component.getContent().getTabSize());
+    }
+
+    @Signature(@Arg("value"))
+    protected Memory __setTabSize(Environment env, Memory... args) {
+        component.getContent().setTabSize(args[0].toInteger());
+        return Memory.NULL;
+    }
+
+    @Signature
+    protected Memory __getLineNumbersEnabled(Environment env, Memory... args) {
+        return TrueMemory.valueOf(component.getLineNumbersEnabled());
+    }
+
+    @Signature(@Arg("value"))
+    protected Memory __setLineNumbersEnabled(Environment env, Memory... args) {
+        component.setLineNumbersEnabled(args[0].toBoolean());
+        return Memory.NULL;
+    }
+
+    @Signature
+    protected Memory __getIconRowHeaderEnabled(Environment env, Memory... args) {
+        return TrueMemory.valueOf(component.isIconRowHeaderEnabled());
+    }
+
+    @Signature(@Arg("value"))
+    protected Memory __setIconRowHeaderEnabled(Environment env, Memory... args) {
+        component.setLineNumbersEnabled(args[0].toBoolean());
         return Memory.NULL;
     }
 }

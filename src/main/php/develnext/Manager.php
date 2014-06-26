@@ -3,9 +3,12 @@ namespace develnext;
 
 use develnext\filetype\FileType;
 use develnext\i18n\Localizator;
+use develnext\ide\IdeManager;
+use develnext\ide\StandardIdeExtension;
 use develnext\lang\Singleton;
 use develnext\project\Project;
 use develnext\project\ProjectManager;
+use develnext\project\ProjectType;
 use develnext\project\type\GuiProjectType;
 use develnext\util\Config;
 use php\io\File;
@@ -19,6 +22,7 @@ use php\swing\SwingUtilities;
 use php\swing\Timer;
 use php\swing\UIDialog;
 use php\swing\UIElement;
+use php\swing\UIListbox;
 use php\swing\UIReader;
 
 class Manager {
@@ -46,9 +50,18 @@ class Manager {
     public $localizator;
 
     /** @var FileType[] */
-    public $fileTypes;
+    protected $fileTypes;
 
-    protected function __construct() {
+    /** @var ProjectType[] */
+    protected $projectTypes;
+
+    /** @var IdeManager */
+    public $ideManager;
+
+    /** @var Project */
+    public $currentProject;
+
+    protected function init() {
         $this->uiReader = new UIReader();
 
         $this->userDirectory = new File(System::getProperty('user.home', './'));
@@ -147,6 +160,18 @@ class Manager {
         $this->fileTypes[] = $fileType;
     }
 
+    public function registerProjectType(ProjectType $projectType) {
+        $this->projectTypes[] = $projectType;
+    }
+
+    /**
+     * @return \develnext\project\ProjectType[]
+     */
+    public function getProjectTypes() {
+        return $this->projectTypes;
+    }
+
+
     /**
      * @param File $file
      * @param Project $project
@@ -193,17 +218,38 @@ class Manager {
         $tm->start();
     }
 
+    public function createProject($name, File $directory, ProjectType $projectType) {
+        $this->closeProject();
+
+        $form = $this->getSystemForm('MainForm.xml');
+
+        $project = $this->projectManager->createProject($projectType, $directory);
+        $project->setName($name);
+        $project->setGuiElements($form->get('area'), $form->get('fileTree'));
+
+        $project->updateTree();
+
+        $this->currentProject = $project;
+        return $project;
+    }
+
+    public function closeProject() {
+        if ($this->currentProject)
+            $this->currentProject->close();
+    }
+
     public function start() {
+        $this->ideManager = new IdeManager($this);
+        $this->ideManager->registerExtension(new StandardIdeExtension());
+
         $form = $this->getSystemForm('MainForm.xml');
         $loginForm = $this->getSystemForm('account/Login.xml');
 
         if ($loginForm->showModal()) {
-            $project = $this->projectManager->createProject(new GuiProjectType(), new File("d:/gui_project/"));
-            $project->setGuiElements($form->get('area'), $form->get('fileTree'));
-
-            $project->updateTree();
-
-            $this->flash($this->localizator->translate('You are welcome to DevelNext!'));
+            if (!$this->currentProject) {
+                $this->getSystemForm('project/NewProject.xml')->showModal();
+            }
+            //$this->flash($this->localizator->translate('You are welcome to DevelNext!'));
             $form->show();
         } else
             System::halt(0);

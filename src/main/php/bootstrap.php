@@ -30,19 +30,13 @@ namespace {
     SwingUtilities::invokeLater(function(){
         $initializer = Manager::getInstance();
 
-        // file types
-        $initializer->registerFileType(new UnknownFileType());
-        $initializer->registerFileType(new DirectoryFileType());
-        $initializer->registerFileType(new TextFileType());
-        $initializer->registerFileType(new PhpFileType());
-        $initializer->registerFileType(new SwingFormFileType());
-
         $initializer->showSplash();
         $initializer->start();
 
         $t = new Timer(2000, function() use ($initializer) {
             $initializer->hideSplash();
         });
+        $t->repeat = false;
         $t->start();
     });
 }

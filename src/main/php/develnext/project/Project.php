@@ -102,4 +102,13 @@ class Project {
 
         $this->fileTree->setEditorManager($this->editorManager);
     }
+
+    public function close() {
+        $this->fileTree->close();
+        $this->editorManager->close();
+    }
+
+    public function saveAll() {
+        $this->editorManager->saveAll();
+    }
 }

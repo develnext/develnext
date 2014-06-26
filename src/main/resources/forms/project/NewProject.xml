@@ -1,4 +1,50 @@
-<ui-dialog size="500, 300"
-         title="{New Project}">
+<ui-dialog size="700, 400"
+         title="{New Project}" resizable="0">
+
+    <ui-panel align="client">
+        <ui-panel align="top" h="15" />
+        <ui-panel align="bottom" h="15" />
+        <ui-panel align="left" w="15" />
+        <ui-panel align="right" w="15" />
+
+        <ui-listbox align="left" w="170" var="type-list" />
+        <ui-panel align="left" w="15" />
+        <ui-panel align="client">
+            <ui-panel align="bottom" h="40">
+              <ui-button text="{Create}" font="Tahoma bold"
+                         w="110" align="left" icon="images/icons/ok16.png" cursor="hand" var="btn-create" />
+
+              <ui-panel align="left" w="10" />
+              <ui-button text="{Cancel}" w="100" align="left" cursor="hand" var="btn-cancel"
+                      icon="images/icons/cancel16.png" />
+            </ui-panel>
+
+            <ui-panel align="bottom" h="15" />
+            <ui-panel align="bottom" h="1" border="line" />
+
+
+            <ui-panel align="client">
+                <ui-label text="{New Project}" align="top" h="50" ver-align="0" font="Tahoma 19" foreground="#25649C" />
+                <ui-panel h="1" align="top" background="#FFFFFF" />
+
+                <ui-panel align="top" h="15" />
+                <ui-label align="top" text="{Name}:" ver-align="0" h="25" />
+                <ui-edit align="top" h="30" var="f-name" />
+
+                <ui-panel align="top" h="5" />
+
+                <ui-label align="top" text="{Directory}:" ver-align="0" h="25" />
+                <ui-panel align="top" h="30">
+                    <ui-button align="left" cursor="hand" w="30" icon="images/icons/open16.png" var="f-directory-btn"/>
+                    <ui-panel align="left" w="3" />
+                    <ui-edit align="client" var="f-directory" />
+                </ui-panel>
+
+                <ui-panel align="top" h="15" />
+                <ui-label align="top" ver-align="0" h="25" text="{Type of project}:" font="Tahoma bold" />
+                <ui-label align="top" h="40" ver-align="0" var="f-type" background="#FFFFFF" />
+            </ui-panel>
+        </ui-panel>
+    </ui-panel>
 
 </ui-dialog>

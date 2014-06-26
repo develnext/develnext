@@ -3,6 +3,7 @@
 namespace develnext\filetype;
 
 use develnext\editor\PhpEditor;
+use develnext\project\EditorManager;
 use develnext\project\Project;
 use php\io\File;
 use php\lib\str;
@@ -22,8 +23,8 @@ class PhpFileType extends FileType {
         return false;
     }
 
-    public function createEditor(UIContainer $container, File $file, Project $project = null) {
-        return new PhpEditor($container, $file, $project);
+    public function createEditor(File $file, EditorManager $manager = null) {
+        return new PhpEditor($file, $manager);
     }
 
     public function getIcon() {

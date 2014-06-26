@@ -1,6 +1,7 @@
 <?php
 namespace develnext\filetype;
 
+use develnext\project\EditorManager;
 use develnext\project\Project;
 use develnext\editor\TextEditor;
 use php\io\File;
@@ -25,8 +26,8 @@ class TextFileType extends FileType {
         return false;
     }
 
-    public function createEditor(UIContainer $container, File $file, Project $project = null) {
-        return new TextEditor($container, $file, $project);
+    public function createEditor(File $file, EditorManager $manager = null) {
+        return new TextEditor($file, $manager);
     }
 
     public function getIcon() {

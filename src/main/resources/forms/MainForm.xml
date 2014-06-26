@@ -2,7 +2,11 @@
          title="DevelNext 2014" default-close-operation="3" maximized="1">
     <include src="forms/MainMenu.xml" align="top" h="25" />
 
-    <ui-panel align="top" h="35" />
+    <ui-panel align="top" h="30" var="headMenu">
+        <ui-panel align="top" h="3" />
+        <ui-panel align="left" w="5" />
+    </ui-panel>
+
     <ui-panel align="client" var="content" layout="grid">
         <ui-panel var="fileTreePanel">
             <ui-tree align="client" root-visible="1" expanded="1" border="empty" var="fileTree">

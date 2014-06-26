@@ -7,7 +7,7 @@ use php\swing\UIContainer;
 
 class SwingFormEditor extends Editor {
 
-    protected function onCreate(UIContainer $container) {
+    protected function onCreate() {
 
     }
 

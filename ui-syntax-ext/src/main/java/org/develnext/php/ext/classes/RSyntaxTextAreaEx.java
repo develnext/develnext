@@ -1,19 +1,24 @@
 package org.develnext.php.ext.classes;
 
-import org.develnext.jphp.swing.support.JScrollableComponent;
 import org.develnext.jphp.swing.support.RootTextElement;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import java.awt.*;
 import java.awt.print.PrinterException;
 
-public class RSyntaxTextAreaEx extends JScrollableComponent<RSyntaxTextArea>
+public class RSyntaxTextAreaEx extends RTextScrollPane
         implements RootTextElement {
-    private String syntaxEditingStyle;
 
-    @Override
-    protected RSyntaxTextArea newComponent() {
-        return new RSyntaxTextArea();
+    protected RSyntaxTextArea component;
+
+    public RSyntaxTextAreaEx() {
+        super(new RSyntaxTextArea());
+        component = (RSyntaxTextArea) this.getTextArea();
+    }
+
+    public RSyntaxTextArea getContent() {
+        return component;
     }
 
     @Override

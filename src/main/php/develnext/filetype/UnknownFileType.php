@@ -2,6 +2,7 @@
 namespace develnext\filetype;
 
 use develnext\editor\TextEditor;
+use develnext\project\EditorManager;
 use develnext\project\Project;
 use php\io\File;
 use php\swing\UIContainer;
@@ -12,7 +13,8 @@ class UnknownFileType extends FileType {
         return true;
     }
 
-    public function createEditor(UIContainer $container, File $file, Project $project = null) {
-        return new TextEditor($container, $file, $project);
+    public function createEditor(File $file, EditorManager $manager = null) {
+        return new TextEditor($file, $manager);
     }
+
 }

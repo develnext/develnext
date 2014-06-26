@@ -1,8 +1,11 @@
 <?php
 namespace develnext\project;
 
+use develnext\editor\Editor;
+use php\io\Stream;
 use php\swing\Border;
 use php\swing\Font;
+use php\swing\Image;
 use php\swing\UIButton;
 use php\swing\UIContainer;
 use php\swing\UILabel;
@@ -26,45 +29,65 @@ class EditorManager {
         $this->project = $project;
     }
 
+    protected function createTabHead(ProjectFile $file) {
+        $tabHead = new UIPanel();
+        $tabHead->setLayout('flow');
+        $tabHead->opaque = false;
+
+        $xLabel = new UILabel();
+        $xLabel->text = (string)$file;
+        $xLabel->font = 'Tahoma 11';
+        $xLabel->setIcon($file->getIcon());
+        $xLabel->border = Border::createEmpty(0, 0, 0, 6);
+
+        $xButton = new UILabel();
+
+        static $closeIcon;
+        if (!$closeIcon)
+            $closeIcon = Image::read(Stream::of('res://images/icons/close16.gif'));
+
+        $xButton->setIcon($closeIcon);
+        $xButton->cursor = 'hand';
+        $xButton->tooltipText = 'Close';
+
+        $xButton->on('click', function() use ($file) {
+            $this->removeDocument($file);
+        });
+
+        $tabHead->add($xLabel);
+        $tabHead->add($xButton);
+
+        return $tabHead;
+    }
+
     public function open(ProjectFile $file) {
-        $tab = $this->documents[ $file->hashCode() ];
-        if ($tab) {
-            $this->tabs->selectedComponent = $tab;
+        $doc = $this->getDocument($file);
+        if ($doc) {
+            $this->tabs->selectedComponent = $doc[0];
             return;
         }
 
         $type = $file->getType();
 
-        $editor = $type->createEditor($this->area, $file->getFile(), $this->project);
+        $editor = $type->createEditor($file->getFile(), $this);
         if ($editor) {
             $this->tabs->addTab(null, $tab = new UIPanel());
-
-            $tabHead = new UIPanel();
-            $tabHead->setLayout('flow');
-            $tabHead->opaque = false;
-
-
-            $xLabel = new UILabel();
-            $xLabel->text = (string)$file;
-            $xLabel->setIcon($file->getIcon());
-            $xLabel->border = Border::createEmpty(0, 0, 0, 5);
-
-            $xButton = new UIButton();
-            $xButton->text = 'X';
-            $xButton->font = 'Tahoma 8';
-
-            $tabHead->add($xLabel);
-            $tabHead->add($xButton);
-
-            $this->tabs->setTabComponentAt($this->tabs->tabCount - 1, $tabHead);
+            $this->tabs->setTabComponentAt($this->tabs->tabCount - 1, $tabHead = $this->createTabHead($file));
 
             $tab->add($cmp = $editor->doCreate());
-            $cmp->border = Border::createEmpty(4, 4, 4, 4);
 
             $this->tabs->selectedComponent = $tab;
             $editor->doLoad();
 
-            $this->documents[ $file->hashCode() ] = $tab;
+            $editor->onChange(function(Editor $editor) use ($tabHead, $file) {
+                $text = (string)$file;
+                if ($editor->isNotSaved())
+                    $text .= ' *';
+
+                $tabHead->getComponent(0)->text = $text;
+            });
+
+            $this->documents[ $file->hashCode() ] = [$tab, $editor];
         }
 
         $this->area->updateUI();
@@ -81,5 +104,30 @@ class EditorManager {
         $area->add($tabs);
 
         $this->tabs = $tabs;
+    }
+
+    public function getDocument(ProjectFile $file) {
+        return $this->documents[ $file->hashCode() ];
+    }
+
+    public function removeDocument(ProjectFile $file) {
+        $doc = $this->getDocument($file);
+        if ($doc) {
+            $this->tabs->remove($doc[0]);
+        }
+        unset($this->documents[ $file->hashCode() ]);
+    }
+
+    public function close() {
+        $this->area->remove($this->tabs);
+        $this->documents = [];
+    }
+
+    public function saveAll() {
+        foreach ($this->documents as $doc) {
+            /** @var Editor $editor */
+            $editor = $doc[1];
+            $editor->doSave();
+        }
     }
 }

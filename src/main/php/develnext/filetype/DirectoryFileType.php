@@ -1,6 +1,7 @@
 <?php
 namespace develnext\filetype;
 
+use develnext\project\EditorManager;
 use develnext\project\Project;
 use php\io\File;
 use php\swing\UIContainer;
@@ -11,7 +12,7 @@ class DirectoryFileType extends FileType {
         return $file->isDirectory();
     }
 
-    public function createEditor(UIContainer $container, File $file, Project $project = null) {
+    public function createEditor(File $file, EditorManager $manager = null) {
         return null;
     }
 

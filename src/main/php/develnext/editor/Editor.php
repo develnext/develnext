@@ -2,6 +2,7 @@
 namespace develnext\editor;
 
 use develnext\lang\Singleton;
+use develnext\project\EditorManager;
 use develnext\project\Project;
 use php\io\File;
 use php\swing\UIContainer;
@@ -15,13 +16,18 @@ abstract class Editor {
     /** @var File */
     protected $file;
 
-    /** @var Project */
-    protected $project;
+    /** @var EditorManager */
+    protected $manager;
 
-    public function __construct(UIContainer $container, File $file = null, Project $project = null) {
+    /** @var bool */
+    protected $notSaved = false;
+
+    /** @var callable */
+    private $changeCallback = null;
+
+    public function __construct(File $file = null, EditorManager $manager = null) {
         $this->file    = $file;
-        $this->project = $project;
-        $this->onCreate($container);
+        $this->manager = $manager;
     }
 
     /**
@@ -33,14 +39,27 @@ abstract class Editor {
 
     final function doLoad() {
         $this->onLoad();
+        $this->doChange(false);
     }
 
     final function doSave() {
         $this->onSave();
+        $this->doChange(false);
     }
 
     final function doDestroy() {
         $this->onDestroy();
+    }
+
+    final public function doChange($notSaved = true) {
+        $this->notSaved = $notSaved;
+        if ($this->changeCallback) {
+            call_user_func($this->changeCallback, $this);
+        }
+    }
+
+    final public function onChange(callable $callback) {
+        $this->changeCallback = $callback;
     }
 
     abstract protected function onCreate();
@@ -54,4 +73,13 @@ abstract class Editor {
 
     protected function onRedo() { }
     protected function onUndo() { }
+
+    /**
+     * @return boolean
+     */
+    public function isNotSaved() {
+        return $this->notSaved;
+    }
+
+
 }

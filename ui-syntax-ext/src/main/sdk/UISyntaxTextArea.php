@@ -11,4 +11,19 @@ class UISyntaxTextArea extends UITextElement {
      * @var string
      */
     public $syntaxStyle;
+
+    /**
+     * @var bool
+     */
+    public $lineNumbersEnabled;
+
+    /**
+     * @var bool
+     */
+    public $iconRowHeaderEnabled;
+
+    /**
+     * @var int
+     */
+    public $tabSize;
 }

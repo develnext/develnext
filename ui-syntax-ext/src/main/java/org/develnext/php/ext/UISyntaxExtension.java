@@ -1,6 +1,7 @@
 package org.develnext.php.ext;
 
 import org.develnext.jphp.swing.SwingExtension;
+import org.develnext.php.ext.classes.RSyntaxTextAreaExEventProvider;
 import org.develnext.php.ext.classes.RSyntaxTextAreaReaders;
 import org.develnext.php.ext.classes.UISyntaxTextArea;
 import org.develnext.php.ext.classes.UISyntaxTextAreaTag;
@@ -23,5 +24,6 @@ public class UISyntaxExtension extends SwingExtension {
 
         registerReaderTag(new UISyntaxTextAreaTag());
         registerPropertyReaders(new RSyntaxTextAreaReaders());
+        registerEventProvider(new RSyntaxTextAreaExEventProvider());
     }
 }

@@ -3,6 +3,7 @@
 namespace develnext\filetype;
 
 use develnext\editor\SwingFormEditor;
+use develnext\project\EditorManager;
 use develnext\project\Project;
 use php\io\File;
 use php\io\FileStream;
@@ -24,8 +25,8 @@ class SwingFormFileType extends FileType {
             return false;
     }
 
-    public function createEditor(UIContainer $container, File $file, Project $project = null) {
-        return new SwingFormEditor($container, $file, $project);
+    public function createEditor(File $file, EditorManager $manager = null) {
+        return new SwingFormEditor($file, $manager);
     }
 
     public function getIcon() {

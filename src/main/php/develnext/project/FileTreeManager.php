@@ -62,6 +62,9 @@ class FileTreeManager {
             $file = $el[0];
 
             $projectFile = $this->project->getType()->onRenderFileInTree(new ProjectFile($file, $this->project));
+            if ($projectFile == null)
+                continue;
+
             $item = new TreeNode($projectFile, $file->isDirectory());
             $node->add($item);
 
@@ -90,5 +93,12 @@ class FileTreeManager {
         $tree->root->userData = $this->project->getName();
         $this->updateNode($tree->root, $files);
         $tree->model->reload($tree->root);
+    }
+
+    public function close() {
+        if ($this->tree) {
+            $this->tree->root->removeAllChildren();
+            $this->tree->model->reload($this->tree->root);
+        }
     }
 }

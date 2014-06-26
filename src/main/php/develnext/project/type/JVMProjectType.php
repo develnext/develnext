@@ -6,6 +6,7 @@ use develnext\project\Project;
 use develnext\project\ProjectFile;
 use develnext\project\ProjectType;
 use php\io\FileStream;
+use php\lib\str;
 
 abstract class JVMProjectType extends ProjectType {
 
@@ -26,9 +27,7 @@ abstract class JVMProjectType extends ProjectType {
         $this->updatePom($project);
 
         $project->getFile('src/')->mkdirs();
-
-        $project->getFile('resources/forms')->mkdirs();
-        $project->getFile('resources/images')->mkdirs();
+        $project->getFile('resources/')->mkdirs();
 
         $project->getFile('resources/JPHP-INF')->mkdirs();
 
@@ -54,6 +53,9 @@ abstract class JVMProjectType extends ProjectType {
         if ($info) {
             return $file->duplicate($info[0], $info[1]);
         }
+
+        if (str::startsWith($relPath, '/resources/JPHP-INF'))
+            return null;
 
         return $file;
     }

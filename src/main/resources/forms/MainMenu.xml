@@ -3,6 +3,7 @@
         <ui-menu-item icon="images/icons/project16.png" text="{New Project}" var="menu-new-project" />
         <ui-menu-item text="{Open Project}" var="menu-open-project" icon="images/icons/open16.png" />
         <separator />
+        <ui-menu-item icon="images/icons/save16.png" text="{Save All}" var="menu-save-all" />
         <ui-menu-item icon="images/icons/settings16.png" text="{Settings}" />
         <separator />
         <ui-menu-item text="{Exit}" />
