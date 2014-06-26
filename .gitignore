@@ -13,7 +13,7 @@
 *.iws
 
 /jphp
+/classes
 
 out/
 build/
-classes/
