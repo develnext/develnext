@@ -3,6 +3,7 @@ namespace develnext\project;
 
 use php\swing\Border;
 use php\swing\Font;
+use php\swing\UIButton;
 use php\swing\UIContainer;
 use php\swing\UILabel;
 use php\swing\UIPanel;
@@ -36,14 +37,26 @@ class EditorManager {
 
         $editor = $type->createEditor($this->area, $file->getFile(), $this->project);
         if ($editor) {
-            $this->tabs->addTab((string)$file, $tab = new UIPanel());
+            $this->tabs->addTab(null, $tab = new UIPanel());
+
+            $tabHead = new UIPanel();
+            $tabHead->setLayout('flow');
+            $tabHead->opaque = false;
+
 
             $xLabel = new UILabel();
-            $xLabel->size = [10, 10];
             $xLabel->text = (string)$file;
             $xLabel->setIcon($file->getIcon());
+            $xLabel->border = Border::createEmpty(0, 0, 0, 5);
 
-            $this->tabs->setTabComponentAt($this->tabs->tabCount - 1, $xLabel);
+            $xButton = new UIButton();
+            $xButton->text = 'X';
+            $xButton->font = 'Tahoma 8';
+
+            $tabHead->add($xLabel);
+            $tabHead->add($xButton);
+
+            $this->tabs->setTabComponentAt($this->tabs->tabCount - 1, $tabHead);
 
             $tab->add($cmp = $editor->doCreate());
             $cmp->border = Border::createEmpty(4, 4, 4, 4);
