@@ -11,9 +11,11 @@
 *.iml
 *.ipr
 *.iws
+*.log
 
 /jphp
 /classes
+/tools
 
 out/
 build/

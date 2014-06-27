@@ -18,12 +18,14 @@
     <cp>libs/*</cp>
   </classPath>
   <jre>
-    <path></path>
+    <path>tools/jre</path>
     <bundledJre64Bit>false</bundledJre64Bit>
-    <minVersion>1.6.0</minVersion>
+    <minVersion></minVersion>
     <maxVersion></maxVersion>
-    <jdkPreference>preferJre</jdkPreference>
+    <jdkPreference>jreOnly</jdkPreference>
     <runtimeBits>64/32</runtimeBits>
+    <initialHeapSize>50</initialHeapSize>
+    <maxHeapSize>512</maxHeapSize>
   </jre>
   <versionInfo>
     <fileVersion>0.1.0.0</fileVersion>

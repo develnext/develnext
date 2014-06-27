@@ -10,6 +10,7 @@ use develnext\project\Project;
 use develnext\project\ProjectManager;
 use develnext\project\ProjectType;
 use develnext\project\type\GuiProjectType;
+use develnext\tool\GradleTool;
 use develnext\util\Config;
 use php\io\File;
 use php\io\FileStream;
@@ -246,6 +247,9 @@ class Manager {
         $loginForm = $this->getSystemForm('account/Login.xml');
 
         if ($loginForm->showModal()) {
+            /*$gradleTool = new GradleTool();
+            dump($gradleTool->getVersion());*/
+
             if (!$this->currentProject) {
                 $this->getSystemForm('project/NewProject.xml')->showModal();
             }

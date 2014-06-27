@@ -83,6 +83,12 @@ task dist(dependsOn: [buildPortableDef]) {
         exclude "*.xml"
         exclude "*.ico"
     }
+
+    // tools are gradle, portable jre, etc.
+    copy {
+        from "tools/"
+        into "$project.ext.distPath/tools"
+    }
 }
 
 task(start, dependsOn: "classes", type: JavaExec) {
@@ -98,6 +104,6 @@ task distZip (type: Zip) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "1.11";
+    gradleVersion = "1.12";
     distributionUrl = "http://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip";
 }
