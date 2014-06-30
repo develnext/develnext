@@ -1,6 +1,7 @@
 <ui-form size="800, 600"
          title="DevelNext 2014" default-close-operation="3" maximized="1">
-    <include src="forms/MainMenu.xml" align="top" h="25" />
+
+    <ui-menu-bar var="mainMenu" align="top" h="25" />
 
     <ui-panel align="top" h="30" var="headMenu">
         <ui-panel align="top" h="3" />
@@ -13,7 +14,10 @@
 
             </ui-tree>
         </ui-panel>
-        <ui-panel var="console" />
+        <ui-panel var="console">
+            <ui-textarea var="console-log" align="client" />
+        </ui-panel>
+
         <ui-panel var="area" border="empty" />
     </ui-panel>
 </ui-form>

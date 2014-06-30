@@ -28,12 +28,16 @@ class Project {
     /** @var EditorManager */
     protected $editorManager;
 
+    /** @var ProjectFormat */
+    protected $projectFormat;
+
     function __construct(ProjectType $type, File $directory) {
         $this->type = $type;
         $this->directory = $directory;
         $this->name = $directory->getName();
         $this->fileTree = new FileTreeManager($this);
         $this->editorManager = new EditorManager($this);
+        $this->projectFormat = new ProjectFormat($this);
     }
 
     /**
@@ -76,6 +80,9 @@ class Project {
         unset($this->dependencies[$dependency->getUniqueCode()]);
     }
 
+    /**
+     * @return ProjectDependency[]
+     */
     public function getDependencies() {
         return $this->dependencies;
     }
@@ -110,5 +117,6 @@ class Project {
 
     public function saveAll() {
         $this->editorManager->saveAll();
+        $this->projectFormat->save();
     }
 }

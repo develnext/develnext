@@ -27,4 +27,12 @@ class JarProjectDependency extends ProjectDependency {
 
         return 'jar#' . $path;
     }
+
+    function toString() {
+        return $this->jarFile->getPath();
+    }
+
+    function fromString($string) {
+        $this->jarFile = new File($string);
+    }
 }

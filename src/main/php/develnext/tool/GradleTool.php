@@ -1,7 +1,7 @@
 <?php
 namespace develnext\tool;
 
-use php\lang\Process;
+use php\io\File;
 
 class GradleTool extends Tool {
 
@@ -9,8 +9,13 @@ class GradleTool extends Tool {
         return $this->execute(['-v'])->getInput()->readFully();
     }
 
-    public function execute(array $args = []) {
-        $process = new Process(['tools/gradle/bin/gradle.bat'] + $args);
-        return $process->startAndWait();
+    /**
+     * @return string
+     */
+    public function getBaseCommand() {
+        if (IS_WIN && (new File(constant('ROOT') . '/tools/gradle/bin/gradle.bat'))->exists()) {
+            return constant('ROOT') . '/tools/gradle/bin/gradle.bat';
+        } else
+            return 'gradle';
     }
 }

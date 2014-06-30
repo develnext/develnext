@@ -24,7 +24,7 @@ abstract class JVMProjectType extends ProjectType {
     }
 
     function onCreateProject(Project $project) {
-        $this->updatePom($project);
+        $this->updateBuildScript($project);
 
         $project->getFile('src/')->mkdirs();
         $project->getFile('resources/')->mkdirs();
@@ -43,7 +43,7 @@ abstract class JVMProjectType extends ProjectType {
     }
 
     function onUpdateProject(Project $project) {
-        $this->updatePom($project);
+        $this->updateBuildScript($project);
     }
 
     function onRenderFileInTree(ProjectFile $file) {
@@ -61,53 +61,54 @@ abstract class JVMProjectType extends ProjectType {
     }
 
 
-    protected function updatePom(Project $project) {
-        $out = new FileStream($project->getDirectory()->getPath() . '/pom.xml', 'w+');
+    protected function updateBuildScript(Project $project) {
+        $out = new FileStream($project->getDirectory()->getPath() . '/build.gradle', 'w+');
 
         $version = "1.0";
         $name = $project->getName();
 
-        $out->write(<<<"DOC"
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.develnext.project</groupId>
-  <artifactId>$name</artifactId>
-  <version>$version</version>
+$out->write(<<<"DOC"
+allprojects {
+    apply plugin: 'java'
 
-  <repositories>
-    <repository>
-      <id>DevelNext Repo</id>
-      <url>http://maven.develnext.org/repository/snapshots/</url>
-    </repository>
-    <repository>
-      <id>central</id>
-      <name>Maven Repository Switchboard</name>
-      <layout>default</layout>
-      <url>http://repo1.maven.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-</project>
+    group = '$name'
+    version = '$version'
+
+    repositories {
+        maven { url 'http://maven.develnext.org/repository/snapshots/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        mavenCentral()
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDir 'src'
+            }
+            resources {
+                srcDir 'src'
+                srcDir 'resources'
+            }
+        }
+    }
+}
 
 
 DOC
 );
 
-        $out->write("<dependencies>\n");
+        $out->write("dependencies {\n");
 
         foreach($project->getDependencies() as $dep) {
             if ($dep instanceof MavenProjectDependency) {
-                $out->write("\t<dependency>\n");
-                $out->write("\t\t<groupId>" . $dep->getGroupId()  . "</groupId>\n");
-                $out->write("\t\t<artifactId>" . $dep->getArtifactId() . "</artifactId>\n");
-                $out->write("\t\t<version>" . $dep->getVersion() . "</version>\n" );
-                $out->write("\t</dependency>\n");
+                $out->write(
+                    "\t\t compile '"
+                    . $dep->getGroupId() . ':' . $dep->getArtifactId() . ':' . $dep->getVersion() . "'\n"
+                );
             }
         }
 
-        $out->write("</dependencies>\n");
+        $out->write("}\n");
         $out->close();
     }
 }

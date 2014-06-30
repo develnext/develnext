@@ -27,4 +27,12 @@ class DirectoryProjectDependency extends ProjectDependency {
 
         return 'dir#' . $path;
     }
+
+    function toString() {
+        return $this->directory->getPath();
+    }
+
+    function fromString($string) {
+        $this->directory = new File($string);
+    }
 }

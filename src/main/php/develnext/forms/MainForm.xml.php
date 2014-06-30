@@ -56,17 +56,18 @@ $button->size = [100, 100];
 $work->getComponent()->add($button);*/
 
 /** @var \php\swing\UIMenuItem $saveAll */
-$saveAll = $form->get('menu-save-all');
+/*$saveAll = $form->get('menu-save-all');
 $saveAll->accelerator = 'control S';
 $saveAll->on('click', function() {
     $manager = Manager::getInstance();
     $manager->currentProject->saveAll();
-});
+});*/
 
+/*
 $form->get('menu-new-project')->on('click', function(){
     $manager = Manager::getInstance();
     $manager->getSystemForm('project/NewProject.xml')->showModal();
-});
+});*/
 
 $form->getWindow()->on('windowClosing', function() use ($control, $configFile, $form, $manager) {
     $control->writeXml($configFile);

@@ -2,6 +2,7 @@
 namespace develnext\project\dependency;
 
 use develnext\project\ProjectDependency;
+use php\lib\str;
 
 /**
  * Class MavenProjectDependency
@@ -27,6 +28,17 @@ class MavenProjectDependency extends ProjectDependency {
 
     function getUniqueCode() {
         return 'maven#' . $this->groupId . ':' . $this->artifactId;
+    }
+
+    function toString() {
+        return $this->groupId . ':' . $this->artifactId . ':' . $this->version;
+    }
+
+    function fromString($string) {
+        $tmp = str::split($string, ':', 3);
+        $this->groupId = $tmp[0];
+        $this->artifactId = $tmp[1];
+        $this->version = $tmp[2];
     }
 
     /**

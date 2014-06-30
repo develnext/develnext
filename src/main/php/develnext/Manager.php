@@ -4,13 +4,11 @@ namespace develnext;
 use develnext\filetype\FileType;
 use develnext\i18n\Localizator;
 use develnext\ide\IdeManager;
-use develnext\ide\StandardIdeExtension;
+use develnext\ide\std\StandardIdeExtension;
 use develnext\lang\Singleton;
 use develnext\project\Project;
 use develnext\project\ProjectManager;
 use develnext\project\ProjectType;
-use develnext\project\type\GuiProjectType;
-use develnext\tool\GradleTool;
 use develnext\util\Config;
 use php\io\File;
 use php\io\FileStream;
@@ -228,6 +226,7 @@ class Manager {
         $project->setName($name);
         $project->setGuiElements($form->get('area'), $form->get('fileTree'));
 
+        $project->saveAll();
         $project->updateTree();
 
         $this->currentProject = $project;

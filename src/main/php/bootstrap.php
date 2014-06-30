@@ -1,13 +1,7 @@
 <?php
 namespace {
 
-    use develnext\filetype\PhpFileType;
-    use develnext\filetype\SwingFormFileType;
     use develnext\Manager;
-    use develnext\filetype\TextFileType;
-    use develnext\filetype\DirectoryFileType;
-    use develnext\filetype\UnknownFileType;
-
     use php\io\Stream;
     use php\lang\Module;
     use php\lib\str;
@@ -17,7 +11,8 @@ namespace {
     use php\swing\UIManager;
 
     // utils functions
-    import(Stream::of('res://functions.php'));
+    $module = new Module(Stream::of('res://functions.php'));
+    $module->call();
 
     UIManager::setLookAndFeel('com.alee.laf.WebLookAndFeel');
 
