@@ -33,7 +33,7 @@ find a few executable files: `DevelNext` (for Linux, MacOS), `DevelNext.bat` (fo
 2. Создайте символическую ссылку для этой директории внутри исходников DevelNext под названием `jphp`.
 3. (только для Windows) Скачайте архив https://bitbucket.org/dim-s/develnext/downloads/tools.7z и распакуйте его в корень исходников.
 
-Установите систему Gradle и используйте его команду `start`, чтобы запустить среду:
+Установите систему Gradle и используйте её команду `start`, чтобы запустить среду:
 
     gradle start
 
@@ -41,6 +41,6 @@ find a few executable files: `DevelNext` (for Linux, MacOS), `DevelNext.bat` (fo
 
     gradle dist
 
-Результат выполнения этой команды будет находится в папке `build/dist-{VERSION}`, там будет находится
+Результат выполнения этой команды будет находиться в папке `build/dist-{VERSION}`, там вы обнаружите
 несколько исполняемых файлов: `DevelNext` (для Linux и MacOS), `DevelNext.bat` (для отладки под Windows) и
-`DevelNext.exe` (для Windows). Используйте одну из них для запуска IDE.
+`DevelNext.exe` (для Windows). Используйте один из них для запуска IDE.
