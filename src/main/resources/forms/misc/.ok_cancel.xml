@@ -1,0 +1,8 @@
+<ui-panel>
+  <ui-button text="{OK}" font="Tahoma bold"
+             w="110" align="left" icon="images/icons/ok16.png" cursor="hand" var="btn-ok" />
+
+  <ui-panel align="left" w="10" />
+  <ui-button text="{Cancel}" w="100" align="left" cursor="hand" var="btn-cancel"
+             icon="images/icons/cancel16.png" />
+</ui-panel>

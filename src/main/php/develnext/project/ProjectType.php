@@ -31,7 +31,6 @@ abstract class ProjectType {
     }
 
     function onCreateProject(Project $project) {
-        // nop
     }
 
     function onUpdateProject(Project $project) {

@@ -26,6 +26,10 @@ abstract class JVMProjectType extends ProjectType {
     }
 
     function onCreateProject(Project $project) {
+        $project->setFileMark($project->getProjectFile('.develnext/'), 'hidden');
+        $project->setFileMark($project->getProjectFile('build/'), 'hidden');
+        $project->setFileMark($project->getProjectFile('.gradle/'), 'hidden');
+
         $this->updateBuildScript($project);
 
         $project->getFile('src/')->mkdirs();

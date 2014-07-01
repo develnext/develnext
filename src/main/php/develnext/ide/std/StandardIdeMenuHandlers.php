@@ -4,6 +4,7 @@ use develnext\Manager;
 use develnext\tool\GradleTool;
 use develnext\tool\JavaTool;
 use php\lib\str;
+use php\swing\event\ComponentEvent;
 
 /**
  * Class StandardIdeMenuHandlers
@@ -54,13 +55,18 @@ class StandardIdeMenuHandlers {
 
     }
 
-    public function build_run() {
+    public function build_run($e) {
         $manager = Manager::getInstance();
 
         $jre = new GradleTool();
+        $e->target->enabled = false;
+
         $manager->ideManager->logProcess($jre->execute(
             $manager->currentProject->getDirectory(), ['run'], false
-        ));
+        ), function() use ($e){
+            $e->target->enabled = true;
+        });
+
     }
 
     /**

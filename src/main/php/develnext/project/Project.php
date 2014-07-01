@@ -31,6 +31,9 @@ class Project {
     /** @var ProjectFormat */
     protected $projectFormat;
 
+    /** @var FileMark[] */
+    protected $fileMarks;
+
     function __construct(ProjectType $type, File $directory) {
         $this->type = $type;
         $this->directory = $directory;
@@ -80,6 +83,26 @@ class Project {
         unset($this->dependencies[$dependency->getUniqueCode()]);
     }
 
+    public function getFileMark(ProjectFile $file, $type) {
+        return $this->fileMarks[$type . '#' . $file->hashCode()];
+    }
+
+    public function setFileMark(ProjectFile $file, $type) {
+        $this->fileMarks[$type . '#' . $file->hashCode()] = new FileMark($file, $type);
+    }
+
+    public function deleteFileMark(ProjectFile $file, $type) {
+        unset($this->fileMarks[$type . '#' . $file->hashCode()]);
+    }
+
+    /**
+     * @return FileMark[]
+     */
+    public function getFileMarks() {
+        return $this->fileMarks;
+    }
+
+
     /**
      * @return ProjectDependency[]
      */
@@ -93,6 +116,14 @@ class Project {
      */
     public function getFile($path) {
         return new File($this->getPath($path));
+    }
+
+    /**
+     * @param $path
+     * @return ProjectFile
+     */
+    public function getProjectFile($path) {
+        return new ProjectFile($this->getFile($path), $this);
     }
 
     public function getPath($path) {
@@ -118,5 +149,9 @@ class Project {
     public function saveAll() {
         $this->editorManager->saveAll();
         $this->projectFormat->save();
+    }
+
+    public function openFile(ProjectFile $file) {
+        $this->editorManager->open($file);
     }
 }

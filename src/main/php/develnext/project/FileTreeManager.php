@@ -61,7 +61,11 @@ class FileTreeManager {
             /** @var File $file */
             $file = $el[0];
 
-            $projectFile = $this->project->getType()->onRenderFileInTree(new ProjectFile($file, $this->project));
+            $projectFile = new ProjectFile($file, $this->project);
+            if ($this->project->getFileMark($projectFile, 'hidden'))
+                continue;
+
+            $projectFile = $this->project->getType()->onRenderFileInTree($projectFile);
             if ($projectFile == null)
                 continue;
 

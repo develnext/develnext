@@ -9,15 +9,15 @@
     </ui-panel>
 
     <ui-panel align="client" var="content" layout="grid">
-        <ui-web-dockable-panel var="fileTreePanel">
+        <ui-panel var="fileTreePanel">
             <ui-tree align="client" root-visible="1" expanded="1" border="empty" var="fileTree">
 
             </ui-tree>
-        </ui-web-dockable-panel>
+        </ui-panel>
 
-        <ui-web-dockable-panel var="console">
+        <ui-panel var="console">
             <ui-textarea var="console-log" align="client" />
-        </ui-web-dockable-panel>
+        </ui-panel>
 
         <ui-panel var="area" border="empty" />
     </ui-panel>

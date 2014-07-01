@@ -55,6 +55,10 @@ class StandardIdeExtension extends IdeExtension {
         $menuHandlers = new StandardIdeMenuHandlers();
         $manager->setMenuHandlers($menuHandlers->getHandlers());
 
+        $manager->addFileTreePopupGroup('new', _('New'));
+        $manager->addFileTreePopupSeparator();
+        $manager->addFileTreePopupItem(null, _('Delete'), null, 'DELETE');
+
         // file types
         $manager->registerFileType(new UnknownFileType());
         $manager->registerFileType(new DirectoryFileType());

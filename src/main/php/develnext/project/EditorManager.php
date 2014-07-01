@@ -29,7 +29,7 @@ class EditorManager {
         $this->project = $project;
     }
 
-    protected function createTabHead(ProjectFile $file) {
+    protected function createTabHead(ProjectFile $file, UIPanel $tab) {
         $tabHead = new UIPanel();
         $tabHead->setLayout('flow');
         $tabHead->opaque = false;
@@ -40,6 +40,9 @@ class EditorManager {
         $xLabel->setIcon($file->getIcon());
         $xLabel->border = Border::createEmpty(0, 0, 0, 6);
         $xLabel->tooltipText = $file->getFile()->getPath();
+        $xLabel->on('click', function() use ($tab) {
+            $this->tabs->selectedComponent = $tab;
+        });
 
         $xButton = new UILabel();
 
@@ -73,7 +76,7 @@ class EditorManager {
         $editor = $type->createEditor($file->getFile(), $this);
         if ($editor) {
             $this->tabs->addTab(null, $tab = new UIPanel());
-            $this->tabs->setTabComponentAt($this->tabs->tabCount - 1, $tabHead = $this->createTabHead($file));
+            $this->tabs->setTabComponentAt($this->tabs->tabCount - 1, $tabHead = $this->createTabHead($file, $tab));
 
             $tab->add($cmp = $editor->doCreate());
 

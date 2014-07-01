@@ -82,4 +82,8 @@ class ProjectFile {
 
         return $hash;
     }
+
+    public function getProject() {
+        return $this->project;
+    }
 }

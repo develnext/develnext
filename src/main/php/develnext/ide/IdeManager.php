@@ -1,6 +1,7 @@
 <?php
 namespace develnext\ide;
 
+use develnext\filetype\creator\Creator;
 use develnext\filetype\FileType;
 use develnext\IDEForm;
 use develnext\lang\Singleton;
@@ -20,6 +21,7 @@ use php\swing\UIMenu;
 use php\swing\UIMenuBar;
 use php\swing\UIMenuItem;
 use php\swing\UIPanel;
+use php\swing\UIPopupMenu;
 use php\swing\UITextArea;
 use php\util\Scanner;
 
@@ -35,12 +37,22 @@ class IdeManager {
     /** @var IDEForm */
     protected $mainForm;
 
+    /** @var UIPopupMenu */
+    protected $fileTreeMenu;
+
     /** @var IdeExtension[] */
     protected $extensions;
+
+    /** @var Creator */
+    protected $fileTypeCreators = [];
 
     public function __construct(Manager $manager) {
         $this->manager  = $manager;
         $this->mainForm = $this->manager->getSystemForm('MainForm.xml');
+
+        // popup
+        $this->fileTreeMenu = new UIPopupMenu();
+        $this->mainForm->get('fileTree')->popupMenu = $this->fileTreeMenu;
     }
 
     public function registerExtension(IdeExtension $extension) {
@@ -55,6 +67,10 @@ class IdeManager {
 
     public function registerProjectType(ProjectType $projectType) {
         $this->manager->registerProjectType($projectType);
+    }
+
+    public function registerFileTypeCreator(Creator $creator, $inMenu = true) {
+        $this->fileTypeCreators[] = $creator;
     }
 
     /**
@@ -207,6 +223,40 @@ class IdeManager {
                 $headItem->on('click', $handler);
             }
         }
+    }
+
+    public function addFileTreePopupGroup($group, $text) {
+        $item = new UIMenu();
+        $item->text = $text;
+        $item->group = $group;
+
+        $this->fileTreeMenu->add($item);
+    }
+
+    public function addFileTreePopupSeparator($group = null) {
+        /** @var UIMenu $menu */
+        $menu = $this->fileTreeMenu;
+        if ($group)
+            $menu = $this->fileTreeMenu->getComponentByGroup($group);
+
+        $menu->addSeparator();
+    }
+
+    public function addFileTreePopupItem($group, $text, $icon = null, $accelerator = null) {
+        $item = new UIMenuItem();
+        $item->text = $text;
+        if ($icon)
+            $item->setIcon(ImageManager::get($icon));
+
+        if ($accelerator)
+            $item->accelerator = $accelerator;
+
+        $menu = $this->fileTreeMenu;
+        if ($group)
+            $menu = $this->fileTreeMenu->getComponentByGroup($group);
+
+        $menu->add($item);
+        return $item;
     }
 
     public function logProcess(Process $process, callable $onEnd = null) {
