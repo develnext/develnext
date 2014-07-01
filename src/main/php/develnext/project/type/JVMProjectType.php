@@ -1,6 +1,7 @@
 <?php
 namespace develnext\project\type;
 
+use develnext\project\dependency\JPHPExtensionDependency;
 use develnext\project\dependency\MavenProjectDependency;
 use develnext\project\Project;
 use develnext\project\ProjectFile;
@@ -19,7 +20,8 @@ abstract class JVMProjectType extends ProjectType {
 
     function getDefaultDependencies() {
         return [
-            new MavenProjectDependency('org.develnext', 'jphp-core', '0.4-SNAPSHOT')
+            new MavenProjectDependency('org.develnext', 'jphp-core', '0.4-SNAPSHOT'),
+            new JPHPExtensionDependency('spl')
         ];
     }
 
@@ -35,15 +37,12 @@ abstract class JVMProjectType extends ProjectType {
         $bootstrap->write('<?php ');
         $bootstrap->close();
 
-        $conf = new FileStream($project->getPath('resources/JPHP-INF/launcher.conf'), 'w+');
-        $conf->write("env.debug = 0\n\n");
-        $conf->write("env.extensions = spl, org.develnext.jphp.swing.SwingExtension\n\n");
-        $conf->write("bootstrap.file = bootstrap.php\n\n");
-        $conf->close();
+        $this->updateConf($project);
     }
 
     function onUpdateProject(Project $project) {
         $this->updateBuildScript($project);
+        $this->updateConf($project);
     }
 
     function onRenderFileInTree(ProjectFile $file) {
@@ -60,6 +59,23 @@ abstract class JVMProjectType extends ProjectType {
         return $file;
     }
 
+    protected function updateConf(Project $project) {
+        $conf = new FileStream($project->getPath('resources/JPHP-INF/launcher.conf'), 'w+');
+
+        $conf->write("env.debug = 0\n\n");
+
+        $jphpExtensions = [];
+        foreach ($project->getDependencies() as $dep) {
+            if ($dep instanceof JPHPExtensionDependency) {
+                $jphpExtensions[] = $dep->getClassName();
+            }
+        }
+
+        $conf->write('env.extensions = ' . str::join($jphpExtensions, ', ') . "\n\n");
+
+        $conf->write("bootstrap.file = bootstrap.php\n\n");
+        $conf->close();
+    }
 
     protected function updateBuildScript(Project $project) {
         $out = new FileStream($project->getDirectory()->getPath() . '/build.gradle', 'w+');
@@ -70,12 +86,14 @@ abstract class JVMProjectType extends ProjectType {
 $out->write(<<<"DOC"
 allprojects {
     apply plugin: 'java'
+    apply plugin: 'application'
 
     group = '$name'
     version = '$version'
 
+    mainClassName = 'php.runtime.launcher.Launcher'
+
     repositories {
-        maven { url 'http://maven.develnext.org/repository/snapshots/' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenCentral()
     }

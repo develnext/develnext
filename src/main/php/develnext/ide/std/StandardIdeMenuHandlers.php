@@ -59,15 +59,8 @@ class StandardIdeMenuHandlers {
 
         $jre = new GradleTool();
         $manager->ideManager->logProcess($jre->execute(
-            $manager->currentProject->getDirectory(), ['jar'], false
-        ), function() use ($manager) {
-            $pr = $manager->currentProject;
-            $java = new JavaTool();
-            $java->execute(null, [
-                '-jar',
-                $pr->getDirectory() . "/build/libs/" . $pr->getName() . "-1.0.jar"
-            ]);
-        });
+            $manager->currentProject->getDirectory(), ['run'], false
+        ));
     }
 
     /**

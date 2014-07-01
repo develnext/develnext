@@ -2,6 +2,7 @@
 
 namespace develnext\project\type;
 
+use develnext\project\dependency\JPHPExtensionDependency;
 use develnext\project\dependency\MavenProjectDependency;
 use develnext\project\Project;
 use php\io\FileStream;
@@ -15,7 +16,8 @@ class GuiProjectType extends JVMProjectType {
 
     function getDefaultDependencies() {
         return Flow::of(parent::getDefaultDependencies())->append([
-            new MavenProjectDependency('org.develnext', 'jphp-swing-ext', '0.4-SNAPSHOT')
+            new MavenProjectDependency('org.develnext', 'jphp-swing-ext', '0.4-SNAPSHOT'),
+            new JPHPExtensionDependency('org.develnext.jphp.swing.SwingExtension')
         ])->toArray();
     }
 

@@ -229,6 +229,7 @@ class IdeManagerLogProcessWorker extends SwingWorker {
         $this->console = $console;
         $this->process = $process;
         $this->onEnd = $onEnd;
+        $console->text = '';
     }
 
     /**

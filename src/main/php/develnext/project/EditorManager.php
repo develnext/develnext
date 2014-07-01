@@ -39,6 +39,7 @@ class EditorManager {
         $xLabel->font = 'Tahoma 11';
         $xLabel->setIcon($file->getIcon());
         $xLabel->border = Border::createEmpty(0, 0, 0, 6);
+        $xLabel->tooltipText = $file->getFile()->getPath();
 
         $xButton = new UILabel();
 

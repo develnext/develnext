@@ -5,6 +5,7 @@ import org.develnext.jphp.json.JsonExtension;
 import org.develnext.jphp.swing.SwingExtension;
 import org.develnext.php.ext.UIDockingExtension;
 import org.develnext.php.ext.UISyntaxExtension;
+import org.develnext.php.ext.UIWeblafExtension;
 import php.runtime.env.CompileScope;
 
 public class DevelNextExtension extends SwingExtension {
@@ -27,7 +28,8 @@ public class DevelNextExtension extends SwingExtension {
                 HttpExtension.class.getName(),
                 JsonExtension.class.getName(),
                 UIDockingExtension.class.getName(),
-                UISyntaxExtension.class.getName()
+                UISyntaxExtension.class.getName(),
+                UIWeblafExtension.class.getName()
         };
     }
 
