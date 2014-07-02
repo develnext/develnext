@@ -2,20 +2,39 @@
 namespace develnext\filetype\creator;
 
 use develnext\IDEForm;
+use develnext\project\Project;
 use develnext\project\ProjectFile;
+use php\io\File;
 
 /**
  * Class FileCreator
  * @package develnext\filetype\creator
  */
 class FileCreator extends Creator {
-    /** @var ProjectFile */
-    protected $parent;
+    public function __construct() {
+        parent::__construct('filetype/creator/FileCreator.xml');
+    }
 
-    /** @var IDEForm */
-    protected $form;
+    function getDescription() {
+        return _('File');
+    }
 
-    public function __construct(ProjectFile $parent) {
-        parent::__construct($parent, 'filetype/creator/FileCreator.xml');
+    function getIcon() {
+        return 'images/icons/filetype/unknown.png';
+    }
+
+    function onDone(File $root, Project $project) {
+        $file = new File($root->getPath() . '/' . $this->form->get('file-name')->text);
+        $file->createNewFile();
+        return new ProjectFile($file, $project);
+    }
+
+    /**
+     * @param ProjectFile $parent
+     * @return ProjectFile
+     */
+    function onOpen(ProjectFile $parent) {
+        $this->form->getWindow()->title = _('New File');
+        $this->form->get('label')->text = _('Enter a new file name');
     }
 }

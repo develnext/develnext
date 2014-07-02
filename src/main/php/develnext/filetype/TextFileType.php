@@ -15,6 +15,9 @@ use php\swing\UIContainer;
 class TextFileType extends FileType {
 
     public function onDetect(File $file, Project $project = null) {
+        if (!$file->isFile())
+            return false;
+
         $name = str::lower($file->getName());
         $extensions = ['.txt', '.log', '.php', '.xml'];
 

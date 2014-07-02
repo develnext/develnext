@@ -154,4 +154,18 @@ class Project {
     public function openFile(ProjectFile $file) {
         $this->editorManager->open($file);
     }
+
+    /**
+     * @return \develnext\project\EditorManager
+     */
+    public function getEditorManager() {
+        return $this->editorManager;
+    }
+
+    /**
+     * @return \develnext\project\FileTreeManager
+     */
+    public function getFileTree() {
+        return $this->fileTree;
+    }
 }

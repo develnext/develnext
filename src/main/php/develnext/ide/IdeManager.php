@@ -71,6 +71,13 @@ class IdeManager {
 
     public function registerFileTypeCreator(Creator $creator, $inMenu = true) {
         $this->fileTypeCreators[] = $creator;
+        if ($inMenu) {
+            $item = $this->addFileTreePopupItem('new', $creator->getDescription(), $creator->getIcon());
+            $item->on('click', function() use ($creator){
+                $manager = Manager::getInstance();
+                $creator->open($manager->currentProject->getFileTree()->getCurrentFile());
+            });
+        }
     }
 
     /**

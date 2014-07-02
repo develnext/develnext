@@ -1,6 +1,8 @@
 <?php
 namespace develnext\ide\std;
 
+use develnext\filetype\creator\DirectoryCreator;
+use develnext\filetype\creator\FileCreator;
 use develnext\filetype\DirectoryFileType;
 use develnext\filetype\GradleFileType;
 use develnext\filetype\PhpFileType;
@@ -58,6 +60,9 @@ class StandardIdeExtension extends IdeExtension {
         $manager->addFileTreePopupGroup('new', _('New'));
         $manager->addFileTreePopupSeparator();
         $manager->addFileTreePopupItem(null, _('Delete'), null, 'DELETE');
+
+        $manager->registerFileTypeCreator(new FileCreator(), true);
+        $manager->registerFileTypeCreator(new DirectoryCreator(), true);
 
         // file types
         $manager->registerFileType(new UnknownFileType());

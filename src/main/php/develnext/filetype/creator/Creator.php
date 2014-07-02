@@ -3,30 +3,62 @@ namespace develnext\filetype\creator;
 
 use develnext\IDEForm;
 use develnext\Manager;
+use develnext\project\Project;
 use develnext\project\ProjectFile;
+use php\io\File;
 
 /**
  * Class Creator
  * @package develnext\filetype\creator
  */
 abstract class Creator {
-    /** @var ProjectFile */
-    protected $parent;
-
     /** @var IDEForm */
     protected $form;
 
-    public function __construct(ProjectFile $parent, $formName) {
-        $this->parent = $parent;
-        $this->form   = Manager::getInstance()->getSystemForm($formName);
+    /** @var ProjectFile */
+    protected $parent;
+
+    public function __construct($formName) {
+        $this->form = Manager::getInstance()->getSystemForm($formName, false);
+        $this->form->get('btn-ok')->on('click', function() {
+            $root = $this->parent->getFile();
+            if ($root->isFile())
+                $root = $root->getParentFile();
+
+            $this->form->hide($this->onDone($root, $this->parent->getProject()));
+        });
+        $this->form->get('btn-cancel')->on('click', function() {
+            $this->form->hide(null);
+        });
     }
 
-    public function open() {
+    public function open(ProjectFile $parent) {
+        $this->parent = $parent;
+        $this->onOpen($parent);
+
         $this->form->showModal();
         if ($this->form->modalResult instanceof ProjectFile) {
-            $project = $this->parent->getProject();
+            $project = $parent->getProject();
             $project->updateTree();
             $project->openFile($this->form->modalResult);
         }
     }
+
+    function getIcon() {
+        return null;
+    }
+
+
+    function onOpen(ProjectFile $parent) {
+
+    }
+
+    /**
+     * @param \php\io\File $root
+     * @param \develnext\project\Project $project
+     * @return ProjectFile
+     */
+    abstract function onDone(File $root, Project $project);
+
+    abstract function getDescription();
 }

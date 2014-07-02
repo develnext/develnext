@@ -12,6 +12,9 @@ use php\swing\UIContainer;
 class PhpFileType extends FileType {
 
     public function onDetect(File $file, Project $project = null) {
+        if (!$file->isFile())
+            return false;
+
         $name = str::lower($file->getName());
         $extensions = ['.php', '.php5', '.phtml'];
 

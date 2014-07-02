@@ -1,8 +1,8 @@
-<ui-dialog size="300, 100">
-    <ui-panel border="empty, size:10" align="client">
-        <ui-label text="{File Name}" align="top" h="30" />
-        <ui-edit align="top" h="25" />
+<ui-dialog size="300, 150" title="{New File}">
+    <ui-panel padding="10" align="client">
+        <ui-label text="{File Name}" align="top" h="30" var="label" />
+        <ui-edit align="top" h="25" var="file-name" />
 
-        <include src="misc/.ok_cancel.xml" align="client" />
+        <include src="forms/misc/.ok_cancel.xml" />
     </ui-panel>
 </ui-dialog>

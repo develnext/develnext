@@ -108,10 +108,11 @@ class Manager {
 
     /**
      * @param string $path
+     * @param bool $cached
      * @return IDEForm
      */
-    public function getSystemForm($path) {
-        if ($form = $this->forms[str::lower($path)])
+    public function getSystemForm($path, $cached = true) {
+        if ($cached && $form = $this->forms[str::lower($path)])
             return $form;
 
         $vars = array();

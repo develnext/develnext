@@ -105,4 +105,12 @@ class FileTreeManager {
             $this->tree->model->reload($this->tree->root);
         }
     }
+
+    public function getCurrentFile() {
+        $data = $this->tree->selectedNode->userData;
+        if ($data instanceof ProjectFile)
+            return $data;
+
+        return new ProjectFile($this->project->getDirectory(), $this->project);
+    }
 }
