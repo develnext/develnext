@@ -134,6 +134,10 @@ class Project {
         $this->fileTree->updateAll();
     }
 
+    public function updateFile(ProjectFile $file) {
+        $this->fileTree->updateFile($file);
+    }
+
     public function setGuiElements(UIContainer $editorContainer, UITree $fileTree) {
         $this->fileTree->setTree($fileTree);
         $this->editorManager->setArea($editorContainer);

@@ -32,6 +32,9 @@ class StandardIdeExtension extends IdeExtension {
         $manager->addMenuGroup('edit', _('Edit'));
             $manager->addMenuItem('edit', 'undo', _('Undo'), 'images/icons/undo16.png', 'control Z');
             $manager->addMenuItem('edit', 'redo', _('Redo'), 'images/icons/redo16.png', 'control shift Z');
+            $manager->addMenuSeparator('edit');
+
+            $manager->addMenuItem('edit', 'delete', _('Delete'), 'images/icons/cancel16.png', 'DELETE');
 
         // ------
         $manager->addMenuGroup('build', _('Build'));
@@ -50,19 +53,27 @@ class StandardIdeExtension extends IdeExtension {
         $manager->addHeadMenuItem('file:settings', 'images/icons/settings16.png');
     }
 
+    protected function registerPopupTreeMenu(IdeManager $manager) {
+        $manager->addFileTreePopupGroup('new', _('Create'), 'images/icons/plus16.png');
+            $manager->addFileTreePopupSeparator();
+        $manager->addFileTreePopupItem(null, 'edit:delete', _('Delete'), 'images/icons/cancel16.png', 'DELETE');
+        $manager->addFileTreePopupItem(null, '', _('Hide'));
+            $manager->addFileTreePopupSeparator();
+        $manager->addFileTreePopupItem(null, '', _('Find in Path'), 'images/icons/find16.png', 'control shift F');
+        $manager->addFileTreePopupItem(null, '', _('Replace in Path'), null, 'control shift R');
+
+        $manager->registerFileTypeCreator(new FileCreator(), true);
+        $manager->registerFileTypeCreator(new DirectoryCreator(), true);
+    }
+
     public function onRegister(IdeManager $manager) {
         $this->registerMainMenu($manager);
         $this->registerHeadMenu($manager);
+        $this->registerPopupTreeMenu($manager);
 
         $menuHandlers = new StandardIdeMenuHandlers();
         $manager->setMenuHandlers($menuHandlers->getHandlers());
 
-        $manager->addFileTreePopupGroup('new', _('New'));
-        $manager->addFileTreePopupSeparator();
-        $manager->addFileTreePopupItem(null, _('Delete'), null, 'DELETE');
-
-        $manager->registerFileTypeCreator(new FileCreator(), true);
-        $manager->registerFileTypeCreator(new DirectoryCreator(), true);
 
         // file types
         $manager->registerFileType(new UnknownFileType());

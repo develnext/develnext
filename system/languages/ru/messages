@@ -33,7 +33,12 @@ Next = Далее
 Cancel = Отмена
 
 Create = Создать
+Delete = Удалить
+Hide = Скрыть
 
 Name = Название
 Directory = Директория
 Type of project = Тип проекта
+
+Are you sure? = Вы уверены?
+Question = Вопрос

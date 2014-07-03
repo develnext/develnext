@@ -72,7 +72,7 @@ class IdeManager {
     public function registerFileTypeCreator(Creator $creator, $inMenu = true) {
         $this->fileTypeCreators[] = $creator;
         if ($inMenu) {
-            $item = $this->addFileTreePopupItem('new', $creator->getDescription(), $creator->getIcon());
+            $item = $this->addFileTreePopupItem('new', '', $creator->getDescription(), $creator->getIcon());
             $item->on('click', function() use ($creator){
                 $manager = Manager::getInstance();
                 $creator->open($manager->currentProject->getFileTree()->getCurrentFile());
@@ -229,6 +229,11 @@ class IdeManager {
             if ($headItem) {
                 $headItem->on('click', $handler);
             }
+
+            $treePopupItem = $this->fileTreeMenu->getComponentByGroup($code);
+            if ($treePopupItem) {
+                $treePopupItem->on('click', $handler);
+            }
         }
     }
 
@@ -249,9 +254,10 @@ class IdeManager {
         $menu->addSeparator();
     }
 
-    public function addFileTreePopupItem($group, $text, $icon = null, $accelerator = null) {
+    public function addFileTreePopupItem($group, $id, $text, $icon = null, $accelerator = null) {
         $item = new UIMenuItem();
         $item->text = $text;
+        $item->group = $id;
         if ($icon)
             $item->setIcon(ImageManager::get($icon));
 

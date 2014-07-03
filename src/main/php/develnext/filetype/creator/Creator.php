@@ -39,7 +39,7 @@ abstract class Creator {
         $this->form->showModal();
         if ($this->form->modalResult instanceof ProjectFile) {
             $project = $parent->getProject();
-            $project->updateTree();
+            $project->updateFile($this->form->modalResult);
             $project->openFile($this->form->modalResult);
         }
     }

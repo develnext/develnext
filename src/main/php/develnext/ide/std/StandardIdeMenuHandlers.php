@@ -5,6 +5,7 @@ use develnext\tool\GradleTool;
 use develnext\tool\JavaTool;
 use php\lib\str;
 use php\swing\event\ComponentEvent;
+use php\swing\UIDialog;
 
 /**
  * Class StandardIdeMenuHandlers
@@ -17,7 +18,7 @@ class StandardIdeMenuHandlers {
     public function __construct() {
         $elements = [
             'file:open-project', 'file:new-project', 'file:save-all', 'file:exit',
-            'edit:undo', 'edit:redo',
+            'edit:undo', 'edit:redo', 'edit:delete',
             'build:run'
         ];
 
@@ -53,6 +54,21 @@ class StandardIdeMenuHandlers {
 
     public function edit_redo() {
 
+    }
+
+    public function edit_delete() {
+        $manager = Manager::getInstance();
+        if (UIDialog::confirm(_('Are you sure?'), _('Question'), UIDialog::YES_NO_OPTION) == UIDialog::YES_OPTION) {
+            $files = $manager->currentProject->getFileTree()->getSelectedFiles();
+            foreach ($files as $file) {
+                $file->getFile()->delete();
+            }
+
+            foreach ($files as $file) {
+                $manager->currentProject->updateFile($file);
+            }
+
+        }
     }
 
     public function build_run($e) {

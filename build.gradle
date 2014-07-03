@@ -9,7 +9,6 @@ allprojects {
     version = '0.1'
 
     repositories {
-        maven { url 'http://maven.develnext.org/repository/snapshots/' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenCentral()
     }
@@ -96,6 +95,7 @@ task(start, dependsOn: "classes", type: JavaExec) {
     main = "php.runtime.launcher.Launcher"
     classpath = sourceSets.main.runtimeClasspath
 }
+
 
 task distZip (type: Zip) {
     archiveName "dist-" + version + ".zip"

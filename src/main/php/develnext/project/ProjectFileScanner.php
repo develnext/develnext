@@ -17,7 +17,7 @@ class ProjectFileScanner {
         $this->project = $project;
     }
 
-    protected function getSubTree(File $directory) {
+    public function getSubTree(File $directory) {
         $files = $directory->findFiles();
 
         /** @var File[] $files */

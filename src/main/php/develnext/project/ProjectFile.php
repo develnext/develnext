@@ -76,6 +76,13 @@ class ProjectFile {
         return $this->file;
     }
 
+    /**
+     * @return ProjectFile
+     */
+    public function getParent() {
+        return new ProjectFile($this->file->getParentFile(), $this->project);
+    }
+
     public function hashCode() {
         $hash = str::replace(str::lower($this->file->getPath()), '\\', '/');
         $hash = str::replace($hash, '//', '/');
