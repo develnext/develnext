@@ -12,9 +12,16 @@ class GradleTool extends Tool {
     /**
      * @return string
      */
+    public function getName() {
+        return 'Gradle';
+    }
+
+    /**
+     * @return string
+     */
     public function getBaseCommand() {
-        if (IS_WIN && (new File(constant('ROOT') . '/tools/gradle/bin/gradle.bat'))->exists()) {
-            return constant('ROOT') . '/tools/gradle/bin/gradle.bat';
+        if (IS_WIN && (new File(ROOT . '/tools/gradle/bin/gradle.bat'))->exists()) {
+            return ROOT . '/tools/gradle/bin/gradle.bat';
         } else
             return 'gradle';
     }

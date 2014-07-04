@@ -5,6 +5,8 @@ import org.develnext.php.ext.classes.RSyntaxTextAreaExEventProvider;
 import org.develnext.php.ext.classes.RSyntaxTextAreaReaders;
 import org.develnext.php.ext.classes.UISyntaxTextArea;
 import org.develnext.php.ext.classes.UISyntaxTextAreaTag;
+import org.develnext.php.ext.classes.autocomplete.WrapAutoCompletion;
+import org.develnext.php.ext.classes.autocomplete.WrapCompletionProvider;
 import php.runtime.env.CompileScope;
 
 public class UISyntaxExtension extends SwingExtension {
@@ -25,5 +27,8 @@ public class UISyntaxExtension extends SwingExtension {
         registerReaderTag(new UISyntaxTextAreaTag());
         registerPropertyReaders(new RSyntaxTextAreaReaders());
         registerEventProvider(new RSyntaxTextAreaExEventProvider());
+
+        registerNativeClass(scope, WrapAutoCompletion.class);
+        registerNativeClass(scope, WrapCompletionProvider.class);
     }
 }

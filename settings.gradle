@@ -7,6 +7,8 @@ include 'ui-syntax-ext',
         'ui-docking-ext',
         'ui-weblaf-ext';
 
+include 'ide-standard-ext';
+
 // JPHP
 /*
 include 'jphp'

@@ -93,4 +93,19 @@ class ProjectFile {
     public function getProject() {
         return $this->project;
     }
+
+    public function delete() {
+        if ($this->file->isDirectory()) {
+            $success = true;
+            foreach ($this->file->findFiles() as $file) {
+                if ($file->isDirectory())
+                    $success = $success && (new ProjectFile($file, $this->project))->delete();
+                else
+                    $success = $success && $file->delete();
+            }
+            return $success && $this->file->delete();
+        } else {
+            return $this->file->delete();
+        }
+    }
 }

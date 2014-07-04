@@ -136,6 +136,8 @@ class Project {
 
     public function updateFile(ProjectFile $file) {
         $this->fileTree->updateFile($file);
+        if (!$file->getFile()->exists())
+            $this->editorManager->close($file);
     }
 
     public function setGuiElements(UIContainer $editorContainer, UITree $fileTree) {
@@ -147,7 +149,7 @@ class Project {
 
     public function close() {
         $this->fileTree->close();
-        $this->editorManager->close();
+        $this->editorManager->closeAll();
     }
 
     public function saveAll() {

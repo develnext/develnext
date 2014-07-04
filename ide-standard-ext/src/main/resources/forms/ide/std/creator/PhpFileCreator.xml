@@ -1,0 +1,16 @@
+<ui-dialog size="300, 220" title="{New PHP File}">
+    <ui-panel padding="10" align="client">
+        <ui-label text="{File Name}" align="top" h="30" var="label" />
+        <ui-edit align="top" h="25" var="file-name" group="ok" />
+        <ui-panel align="top" h="8" />
+
+        <ui-combobox align="top" h="25" var="file-type"
+                     items="{Simple File},{Class},{Interface},{Trait}" selected-index="0">
+        </ui-combobox>
+
+        <ui-panel align="top" h="8" />
+        <ui-checkbox text="{With Namespace}" selected="1" align="top" h="25" var="with-namespace" />
+
+        <include src="forms/misc/.ok_cancel.xml" />
+    </ui-panel>
+</ui-dialog>

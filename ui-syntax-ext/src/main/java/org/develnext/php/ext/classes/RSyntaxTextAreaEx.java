@@ -4,6 +4,7 @@ import org.develnext.jphp.swing.support.RootTextElement;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.print.PrinterException;
 
@@ -18,6 +19,11 @@ public class RSyntaxTextAreaEx extends RTextScrollPane
     }
 
     public RSyntaxTextArea getContent() {
+        return component;
+    }
+
+    @Override
+    public JTextComponent getTextComponent() {
         return component;
     }
 

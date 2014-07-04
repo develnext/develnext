@@ -2,10 +2,11 @@
 
 // UTIL Functions
 use php\io\File;
+use php\lib\str;
 use php\swing\UIDialog;
 use develnext\Manager;
 
-define('IS_WIN', PHP_OS === 'Windows');
+define('IS_WIN', str::startsWith(PHP_OS, 'Windows'));
 define('ROOT', (new File("."))->getAbsolutePath());
 
 function dump($var) {

@@ -4,6 +4,7 @@ dependencies {
     compile project(':jphp-swing-ext')
 
     compile 'com.fifesoft:rsyntaxtextarea:2.5.0'
+    compile 'com.fifesoft:autocomplete:2.5.0'
 }
 
 task dist(dependsOn: buildPortableDef) {

@@ -85,4 +85,26 @@ public class UISyntaxTextArea extends UITextElement {
         component.setLineNumbersEnabled(args[0].toBoolean());
         return Memory.NULL;
     }
+
+    @Signature
+    protected Memory __getCodeFolding(Environment env, Memory... args) {
+        return TrueMemory.valueOf(component.getContent().isCodeFoldingEnabled());
+    }
+
+    @Signature(@Arg("value"))
+    protected Memory __setCodeFolding(Environment env, Memory... args) {
+        component.getContent().setCodeFoldingEnabled(args[0].toBoolean());
+        return Memory.NULL;
+    }
+
+    @Signature
+    protected Memory __getAntiAliasing(Environment env, Memory... args) {
+        return TrueMemory.valueOf(component.getContent().getAntiAliasingEnabled());
+    }
+
+    @Signature(@Arg("value"))
+    protected Memory __setAntiAliasing(Environment env, Memory... args) {
+        component.getContent().setAntiAliasingEnabled(args[0].toBoolean());
+        return Memory.NULL;
+    }
 }

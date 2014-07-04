@@ -64,6 +64,14 @@ class EditorManager {
         return $tabHead;
     }
 
+    public function close(ProjectFile $file) {
+        $doc = $this->getDocument($file);
+        if ($doc) {
+            $this->tabs->remove($doc[0]);
+            return;
+        }
+    }
+
     public function open(ProjectFile $file) {
         $doc = $this->getDocument($file);
         if ($doc) {
@@ -122,7 +130,7 @@ class EditorManager {
         unset($this->documents[ $file->hashCode() ]);
     }
 
-    public function close() {
+    public function closeAll() {
         $this->area->remove($this->tabs);
         $this->documents = [];
     }

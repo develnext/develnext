@@ -6,6 +6,8 @@ use develnext\Manager;
 use develnext\project\Project;
 use develnext\project\ProjectFile;
 use php\io\File;
+use php\swing\event\KeyEvent;
+use php\swing\UITextElement;
 
 /**
  * Class Creator
@@ -20,13 +22,25 @@ abstract class Creator {
 
     public function __construct($formName) {
         $this->form = Manager::getInstance()->getSystemForm($formName, false);
-        $this->form->get('btn-ok')->on('click', function() {
+        $this->form->get('btn-ok')->on('click', $okHandler = function() {
             $root = $this->parent->getFile();
             if ($root->isFile())
                 $root = $root->getParentFile();
 
             $this->form->hide($this->onDone($root, $this->parent->getProject()));
         });
+
+        foreach ($this->form->getWindow()->getComponentsByGroup('ok') as $el) {
+            if ($el instanceof UITextElement)
+                $el->on('keyUp', function(KeyEvent $e) use ($okHandler) {
+                    if ($e->keyChar == "\n") {
+                        $okHandler();
+                    }
+                });
+            else
+                $el->on('click', $okHandler);
+        }
+
         $this->form->get('btn-cancel')->on('click', function() {
             $this->form->hide(null);
         });

@@ -7,6 +7,8 @@ use develnext\IDEForm;
 use develnext\lang\Singleton;
 use develnext\Manager;
 use develnext\project\ProjectType;
+use develnext\tool\Tool;
+use php\io\File;
 use php\io\Stream;
 use php\lang\Process;
 use php\lang\Thread;
@@ -73,6 +75,7 @@ class IdeManager {
         $this->fileTypeCreators[] = $creator;
         if ($inMenu) {
             $item = $this->addFileTreePopupItem('new', '', $creator->getDescription(), $creator->getIcon());
+
             $item->on('click', function() use ($creator){
                 $manager = Manager::getInstance();
                 $creator->open($manager->currentProject->getFileTree()->getCurrentFile());
@@ -272,6 +275,14 @@ class IdeManager {
         return $item;
     }
 
+    public function logTool(Tool $tool, File $directory, array $commands, callable $onEnd = null) {
+        $console = $this->mainForm->get('console-log');
+        $dir = $directory->getPath();
+        $console->text = '> ' . $tool->getName() . ' ' . str::join($commands, ' ') . " (for $dir) ... \n\n";
+
+        $this->logProcess($tool->execute($directory, $commands, false), $onEnd);
+    }
+
     public function logProcess(Process $process, callable $onEnd = null) {
         $worker = new IdeManagerLogProcessWorker($this->mainForm->get('console-log'), $process, $onEnd);
         $worker->execute();
@@ -292,7 +303,6 @@ class IdeManagerLogProcessWorker extends SwingWorker {
         $this->console = $console;
         $this->process = $process;
         $this->onEnd = $onEnd;
-        $console->text = '';
     }
 
     /**
@@ -300,13 +310,13 @@ class IdeManagerLogProcessWorker extends SwingWorker {
      */
     protected function doInBackground() {
         $st = $this->process->getInput();
-        $scanner = new Scanner($st, 'CP866');
+        $scanner = new Scanner($st);
         while ($scanner->hasNextLine()) {
             $this->publish([$scanner->nextLine()]);
         }
 
         $err = $this->process->getError();
-        $scanner2 = new Scanner($err, 'CP866');
+        $scanner2 = new Scanner($err);
         while ($scanner2->hasNextLine()) {
             $this->publish([$scanner2->nextLine()]);
         }

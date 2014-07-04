@@ -23,6 +23,7 @@ use php\swing\UIDialog;
 use php\swing\UIElement;
 use php\swing\UIListbox;
 use php\swing\UIReader;
+use php\util\Scanner;
 
 class Manager {
     use Singleton;
@@ -75,7 +76,7 @@ class Manager {
         // localization
         $this->localizator = new Localizator($this->config->get('lang', 'en'));
         $this->localizator->append(
-            Stream::of('./system/languages/'.$this->localizator->getLang().'/messages')
+            Stream::of(ROOT . '/system/languages/'.$this->localizator->getLang().'/messages')
         );
 
         $this->projectManager = ProjectManager::getInstance();
@@ -239,9 +240,30 @@ class Manager {
             $this->currentProject->close();
     }
 
+    protected function loadExtensions() {
+        $st = null;
+        try {
+            $st = Stream::of(ROOT . '/system/extension.list');
+            $reader = new Scanner($st);
+            while ($reader->hasNextLine()) {
+                $ext = str::trim($reader->nextLine());
+                if ($ext) {
+                    $class = new \ReflectionClass($ext);
+                    $this->ideManager->registerExtension($class->newInstance());
+                }
+            }
+
+            $st->close();
+        } catch (IOException $e) {
+            if ($st)
+                $st->close();
+        }
+    }
+
+
     public function start() {
         $this->ideManager = new IdeManager($this);
-        $this->ideManager->registerExtension(new StandardIdeExtension());
+        $this->loadExtensions();
 
         $form = $this->getSystemForm('MainForm.xml');
         $loginForm = $this->getSystemForm('account/Login.xml');

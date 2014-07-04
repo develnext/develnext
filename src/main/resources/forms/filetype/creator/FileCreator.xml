@@ -1,7 +1,7 @@
 <ui-dialog size="300, 150" title="{New File}">
     <ui-panel padding="10" align="client">
         <ui-label text="{File Name}" align="top" h="30" var="label" />
-        <ui-edit align="top" h="25" var="file-name" />
+        <ui-edit align="top" h="25" var="file-name" group="ok" />
 
         <include src="forms/misc/.ok_cancel.xml" />
     </ui-panel>

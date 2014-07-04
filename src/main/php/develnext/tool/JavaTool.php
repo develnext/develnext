@@ -12,6 +12,14 @@ class JavaTool extends Tool {
     /**
      * @return string
      */
+    public function getName() {
+        return 'Java';
+    }
+
+
+    /**
+     * @return string
+     */
     public function getBaseCommand() {
         if (IS_WIN && (new File('tools/jre/bin/java.exe'))->exists()) {
             return 'tools/jre/bin/java.exe';

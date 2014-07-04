@@ -17,6 +17,11 @@ abstract class Tool {
     /**
      * @return string
      */
+    abstract public function getName();
+
+    /**
+     * @return string
+     */
     abstract public function getBaseCommand();
 
     /**

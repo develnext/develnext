@@ -16,7 +16,7 @@
         </ui-panel>
 
         <ui-panel var="console">
-            <ui-textarea var="console-log" align="client" />
+            <ui-textarea var="console-log" align="client" font="Consolas 12" />
         </ui-panel>
 
         <ui-panel var="area" border="empty" />

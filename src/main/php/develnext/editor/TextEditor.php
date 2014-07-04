@@ -29,6 +29,7 @@ class TextEditor extends Editor {
         $syntaxArea->tabSize = 2;
         $syntaxArea->iconRowHeaderEnabled = true;
         $syntaxArea->lineNumbersEnabled = true;
+        $syntaxArea->antiAliasing = true;
 
         $syntaxArea->on('keyPress', function(KeyEvent $e){
             if (char::isPrintable($e->keyChar) || $e->keyCode < 32) {

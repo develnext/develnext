@@ -26,4 +26,14 @@ class UISyntaxTextArea extends UITextElement {
      * @var int
      */
     public $tabSize;
+
+    /**
+     * @var bool
+     */
+    public $codeFolding;
+
+    /**
+     * @var bool
+     */
+    public $antiAliasing;
 }
