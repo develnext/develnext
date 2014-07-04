@@ -70,6 +70,8 @@ class StandardIdeExtension extends IdeExtension {
     }
 
     public function onRegister(IdeManager $manager) {
+        $manager->addLocalizationPath('res://i18n/std');
+
         $this->registerMainMenu($manager);
         $this->registerHeadMenu($manager);
         $this->registerPopupTreeMenu($manager);

@@ -275,6 +275,12 @@ class IdeManager {
         return $item;
     }
 
+    public function addLocalizationPath($path) {
+        Manager::getInstance()->localizator->append(
+            Stream::of($path . '/messages.' .  Manager::getInstance()->localizator->getLang())
+        );
+    }
+
     public function logTool(Tool $tool, File $directory, array $commands, callable $onEnd = null) {
         $console = $this->mainForm->get('console-log');
         $dir = $directory->getPath();
