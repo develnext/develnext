@@ -9,6 +9,7 @@ use develnext\Manager;
 use develnext\project\ProjectType;
 use develnext\tool\Tool;
 use php\io\File;
+use php\io\IOException;
 use php\io\Stream;
 use php\lang\Process;
 use php\lang\Thread;
@@ -276,9 +277,13 @@ class IdeManager {
     }
 
     public function addLocalizationPath($path) {
-        Manager::getInstance()->localizator->append(
-            Stream::of($path . '/messages.' .  Manager::getInstance()->localizator->getLang())
-        );
+        try {
+            Manager::getInstance()->localizator->append(
+                Stream::of($path . '/messages.' .  Manager::getInstance()->localizator->getLang())
+            );
+        } catch (IOException $e) {
+
+        }
     }
 
     public function logTool(Tool $tool, File $directory, array $commands, callable $onEnd = null) {

@@ -76,7 +76,7 @@ class Manager {
         // localization
         $this->localizator = new Localizator($this->config->get('lang', 'en'));
         $this->localizator->append(
-            Stream::of(ROOT . '/system/languages/'.$this->localizator->getLang().'/messages')
+            Stream::of(\ROOT . '/system/languages/'.$this->localizator->getLang().'/messages')
         );
 
         $this->projectManager = ProjectManager::getInstance();
@@ -243,7 +243,7 @@ class Manager {
     protected function loadExtensions() {
         $st = null;
         try {
-            $st = Stream::of(ROOT . '/system/extension.list');
+            $st = Stream::of(\ROOT . '/system/extension.list');
             $reader = new Scanner($st);
             while ($reader->hasNextLine()) {
                 $ext = str::trim($reader->nextLine());
@@ -257,6 +257,7 @@ class Manager {
         } catch (IOException $e) {
             if ($st)
                 $st->close();
+            throw $e;
         }
     }
 
