@@ -23,7 +23,10 @@ class PhpFileCreator extends Creator {
         if (!str::endsWith($fileName, '.php'))
             $fileName .= '.php';
 
+        $fileName = str::replace($fileName, '\\', '/');
         $file = new File($root->getPath() . '/' . $fileName);
+        if (!$file->getParentFile()->exists())
+            $file->getParentFile()->mkdirs();
 
         $writer = new FileStream($file, 'w+');
         $writer->write("<?php \n");

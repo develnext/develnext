@@ -1,6 +1,7 @@
 <?php
 namespace develnext\project;
 
+use php\io\File;
 use php\lib\str;
 
 /**
@@ -25,5 +26,19 @@ class FileMark {
 
     function hashCode() {
         return $this->type . '#' . $this->file->hashCode();
+    }
+
+    function toArray() {
+        return [
+            $this->file->toArray(),
+            $this->type
+        ];
+    }
+
+    static function fromArray(array $array, Project $project) {
+        return new FileMark(
+            ProjectFile::fromArray($array[0], $project),
+            $array[1]
+        );
     }
 }

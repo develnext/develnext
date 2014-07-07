@@ -1,7 +1,11 @@
+Welcome to DevelNext = Добро пожаловать в DevelNext
 
 File = Файл
 New Project = Новый проект
 Open Project = Открыть проект
+Create Project = Создать проект
+Import Project = Импортировать проект
+Close Project = Закрыть проект
 Settings = Настройки
 Exit = Выход
 
@@ -42,3 +46,9 @@ Type of project = Тип проекта
 
 Are you sure? = Вы уверены?
 Question = Вопрос
+
+Create a project based on template = Создать проект из шаблона
+Open a project created with DevelNext = Открыть проект созданный через DevelNext
+Import a project from other project formats = Импортировать проект из других проектных форматов
+
+The last projects = Последние проекты

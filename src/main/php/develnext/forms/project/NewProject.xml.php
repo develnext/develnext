@@ -76,6 +76,10 @@ $form->get('btn-create')->on('click', function() use ($typeList, $types, $form, 
             new File($form->get('f-directory')->text),
             $type
         );
-        $form->hide();
+        $form->hide(true);
     }
+});
+
+$form->get('btn-cancel')->on('click', function() use ($form){
+    $form->hide();
 });

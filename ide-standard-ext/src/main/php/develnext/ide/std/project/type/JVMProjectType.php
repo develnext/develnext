@@ -6,16 +6,17 @@ use develnext\ide\std\project\dependency\MavenProjectDependency;
 use develnext\project\Project;
 use develnext\project\ProjectFile;
 use develnext\project\ProjectType;
+use php\io\File;
 use php\io\FileStream;
 use php\lib\str;
 
 abstract class JVMProjectType extends ProjectType {
 
     protected static $specialPaths = [
-        '/src' => ['Sources', 'images/icons/filetype/sources.png'],
-        '/resources' => ['Resources', 'images/icons/filetype/resources.png'],
-        '/resources/forms' => [null, 'images/icons/filetype/forms.png'],
-        '/resources/images' => [null, 'images/icons/filetype/images.png'],
+        '/src' => ['{Sources} [/src]', 'images/icons/filetype/sources.png'],
+        '/resources' => ['{Resources} [/resources]', 'images/icons/filetype/resources.png'],
+        '/resources/forms' => ['{Forms}', 'images/icons/filetype/forms.png'],
+        '/resources/images' => ['{Images}', 'images/icons/filetype/images.png'],
     ];
 
     function getDefaultDependencies() {
@@ -54,7 +55,7 @@ abstract class JVMProjectType extends ProjectType {
         $info = self::$specialPaths[$relPath];
 
         if ($info) {
-            return $file->duplicate($info[0], $info[1]);
+            return $file->duplicate(__($info[0]), $info[1]);
         }
 
         if (str::startsWith($relPath, '/resources/JPHP-INF'))

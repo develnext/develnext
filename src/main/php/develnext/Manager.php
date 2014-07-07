@@ -7,6 +7,7 @@ use develnext\ide\IdeManager;
 use develnext\ide\std\StandardIdeExtension;
 use develnext\lang\Singleton;
 use develnext\project\Project;
+use develnext\project\ProjectLoader;
 use develnext\project\ProjectManager;
 use develnext\project\ProjectType;
 use develnext\util\Config;
@@ -55,6 +56,9 @@ class Manager {
     /** @var ProjectType[] */
     protected $projectTypes;
 
+    /** @var File[] */
+    protected $latestProjects;
+
     /** @var IdeManager */
     public $ideManager;
 
@@ -75,8 +79,9 @@ class Manager {
 
         // localization
         $this->localizator = new Localizator($this->config->get('lang', 'en'));
+
         $this->localizator->append(
-            Stream::of(\ROOT . '/system/languages/'.$this->localizator->getLang().'/messages')
+            Stream::of(\ROOT . '/system/languages/messages.' . $this->localizator->getLang())
         );
 
         $this->projectManager = ProjectManager::getInstance();
@@ -219,25 +224,62 @@ class Manager {
         $tm->start();
     }
 
+    protected function linkGuiToProject(Project $project) {
+        $form = $this->getSystemForm('MainForm.xml');
+        $project->setGuiElements($form->get('area'), $form->get('fileTree'));
+    }
+
     public function createProject($name, File $directory, ProjectType $projectType) {
         $this->closeProject();
 
-        $form = $this->getSystemForm('MainForm.xml');
-
         $project = $this->projectManager->createProject($projectType, $directory);
         $project->setName($name);
-        $project->setGuiElements($form->get('area'), $form->get('fileTree'));
+        $this->linkGuiToProject($project);
 
         $project->saveAll();
         $project->updateTree();
 
         $this->currentProject = $project;
+        $this->addToLatest($project);
         return $project;
+    }
+
+    public function openProject(File $directory) {
+        $loader = new ProjectLoader();
+        $project = $loader->load($directory);
+        if (!$project)
+            return null;
+
+        $this->currentProject = $project;
+        $this->linkGuiToProject($project);
+
+        $project->saveAll();
+        $project->updateTree();
+        $this->addToLatest($project);
+
+        return $project;
+    }
+
+    protected function addToLatest(Project $project) {
+        foreach ($this->latestProjects as $index => $file) {
+            if ($file->getPath() === $project->getDirectory()->getPath()) {
+                break;
+            }
+            $index = null;
+        }
+        if ($index !== null) {
+            unset($this->latestProjects[$index]);
+        }
+
+        $this->latestProjects = [$project->getDirectory()] + $this->latestProjects;
+        $this->saveIdeConfigurations();
     }
 
     public function closeProject() {
         if ($this->currentProject)
             $this->currentProject->close();
+
+        $this->currentProject = null;
     }
 
     protected function loadExtensions() {
@@ -261,24 +303,54 @@ class Manager {
         }
     }
 
+    public function showWelcome() {
+        $form = $this->getSystemForm('MainForm.xml');
+
+        if (!$this->currentProject) {
+            $welcome = $this->getSystemForm('account/Welcome.xml');
+            $welcome->modalResult = false;
+            /** @var UIListbox $list */
+            $list = $welcome->get('list-latest-projects');
+            $list->setItems($this->latestProjects);
+
+            if (!$welcome->showModal())
+                System::halt(0);
+        }
+        $form->show();
+    }
 
     public function start() {
         $this->ideManager = new IdeManager($this);
         $this->loadExtensions();
+        $this->loadIdeConfigurations();
 
-        $form = $this->getSystemForm('MainForm.xml');
-        $loginForm = $this->getSystemForm('account/Login.xml');
+        $this->showWelcome();
+    }
 
-        if ($loginForm->showModal()) {
-            /*$gradleTool = new GradleTool();
-            dump($gradleTool->getVersion());*/
+    private function loadIdeConfigurations() {
+        $this->latestProjects = [];
 
-            if (!$this->currentProject) {
-                $this->getSystemForm('project/NewProject.xml')->showModal();
+        $file = $this->getConfigFile('latest_projects.list');
+        if ($file->exists()) {
+            $sc = new Scanner($fs = new FileStream($file));
+            while ($sc->hasNextLine()) {
+                $el = new File(str::trim($sc->nextLine()));
+                if ($el->exists())
+                    $this->latestProjects[] = $el;
             }
-            //$this->flash($this->localizator->translate('You are welcome to DevelNext!'));
-            $form->show();
-        } else
-            System::halt(0);
+
+            $fs->close();
+        }
+    }
+
+    private function saveIdeConfigurations() {
+        $file = $this->getConfigFile('latest_projects.list');
+        $st = new FileStream($file, 'w+');
+
+        foreach($this->latestProjects as $el) {
+            $st->write($el->getPath() . "\n");
+        }
+
+        $st->close();
     }
 }

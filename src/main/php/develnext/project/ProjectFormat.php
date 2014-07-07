@@ -30,11 +30,19 @@ class ProjectFormat {
             $dependencies[] = get_class($dep) . '###' . $dep->toString();
         }
 
+        $fileMarks = [];
+        foreach ($this->project->getFileMarks() as $mark) {
+            $fileMarks[] = $mark->toArray();
+        }
+
         $data = array(
             'name' => $this->project->getName(),
-            'type' => $this->project->getType()->getCode(),
-            'dependencies' => $dependencies
+            'type' => get_class($this->project->getType()),
+            'dependencies' => $dependencies,
+            'file_marks' => $fileMarks
         );
+
+        $this->project->getFileMarks();
 
         $rootFile = new FileStream($dir->getPath() . '/root.json', 'w+');
         $rootFile->write($processor->format($data));

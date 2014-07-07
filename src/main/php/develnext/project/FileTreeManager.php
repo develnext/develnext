@@ -26,6 +26,9 @@ class FileTreeManager {
     /** @var Project */
     protected $project;
 
+    /** @var ProjectFile */
+    protected $cachedNodes = [];
+
     public function __construct(Project $project) {
         $this->project = $project;
         $this->scanner = new ProjectFileScanner($project);
@@ -77,25 +80,24 @@ class FileTreeManager {
      * @return TreeNode
      */
     protected function findNode(TreeNode $parent, ProjectFile $file) {
-        $relPath = str::split(str::replace($file->getRelPath(), '\\', '/'), '/');
+        if ($r = $this->cachedNodes[$file->hashCode()])
+            return $r;
 
-        $offset = 0;
-
-        retry:
         for($i = 0; $i < $parent->getChildCount(); $i++) {
             $child = $parent->getChild($i);
             if ($child->userData instanceof ProjectFile) {
-                if ($child->userData->getFile()->getName() == $relPath[$offset]) {
-                    if ($offset == sizeof($relPath) - 1)
-                        return $child;
-                    else {
-                        $parent = $child;
-                        $offset++;
-                        goto retry;
+                if ($child->userData->hashCode() === $file->hashCode()) {
+                    return $this->cachedNodes[$file->hashCode()] = $child;
+                } else {
+                    if ($child->getChildCount() > 0) {
+                        $r = $this->findNode($child, $file);
+                        if ($r)
+                            return $this->cachedNodes[$file->hashCode()] = $r;
                     }
                 }
             }
         }
+        return null;
     }
 
     /**
@@ -114,8 +116,10 @@ class FileTreeManager {
         return $item;
     }
 
-    protected function updateNode(TreeNode $node, array $files) {
-        $node->removeAllChildren();
+    protected function updateNode(TreeNode $node, array $files, $clear = true) {
+        if ($clear)
+            $node->removeAllChildren();
+
         foreach ($files as $el) {
             /** @var File $file */
             $file = $el[0];
@@ -138,27 +142,55 @@ class FileTreeManager {
 
     public function updateAll(ProjectFile $parent = null) {
         $tree = $this->getTree();
+        $contentRoots = [];
+
         if ($parent == null) {
+            $tree->root->removeAllChildren();
+
+            $contentRoots = $this->project->getContentRoots();
+
             $parent = new ProjectFile($this->project->getDirectory(), $this->project);
             $root   = $tree->root;
         } else {
             $root = $this->findNode($tree->root, $parent);
+            if ($root == null) {
+                $root = $this->createNode($parent);
+                if ($root == null)
+                    return;
+
+                $tree->root->add($root);
+                $tree->model->nodeStructureChanged($tree->root);
+            }
         }
 
         $files = $this->scanner->getSubTree($parent->getFile());
         $tree->root->userData = $this->project->getName();
 
         $this->updateNode($root, $files);
+        foreach ($contentRoots as $el) {
+            $this->updateAll($el);
+        }
+
         $tree->model->reload($root);
     }
 
     public function updateFile(ProjectFile $file) {
-        if ($node = $this->findNode($this->getTree()->root, $file))
+        if ($node = $this->findNode($this->getTree()->root, $file)) {
             $node->removeFromParent();
+            unset($this->cachedNodes[ $file->hashCode() ]);
+        }
 
-        $node = $this->findNode($this->getTree()->root, $file->getParent());
+        do {
+            if ($file->getParent() == null)
+                return;
+
+            $node = $this->findNode($this->getTree()->root, $file->getParent());
+            if ($node == null) {
+                $this->updateFile($file->getParent());
+            }
+        } while ($node == null);
+
         $item = $this->createNode($file);
-
         if ($file->getFile()->exists()) {
             if ($item) {
                 $idx = null;
@@ -200,7 +232,7 @@ class FileTreeManager {
     }
 
     public function getCurrentFile() {
-        $data = $this->tree->selectedNode->userData;
+        $data = $this->getTree()->selectedNode->userData;
         if ($data instanceof ProjectFile)
             return $data;
 
@@ -218,5 +250,25 @@ class FileTreeManager {
             }
         }
         return $result;
+    }
+
+    public function selectFile(ProjectFile $file) {
+        if ($this->tree) {
+            $node = $this->findNode($this->tree->root, $file);
+            if ($node) {
+                $parent = $node->parent;
+                while ($parent != null) {
+                    if (!$this->tree->isExpandedNode($parent)) {
+                        $this->tree->expandNode($parent);
+                        $this->tree->expandNodeAll($parent);
+                    }
+
+                    $parent = $parent->parent;
+                }
+
+                $this->tree->selectedNodes = [];
+                $this->tree->addSelectionNode($node);
+            }
+        }
     }
 }

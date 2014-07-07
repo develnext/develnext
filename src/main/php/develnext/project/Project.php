@@ -2,6 +2,7 @@
 namespace develnext\project;
 
 use php\io\File;
+use php\lib\str;
 use php\swing\UIContainer;
 use php\swing\UITree;
 
@@ -33,6 +34,9 @@ class Project {
 
     /** @var FileMark[] */
     protected $fileMarks;
+
+    /** @var ProjectFile[] */
+    protected $contentRoots = [];
 
     function __construct(ProjectType $type, File $directory) {
         $this->type = $type;
@@ -84,15 +88,22 @@ class Project {
     }
 
     public function getFileMark(ProjectFile $file, $type) {
-        return $this->fileMarks[$type . '#' . $file->hashCode()];
+        $mark = new FileMark($file, $type);
+        return $this->fileMarks[$mark->hashCode()];
+    }
+
+    public function addFileMark(FileMark $mark) {
+        $this->fileMarks[$mark->hashCode()] = $mark;
     }
 
     public function setFileMark(ProjectFile $file, $type) {
-        $this->fileMarks[$type . '#' . $file->hashCode()] = new FileMark($file, $type);
+        $mark = new FileMark($file, $type);
+        $this->fileMarks[$mark->hashCode()] = $mark;
     }
 
     public function deleteFileMark(ProjectFile $file, $type) {
-        unset($this->fileMarks[$type . '#' . $file->hashCode()]);
+        $mark = new FileMark($file, $type);
+        unset($this->fileMarks[$mark->hashCode()]);
     }
 
     /**
@@ -159,6 +170,7 @@ class Project {
 
     public function openFile(ProjectFile $file) {
         $this->editorManager->open($file);
+        $this->fileTree->selectFile($file);
     }
 
     /**
@@ -173,5 +185,28 @@ class Project {
      */
     public function getFileTree() {
         return $this->fileTree;
+    }
+
+    public function addContentRoot(File $path) {
+        $projectFile = new ProjectFile($path, $this);
+        $this->contentRoots[ $projectFile->hashCode() ] = $projectFile;
+    }
+
+    public function removeContentRoot(File $path) {
+        $projectFile = new ProjectFile($path, $this);
+        unset($this->contentRoots[ $projectFile->hashCode() ]);
+    }
+
+    public function getContentRoots() {
+        return $this->contentRoots;
+    }
+
+    public function isContentRoot(File $path) {
+        $projectFile = new ProjectFile($path, $this);
+        return isset($this->contentRoots[$projectFile->hashCode()]);
+    }
+
+    public function isExternalFile(File $path) {
+        return (new ProjectFile($path, $this))->isExternal();
     }
 }

@@ -4,6 +4,7 @@ namespace develnext\ide\std;
 use develnext\filetype\creator\DirectoryCreator;
 use develnext\filetype\creator\FileCreator;
 use develnext\filetype\DirectoryFileType;
+use develnext\filetype\ExternalRootDirectoryFileType;
 use develnext\filetype\UnknownFileType;
 use develnext\ide\IdeExtension;
 use develnext\ide\IdeManager;
@@ -21,6 +22,7 @@ class StandardIdeExtension extends IdeExtension {
         $manager->addMenuGroup('file', _('File'));
             $manager->addMenuItem('file', 'new-project', _('New Project'), 'images/icons/project16.png', 'control N');
             $manager->addMenuItem('file', 'open-project', _('Open Project'), 'images/icons/open16.png', 'control O');
+            $manager->addMenuItem('file', 'close-project', _('Close Project'));
             $manager->addMenuSeparator('file');
 
             $manager->addMenuItem('file', 'save-all', _('Save All'), 'images/icons/save16.png', 'control S');
@@ -56,12 +58,13 @@ class StandardIdeExtension extends IdeExtension {
 
     protected function registerPopupTreeMenu(IdeManager $manager) {
         $manager->addFileTreePopupGroup('new', _('Create'), 'images/icons/plus16.png');
+        $manager->addFileTreePopupItem(null, 'edit:copy-files', __('{Add file/directory} ...'), 'images/icons/plus16.png');
             $manager->addFileTreePopupSeparator();
         $manager->addFileTreePopupItem(null, 'edit:delete', _('Delete'), 'images/icons/cancel16.png', 'DELETE');
         $manager->addFileTreePopupItem(null, '', _('Hide'));
             $manager->addFileTreePopupSeparator();
-        $manager->addFileTreePopupItem(null, '', _('Find in Path'), 'images/icons/find16.png', 'control shift F');
-        $manager->addFileTreePopupItem(null, '', _('Replace in Path'), null, 'control shift R');
+        $manager->addFileTreePopupItem(null, '', __('{Find in Path} ...'), 'images/icons/find16.png', 'control shift F');
+        $manager->addFileTreePopupItem(null, '', __('{Replace in Path} ...'), null, 'control shift R');
 
         $manager->registerFileTypeCreator(new FileCreator(), true);
         $manager->registerFileTypeCreator(new DirectoryCreator(), true);
@@ -82,6 +85,7 @@ class StandardIdeExtension extends IdeExtension {
         // file types
         $manager->registerFileType(new UnknownFileType());
         $manager->registerFileType(new DirectoryFileType());
+        $manager->registerFileType(new ExternalRootDirectoryFileType());
         $manager->registerFileType(new TextFileType());
         $manager->registerFileType(new PhpFileType());
         $manager->registerFileType(new SwingFormFileType());

@@ -1,0 +1,34 @@
+<ui-dialog size="600, 500" title="{Welcome to DevelNext}">
+
+  <include src="forms/account/.panel.xml" />
+  <ui-panel align="client" padding="30">
+      <ui-button  icon="images/icons/document_green32.png" align="top" h="50" var="btn-create-project"
+                  cursor="hand"  hor-align="2"><![CDATA[<html>
+          <b>{Create Project}</b><br><small>{Create a project based on template}</small>
+        </html>]]>
+      </ui-button>
+
+      <ui-panel align="top" h="10" />
+      <ui-button icon="images/icons/open_document32.png" align="top" h="50" var="btn-open-project"
+                 cursor="hand" hor-align="2"><![CDATA[<html>
+          <b>{Open Project}</b><br><small>{Open a project created with DevelNext}</small>
+        </html>]]>
+      </ui-button>
+
+      <ui-panel align="top" h="10" />
+      <ui-button enabled="0" icon="images/icons/document_import32.png" align="top" h="50" var="btn-import-project"
+                 cursor="hand" hor-align="2"><![CDATA[<html>
+          <b>{Import Project}</b><br><small>{Import a project from other project formats}</small>
+        </html>]]>
+      </ui-button>
+
+      <ui-panel align="top" h="20" />
+      <ui-panel align="top" h="1" background="#AEAEAE" />
+      <ui-panel align="top" h="10" />
+
+      <ui-label text="{The last projects}:" align="top" h="30" />
+      <ui-listbox align="client" var="list-latest-projects">
+
+      </ui-listbox>
+  </ui-panel>
+</ui-dialog>

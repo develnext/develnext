@@ -3,6 +3,7 @@ namespace develnext\ide\std;
 use develnext\Manager;
 use develnext\tool\GradleTool;
 use develnext\tool\JavaTool;
+use php\lang\System;
 use php\lib\str;
 use php\swing\event\ComponentEvent;
 use php\swing\UIDialog;
@@ -17,7 +18,7 @@ class StandardIdeMenuHandlers {
 
     public function __construct() {
         $elements = [
-            'file:open-project', 'file:new-project', 'file:save-all', 'file:exit',
+            'file:open-project', 'file:new-project', 'file:close-project', 'file:save-all', 'file:exit',
             'edit:undo', 'edit:redo', 'edit:delete',
             'build:run'
         ];
@@ -37,6 +38,14 @@ class StandardIdeMenuHandlers {
     public function file_newProject() {
         $manager = Manager::getInstance();
         $manager->getSystemForm('project/NewProject.xml')->showModal();
+    }
+
+    public function file_closeProject() {
+        $manager = Manager::getInstance();
+        $manager->closeProject();
+
+        $manager->getSystemForm('MainForm.xml')->hide();
+        $manager->showWelcome();
     }
 
     public function file_saveAll() {

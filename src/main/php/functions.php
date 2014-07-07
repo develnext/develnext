@@ -26,3 +26,7 @@ function vdump($var) {
 function _($code, array $args = []) {
     return Manager::getInstance()->localizator->get($code, $args);
 }
+
+function __($text) {
+    return Manager::getInstance()->localizator->translate($text);
+}

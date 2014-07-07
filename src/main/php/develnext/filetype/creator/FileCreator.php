@@ -25,6 +25,9 @@ class FileCreator extends Creator {
 
     function onDone(File $root, Project $project) {
         $file = new File($root->getPath() . '/' . $this->form->get('file-name')->text);
+        if (!$file->getParentFile()->exists())
+            $file->getParentFile()->mkdirs();
+
         $file->createNewFile();
         return new ProjectFile($file, $project);
     }

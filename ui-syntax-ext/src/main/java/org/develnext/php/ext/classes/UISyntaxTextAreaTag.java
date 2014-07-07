@@ -15,7 +15,7 @@ public class UISyntaxTextAreaTag extends BaseTag<RSyntaxTextArea> {
     }
 
     @Override
-    public void read(ElementItem elementItem, RSyntaxTextArea rSyntaxTextArea, Node node) {
+    public void read(ElementItem elementItem, RSyntaxTextArea rSyntaxTextArea, Node node, UIReader uiReader) {
 
     }
 }
