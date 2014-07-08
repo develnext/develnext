@@ -15,8 +15,16 @@ abstract class ProjectType {
         return '';
     }
 
-    function getIcon() {
+    protected function getIcon() {
         return 'images/icons/project';
+    }
+
+    function getBigIcon() {
+        return $this->getIcon() . '32.png';
+    }
+
+    function getSmallIcon() {
+        return $this->getIcon() . '16.png';
     }
 
     /**

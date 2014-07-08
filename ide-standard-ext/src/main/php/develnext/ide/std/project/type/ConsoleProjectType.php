@@ -7,7 +7,7 @@ class ConsoleProjectType extends JVMProjectType {
         return 'Console';
     }
 
-    function getIcon() {
+    protected function getIcon() {
         return 'images/icons/projecttype/console';
     }
 }

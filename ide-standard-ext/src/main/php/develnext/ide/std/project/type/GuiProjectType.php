@@ -21,7 +21,7 @@ class GuiProjectType extends JVMProjectType {
         ])->toArray();
     }
 
-    function getIcon() {
+    protected function getIcon() {
         return 'images/icons/projecttype/gui';
     }
 

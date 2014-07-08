@@ -1,5 +1,6 @@
 <?php
 
+use develnext\ide\ImageManager;
 use develnext\Manager;
 use develnext\IDEForm;
 use php\io\File;
@@ -44,7 +45,7 @@ $typeList->onCellRender(function(UIListbox $self, UILabel $template, $value, $in
     if ($type) {
         $template->iconTextGap = 4;
         $template->border = Border::createEmpty(3, 3, 3, 3);
-        $template->setIcon(Image::read(Stream::of('res://' . $type->getIcon() . '32.png')));
+        $template->setIcon(ImageManager::get($type->getBigIcon()));
     }
 
     return $template;
@@ -59,7 +60,7 @@ $typeList->on('click', function() use ($typeList, $types, $form) {
 
     if ($type) {
         $label->text = $type->getName();
-        $label->setIcon(Image::read(Stream::of('res://' . $type->getIcon() . '32.png')));
+        $label->setIcon(ImageManager::get($type->getBigIcon()));
     }
 });
 

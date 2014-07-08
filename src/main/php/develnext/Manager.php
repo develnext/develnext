@@ -10,6 +10,7 @@ use develnext\project\Project;
 use develnext\project\ProjectLoader;
 use develnext\project\ProjectManager;
 use develnext\project\ProjectType;
+use develnext\ui\decorator\UIListboxDecorator;
 use develnext\util\Config;
 use php\io\File;
 use php\io\FileStream;
@@ -17,6 +18,7 @@ use php\io\IOException;
 use php\io\Stream;
 use php\lang\Module;
 use php\lang\System;
+use php\lib\items;
 use php\lib\str;
 use php\swing\SwingUtilities;
 use php\swing\Timer;
@@ -56,7 +58,7 @@ class Manager {
     /** @var ProjectType[] */
     protected $projectTypes;
 
-    /** @var File[] */
+    /** @var Project[] */
     protected $latestProjects;
 
     /** @var IdeManager */
@@ -260,9 +262,17 @@ class Manager {
         return $project;
     }
 
+    /**
+     * @param $index
+     * @return Project
+     */
+    public function getLatestProject($index) {
+        return $this->latestProjects[$index];
+    }
+
     protected function addToLatest(Project $project) {
         foreach ($this->latestProjects as $index => $file) {
-            if ($file->getPath() === $project->getDirectory()->getPath()) {
+            if ($file->getDirectory()->getPath() === $project->getDirectory()->getPath()) {
                 break;
             }
             $index = null;
@@ -271,7 +281,7 @@ class Manager {
             unset($this->latestProjects[$index]);
         }
 
-        $this->latestProjects = [$project->getDirectory()] + $this->latestProjects;
+        $this->latestProjects = items::toArray([$project] + $this->latestProjects);
         $this->saveIdeConfigurations();
     }
 
@@ -309,9 +319,17 @@ class Manager {
         if (!$this->currentProject) {
             $welcome = $this->getSystemForm('account/Welcome.xml');
             $welcome->modalResult = false;
+
             /** @var UIListbox $list */
             $list = $welcome->get('list-latest-projects');
-            $list->setItems($this->latestProjects);
+            $listDecor = new UIListboxDecorator($list);
+            $listDecor->clear();
+
+            foreach($this->latestProjects as $project) {
+                $listDecor->add(
+                    $project->getName(), $project->getDirectory()->getPath(), $project->getType()->getBigIcon()
+                );
+            }
 
             if (!$welcome->showModal())
                 System::halt(0);
@@ -330,13 +348,17 @@ class Manager {
     private function loadIdeConfigurations() {
         $this->latestProjects = [];
 
+        $loader = new ProjectLoader();
         $file = $this->getConfigFile('latest_projects.list');
         if ($file->exists()) {
             $sc = new Scanner($fs = new FileStream($file));
             while ($sc->hasNextLine()) {
                 $el = new File(str::trim($sc->nextLine()));
-                if ($el->exists())
-                    $this->latestProjects[] = $el;
+                if ($el->exists()) {
+                    $pr = $loader->load($el);
+                    if ($pr)
+                        $this->latestProjects[] = $pr;
+                }
             }
 
             $fs->close();
@@ -348,7 +370,7 @@ class Manager {
         $st = new FileStream($file, 'w+');
 
         foreach($this->latestProjects as $el) {
-            $st->write($el->getPath() . "\n");
+            $st->write($el->getDirectory()->getPath() . "\n");
         }
 
         $st->close();
