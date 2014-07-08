@@ -26,6 +26,7 @@ use php\swing\UIDialog;
 use php\swing\UIElement;
 use php\swing\UIListbox;
 use php\swing\UIReader;
+use php\util\Flow;
 use php\util\Scanner;
 
 class Manager {
@@ -257,8 +258,8 @@ class Manager {
 
         $project->saveAll();
         $project->updateTree();
-        $this->addToLatest($project);
 
+        $this->addToLatest($project);
         return $project;
     }
 
@@ -281,7 +282,7 @@ class Manager {
             unset($this->latestProjects[$index]);
         }
 
-        $this->latestProjects = items::toArray([$project] + $this->latestProjects);
+        $this->latestProjects = Flow::of([$project])->append($this->latestProjects)->limit(15)->toArray();
         $this->saveIdeConfigurations();
     }
 

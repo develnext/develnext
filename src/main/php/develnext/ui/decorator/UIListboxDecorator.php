@@ -4,9 +4,11 @@ namespace develnext\ui\decorator;
 
 use develnext\ide\ImageManager;
 use php\swing\Border;
+use php\swing\Font;
 use php\swing\UIElement;
 use php\swing\UILabel;
 use php\swing\UIListbox;
+use php\swing\UIPanel;
 
 class UIListboxDecorator extends UIDecorator {
     /** @var UIListbox */
@@ -18,9 +20,15 @@ class UIListboxDecorator extends UIDecorator {
     /** @var string */
     protected $descriptionColor = 'gray';
 
+    /** @var string */
+    protected $hintColor = 'gray';
+
     public function __construct(UIListbox $element) {
         parent::__construct($element);
         $element->onCellRender(function(UIListbox $list, UILabel $template, $value, $index){
+            $panel = new UIPanel();
+            $panel->setLayout('grid');
+
             $item = $this->items[$index];
             $template->text = "<html>$item[title]";
             $template->border = Border::createEmpty(4, 4, 4, 4);
@@ -31,6 +39,9 @@ class UIListboxDecorator extends UIDecorator {
 
             if ($item['icon'])
                 $template->setIcon($item['icon']);
+
+            $panel->add($template);
+            return $panel;
         });
 
         for($i = 0; $i < $element->itemCount; $i++) {

@@ -1,0 +1,27 @@
+<ui-dialog size="450, 500">
+    <ui-panel padding="10" align="client">
+        <ui-panel align="bottom" h="27">
+            <ui-button align="right" text="{Cancel}" w="100" var="btn-cancel" cursor="hand" />
+            <ui-panel align="right" w="10" />
+            <ui-button align="right" text="{OK}" w="100" var="btn-ok" cursor="hand" />
+        </ui-panel>
+        <ui-panel align="bottom" h="10" />
+
+        <ui-panel align="top" h="27">
+            <ui-button align="left" w="27" icon="images/ide/components/refresh.png" focusable="0" cursor="hand"
+                    var="btn-update" tooltip="{Update file tree of the selected items}" />
+            <ui-panel align="left" w="2" />
+
+            <ui-button align="left" w="27" icon="images/ide/components/folder_add.png" focusable="0" cursor="hand"
+                       var="btn-folder-add" tooltip="{Add a folder}" />
+            <ui-panel align="left" w="2" />
+        </ui-panel>
+
+        <ui-panel align="top" h="3" />
+
+        <ui-edit align="top" h="27" var="file-path" font="Tahoma 11" editable="0" />
+        <ui-panel align="top" h="3" />
+
+        <ui-tree align="client" var="file-tree" root-visible="1" expanded="1" root="{File System}" />
+    </ui-panel>
+</ui-dialog>

@@ -18,6 +18,7 @@ use php\swing\Color;
 use php\swing\Image;
 use php\swing\SwingUtilities;
 use php\swing\SwingWorker;
+use php\swing\text\Style;
 use php\swing\UIButton;
 use php\swing\UIElement;
 use php\swing\UIMenu;
@@ -25,6 +26,7 @@ use php\swing\UIMenuBar;
 use php\swing\UIMenuItem;
 use php\swing\UIPanel;
 use php\swing\UIPopupMenu;
+use php\swing\UIRichTextArea;
 use php\swing\UITextArea;
 use php\util\Scanner;
 
@@ -287,11 +289,37 @@ class IdeManager {
     }
 
     public function logTool(Tool $tool, File $directory, array $commands, callable $onEnd = null) {
+        /** @var UIRichTextArea $console */
         $console = $this->mainForm->get('console-log');
-        $dir = $directory->getPath();
-        $console->text = '> ' . $tool->getName() . ' ' . str::join($commands, ' ') . " (for $dir) ... \n\n";
+        $console->text = '';
 
-        $this->logProcess($tool->execute($directory, $commands, false), $onEnd);
+        $dir = $directory->getPath();
+
+        $style = $console->addStyle('run');
+        $style->foreground = Color::decode('#167E16');
+
+        $style = $console->addStyle('std');
+        $style->foreground = Color::decode('#000000');
+
+        $style = $console->addStyle('err');
+        $style->foreground = Color::decode('#C40000');
+
+        $style = $console->addStyle('err-b', $style);
+        $style->bold = true;
+
+        $console->appendText(
+            '> ' . $tool->getName() . ' ' . str::join($commands, ' ') . " (for $dir) ... \n\n",
+            $console->getStyle('run')
+        );
+
+        try {
+            $this->logProcess($tool->execute($directory, $commands, false), $onEnd);
+        } catch (IOException $e) {
+            $console->appendText(_('Error') . ":\n-----------\n", $console->getStyle('err-b'));
+            $console->appendText($e->getMessage() . "\n", $console->getStyle('err'));
+            if ($onEnd)
+                $onEnd();
+        }
     }
 
     public function logProcess(Process $process, callable $onEnd = null) {
@@ -301,7 +329,7 @@ class IdeManager {
 }
 
 class IdeManagerLogProcessWorker extends SwingWorker {
-    /** @var \php\swing\UIElement */
+    /** @var UIRichTextArea */
     protected $console;
 
     /** @var Process */
@@ -337,7 +365,7 @@ class IdeManagerLogProcessWorker extends SwingWorker {
 
     protected function process(array $values) {
         foreach ($values as $value)
-            $this->console->text .= $value . "\n";
+            $this->console->appendText($value . "\n", $this->console->getStyle('std'));
 
         if (!$values && $this->onEnd)
             call_user_func($this->onEnd);

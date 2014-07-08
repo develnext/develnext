@@ -1,8 +1,10 @@
 <?php
 
+use develnext\ide\components\UIDirectoryChooser;
 use develnext\ide\ImageManager;
 use develnext\Manager;
 use develnext\IDEForm;
+use develnext\project\UIProjectChooser;
 use php\io\File;
 use php\io\Stream;
 use php\swing\Border;
@@ -14,19 +16,15 @@ use php\swing\UIListbox;
 /** @var IDEForm $form */
 
 $form->get('f-directory-btn')->on('click', function() use ($form) {
-    $dirDialog = new UIFileChooser();
-    $dirDialog->acceptAllFileFilterUsed = false;
+    $chooser = new UIProjectChooser();
+    $chooser->showForSave();
 
-    $dirDialog->addChoosableFilter(function(File $file){
-        return $file->isDirectory();
-    }, 'Directories');
-
-    if ($dirDialog->showOpenDialog()) {
-        $form->get('f-directory')->text = $dirDialog->selectedFile->getPath();
+    if ($chooser->getSelectedFile()) {
+        $form->get('f-directory')->text = $chooser->getSelectedFile()->getPath();
         $fName = $form->get('f-name');
 
         if (!$fName->text)
-            $fName->text = $dirDialog->selectedFile->getName();
+            $fName->text = $chooser->getSelectedFile()->getName();
     }
 });
 

@@ -2,8 +2,11 @@
 
 /** @var \develnext\IDEForm $form */
 
+use develnext\ide\components\UIDirectoryChooser;
 use develnext\ide\ImageManager;
 use develnext\Manager;
+use develnext\project\ProjectLoader;
+use develnext\project\UIProjectChooser;
 use php\io\File;
 use php\swing\event\MouseEvent;
 use php\swing\UIDialog;
@@ -27,7 +30,6 @@ $form->get('list-latest-projects')->on('click', function(MouseEvent $e) use ($fo
         $project = $manager->getLatestProject($list->selectedIndex);
 
         $manager->closeProject();
-
         $project = $manager->openProject($project->getDirectory());
         if (!$project) {
             UIDialog::message(_('Cannot open project'), _('Error'), UIDialog::ERROR_MESSAGE);
@@ -38,23 +40,13 @@ $form->get('list-latest-projects')->on('click', function(MouseEvent $e) use ($fo
 });
 
 $form->get('btn-open-project')->on('click', function() use ($form) {
-    $dirDialog = new UIFileChooser();
-    $dirDialog->acceptAllFileFilterUsed = false;
+    $dirDialog = new UIProjectChooser();
+    $dirDialog->showForOpen();
 
-    $dirDialog->onFileView('icon', function(File $file){
-        if ((new File($file->getPath() . '/.develnext'))->exists()) {
-            return ImageManager::get('images/icons/project16.png');
-        }
-    });
-
-    $dirDialog->addChoosableFilter(function(File $file){
-        return $file->isDirectory();
-    }, 'Directories');
-
-    if ($dirDialog->showOpenDialog()) {
+    if ($dirDialog->getSelectedFile()) {
         $manager = Manager::getInstance();
         $manager->closeProject();
-        $project = $manager->openProject($dirDialog->selectedFile);
+        $project = $manager->openProject($dirDialog->getSelectedFile());
         if (!$project) {
             UIDialog::message(_('Cannot open project'), _('Error'), UIDialog::ERROR_MESSAGE);
         } else {

@@ -10,13 +10,11 @@
 
     <ui-panel align="client" var="content" layout="grid">
         <ui-panel var="fileTreePanel">
-            <ui-tree align="client" root-visible="1" expanded="1" border="empty" var="fileTree">
-
-            </ui-tree>
+            <ui-tree align="client" root-visible="1" expanded="1" border="empty" var="fileTree" />
         </ui-panel>
 
         <ui-panel var="console">
-            <ui-textarea var="console-log" align="client" font="Consolas 12" />
+            <ui-rich-textarea var="console-log" align="client" font="Consolas 12" />
         </ui-panel>
 
         <ui-panel var="area" border="empty" />

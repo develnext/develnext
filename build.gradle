@@ -66,6 +66,7 @@ dependencies {
     compile project(':ui-docking-ext')
     compile project(':ui-weblaf-ext')
 
+    compile project(':ide-components-ext')
     compile project(':ide-standard-ext')
 
     testCompile 'junit:junit:4.+'

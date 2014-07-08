@@ -20,8 +20,10 @@ class ProjectLoader {
         if (!$dir->isDirectory())
             return null;
 
-        $data = $processor->parse(Stream::of($dir->getPath() . '/root.json')->readFully());
+        $st = Stream::of($dir->getPath() . '/root.json');
+        $data = $processor->parse($st->readFully());
         $type = $data['type'];
+        $st->close();
 
         if (!class_exists($type))
             return null;
