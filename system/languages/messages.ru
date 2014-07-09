@@ -52,3 +52,5 @@ Open a project created with DevelNext = Открыть проект создан
 Import a project from other project formats = Импортировать проект из других проектных форматов
 
 The last projects = Последние проекты
+
+Error = Ошибка

@@ -10,10 +10,16 @@
         <ui-panel align="top" h="27">
             <ui-button align="left" w="27" icon="images/ide/components/refresh.png" focusable="0" cursor="hand"
                     var="btn-update" tooltip="{Update file tree of the selected items}" />
-            <ui-panel align="left" w="2" />
+            <ui-panel align="left" w="4" />
+            <ui-panel align="left" w="1" background="#AEAEAE" />
+            <ui-panel align="left" w="4" />
 
             <ui-button align="left" w="27" icon="images/ide/components/folder_add.png" focusable="0" cursor="hand"
                        var="btn-folder-add" tooltip="{Add a folder}" />
+            <ui-panel align="left" w="2" />
+
+            <ui-button align="left" w="27" icon="images/ide/components/delete.png" focusable="0" cursor="hand"
+                       var="btn-delete" tooltip="{Delete}" />
             <ui-panel align="left" w="2" />
         </ui-panel>
 
