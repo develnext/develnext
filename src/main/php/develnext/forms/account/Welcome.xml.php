@@ -41,7 +41,7 @@ $form->get('list-latest-projects')->on('click', function(MouseEvent $e) use ($fo
 
 $form->get('btn-open-project')->on('click', function() use ($form) {
     $dirDialog = new UIProjectChooser();
-    $dirDialog->showForOpen();
+    $dirDialog->showDialog();
 
     if ($dirDialog->getSelectedFile()) {
         $manager = Manager::getInstance();

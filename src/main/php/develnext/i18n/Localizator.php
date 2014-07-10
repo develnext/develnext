@@ -27,7 +27,7 @@ namespace develnext\i18n {
 
         public static function format($string, array $args = []) {
             foreach($args as $i => $el) {
-                $string = str::replace($string, '{' . ($i+1) . '}', $el);
+                $string = str::replace($string, '{' . ($i) . '}', $el);
             }
             return $string;
         }
@@ -35,7 +35,7 @@ namespace develnext\i18n {
         public function get($code, array $args = []) {
             $text = $this->messages[$code];
             if (!$text)
-                return $code;
+                return $args ? self::format($code, $args) : $code;
 
             return self::format($text, $args);
         }

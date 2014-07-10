@@ -15,6 +15,7 @@ use develnext\util\Config;
 use php\io\File;
 use php\io\FileStream;
 use php\io\IOException;
+use php\io\ResourceStream;
 use php\io\Stream;
 use php\lang\Module;
 use php\lang\System;
@@ -86,6 +87,10 @@ class Manager {
         $this->localizator->append(
             Stream::of(\ROOT . '/system/languages/messages.' . $this->localizator->getLang())
         );
+
+        foreach (ResourceStream::getResources('i18n/messages.' . $this->localizator->getLang()) as $resource) {
+            $this->localizator->append($resource);
+        }
 
         $this->projectManager = ProjectManager::getInstance();
     }
@@ -296,17 +301,19 @@ class Manager {
     protected function loadExtensions() {
         $st = null;
         try {
-            $st = Stream::of(\ROOT . '/system/extension.list');
-            $reader = new Scanner($st);
-            while ($reader->hasNextLine()) {
-                $ext = str::trim($reader->nextLine());
-                if ($ext) {
-                    $class = new \ReflectionClass($ext);
-                    $this->ideManager->registerExtension($class->newInstance());
+            $list = ResourceStream::getResources('DEVELNEXT-INF/extensions.list');
+            foreach ($list as $st) {
+                $reader = new Scanner($st);
+                while ($reader->hasNextLine()) {
+                    $ext = str::trim($reader->nextLine());
+                    if ($ext) {
+                        $class = new \ReflectionClass($ext);
+                        $this->ideManager->registerExtension($class->newInstance());
+                    }
                 }
-            }
 
-            $st->close();
+                $st->close();
+            }
         } catch (IOException $e) {
             if ($st)
                 $st->close();

@@ -16,8 +16,8 @@ use php\swing\UIListbox;
 /** @var IDEForm $form */
 
 $form->get('f-directory-btn')->on('click', function() use ($form) {
-    $chooser = new UIProjectChooser();
-    $chooser->showForSave();
+    $chooser = new UIProjectChooser(true);
+    $chooser->showDialog();
 
     if ($chooser->getSelectedFile()) {
         $form->get('f-directory')->text = $chooser->getSelectedFile()->getPath();

@@ -1,4 +1,21 @@
 <ui-dialog size="450, 500">
+    <ui-menu-bar>
+        <ui-menu var="menu">
+
+        </ui-menu>
+    </ui-menu-bar>
+
+
+        <ui-popup-menu var="popup-menu">
+            <ui-menu-item text="{ide.components.home}" var="menu-home" icon="images/ide/components/home.png" />
+            <separator />
+            <ui-menu-item text="{ide.components.folder_new} ..." var="menu-folder-add" icon="images/ide/components/folder_add.png" />
+            <ui-menu-item text="{ide.components.delete}" var="menu-delete" icon="images/ide/components/delete.png" />
+            <separator />
+            <ui-menu-item text="{ide.components.refresh}" var="menu-update" icon="images/ide/components/refresh.png" />
+        </ui-popup-menu>
+
+
     <ui-panel padding="10" align="client">
         <ui-panel align="bottom" h="27">
             <ui-button align="right" text="{Cancel}" w="100" var="btn-cancel" cursor="hand" />
@@ -8,6 +25,8 @@
         <ui-panel align="bottom" h="10" />
 
         <ui-panel align="top" h="27">
+            <ui-button align="left" w="27" icon="images/ide/components/home.png" focusable="0" cursor="hand"
+                    var="btn-home" />
             <ui-button align="left" w="27" icon="images/ide/components/refresh.png" focusable="0" cursor="hand"
                     var="btn-update" tooltip="{Update file tree of the selected items}" />
             <ui-panel align="left" w="4" />
@@ -28,6 +47,6 @@
         <ui-edit align="top" h="27" var="file-path" font="Tahoma 11" editable="0" />
         <ui-panel align="top" h="3" />
 
-        <ui-tree align="client" var="file-tree" root-visible="1" expanded="1" root="{File System}" />
+        <ui-tree align="client" var="file-tree" root-visible="1" expanded="1" root="{ide.components.tree.root}" />
     </ui-panel>
 </ui-dialog>

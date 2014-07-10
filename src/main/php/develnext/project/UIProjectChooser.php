@@ -14,8 +14,9 @@ use php\swing\UILabel;
 use php\swing\UITree;
 
 class UIProjectChooser extends UIDirectoryChooser {
-    public function __construct()  {
-        parent::__construct();
+
+    public function __construct($forSave = false)  {
+        parent::__construct('project' . ($forSave ? 'Save' : 'Load'));
 
         $this->onFetchIcon(function(UIDirectoryChooser $self, File $file){
             $loader = new ProjectLoader();
@@ -23,29 +24,23 @@ class UIProjectChooser extends UIDirectoryChooser {
             if ($project)
                 return ImageManager::get($project->getType()->getSmallIcon());
         });
-    }
 
-    public function showForOpen() {
-        $this->setOkButtonEnabled(false);
+        if (!$forSave) {
+            $this->setOkButtonEnabled(false);
 
-        $this->onSelected(function(UIDirectoryChooser $self, File $file){
-            $loader = new ProjectLoader();
-            $project = $loader->load($file);
-            $self->setOkButtonEnabled(!!$project);
-        });
+            $this->onSelected(function(UIDirectoryChooser $self, File $file){
+                $loader = new ProjectLoader();
+                $project = $loader->load($file);
+                $self->setOkButtonEnabled(!!$project);
+            });
+        } else {
+            $this->setOkButtonEnabled(true);
 
-        $this->showDialog();
-    }
-
-    public function showForSave() {
-        $this->setOkButtonEnabled(true);
-
-        $this->onSelected(function(UIDirectoryChooser $self, File $file){
-            $loader = new ProjectLoader();
-            $project = $loader->load($file);
-            $self->setOkButtonEnabled(!$project);
-        });
-
-        $this->showDialog();
+            $this->onSelected(function(UIDirectoryChooser $self, File $file){
+                $loader = new ProjectLoader();
+                $project = $loader->load($file);
+                $self->setOkButtonEnabled(!$project);
+            });
+        }
     }
 }

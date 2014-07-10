@@ -1,0 +1,18 @@
+
+ide.components.loading = loading
+
+ide.components.tree.root = File System
+ide.components.delete.title = Question
+ide.components.delete.question = Are you sure to delete "{0}"
+
+ide.components.folder_add.text = Enter a new directory name
+
+ide.components.folder_add.exists = The file already exists
+ide.components.folder_add.fail = Unable to create the directory
+
+ide.components.home = Go Home
+ide.components.folder_new = New Folder
+ide.components.delete = Delete
+ide.components.refresh = Refresh
+
+ide.components.delete.fail = Unable to delete the file
