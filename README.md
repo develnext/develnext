@@ -1,6 +1,8 @@
 DevelNext - IDE for PHP
 =======================
 
+[![Build Status](https://travis-ci.org/develnext/develnext.svg?branch=master)](https://travis-ci.org/develnext/develnext)
+
 ![DevelNext](src/main/resources/images/splash.png)
 
 
