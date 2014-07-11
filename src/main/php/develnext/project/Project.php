@@ -38,6 +38,9 @@ class Project {
     /** @var ProjectFile[] */
     protected $contentRoots = [];
 
+    /** @var ProjectRunner[] */
+    protected $runners;
+
     function __construct(ProjectType $type, File $directory) {
         $this->type = $type;
         $this->directory = $directory;
@@ -208,5 +211,20 @@ class Project {
 
     public function isExternalFile(File $path) {
         return (new ProjectFile($path, $this))->isExternal();
+    }
+
+    /**
+     * @return \develnext\project\ProjectRunner[]
+     */
+    public function getRunners() {
+        return $this->runners;
+    }
+
+    public function addRunner(ProjectRunner $runner) {
+        $this->runners[] = $runner;
+    }
+
+    public function removeRunner($index) {
+        unset($this->runners[$index]);
     }
 }

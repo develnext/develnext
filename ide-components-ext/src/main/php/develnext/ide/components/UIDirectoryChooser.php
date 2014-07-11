@@ -59,6 +59,12 @@ class UIDirectoryChooser {
     /** @var File */
     protected $selectedFile;
 
+    /** @var File[] */
+    protected $selectedFiles;
+
+    /** @var bool */
+    protected $isOnlyDirectories = false;
+
     /** @var array */
     protected static $init;
 
@@ -90,6 +96,12 @@ class UIDirectoryChooser {
             if ($e->target->enabled) {
                 if ($tree->selectedNode && $tree->selectedNode->userData instanceof __File) {
                     $this->selectedFile = $tree->selectedNode->userData->getFile();
+                }
+
+                $this->selectedFiles = [];
+                foreach($tree->selectedNodes as $node) {
+                    if ($node->userData instanceof __File)
+                        $this->selectedFiles[] = $node->userData->getFile();
                 }
                 $this->form->hide($this->selectedFile);
             }
@@ -186,7 +198,10 @@ class UIDirectoryChooser {
                 if ($this->onFetchIcon)
                    $icon = call_user_func($this->onFetchIcon, $this, $node->userData->getFile());
 
-                $template->setIcon($icon ? $icon : ImageManager::get('images/icons/filetype/folder.png'));
+                $template->setIcon(
+                    $icon ? $icon : ImageManager::get(
+                        'images/icons/filetype/'. ($node->userData->getFile()->isDirectory() ? 'folder' : 'unknown') .'.png')
+                );
             }
         });
 
@@ -231,7 +246,7 @@ class UIDirectoryChooser {
     }
 
     public function updateSubTree(TreeNode $node, File $file = null, callable $callback = null) {
-        $worker = new UpdateSubTreeWorker($node, $file, $callback);
+        $worker = new UpdateSubTreeWorker($node, $this->isOnlyDirectories, $file, $callback);
         $worker->execute();
     }
 
@@ -270,6 +285,21 @@ class UIDirectoryChooser {
 
     public function getTitle() {
         return $this->form->getWindow()->title;
+    }
+
+    /**
+     * @param boolean $isOnlyDirectories
+     */
+    public function setOnlyDirectories($isOnlyDirectories)
+    {
+        $this->isOnlyDirectories = $isOnlyDirectories;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isOnlyDirectories() {
+        return $this->isOnlyDirectories;
     }
 
     protected function findNode(File $file, callable $callback) {
@@ -357,6 +387,13 @@ class UIDirectoryChooser {
         return $this->selectedFile;
     }
 
+    /**
+     * @return \php\io\File[]
+     */
+    public function getSelectedFiles() {
+        return $this->selectedFiles;
+    }
+
     public static function deleteFile(File $file) {
         $r = true;
         if ($file->isDirectory()) {
@@ -379,16 +416,20 @@ class UIDirectoryChooser_UpdateSubTreeWorker extends SwingWorker {
     /** @var callable */
     protected $callback;
 
-    function __construct(TreeNode $node, File $file = null, callable $callback = null) {
+    /** @var bool */
+    protected $onlyDirs;
+
+    function __construct(TreeNode $node, $onlyDirs, File $file = null, callable $callback = null) {
         $this->node = $node;
         $this->file = $file;
         $this->callback = $callback;
+        $this->onlyDirs = $onlyDirs;
     }
 
     public function update(TreeNode $node, File $file = null, $level = 0) {
         $files = $file == null ? File::listRoots() : $file->findFiles(function(File $dir, $name) {
             $file = new File($dir, $name);
-            return $file->isDirectory() && !$file->isHidden();
+            return ((($this->onlyDirs && $file->isDirectory()) || !$this->onlyDirs)) && !$file->isHidden();
         });
 
         if ($level > 0) {
@@ -411,7 +452,8 @@ class UIDirectoryChooser_UpdateSubTreeWorker extends SwingWorker {
             $this->publish([[$node, $item]]);
             //$node->add($item);
 
-            $this->update($item, $root, $level + 1);
+            if ($root->isDirectory())
+                $this->update($item, $root, $level + 1);
         }
 
         $this->publish([null]);

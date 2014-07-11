@@ -40,7 +40,7 @@ allprojects {
     task copyRuntimeLibs(type: Copy, dependsOn: "jar", overwrite: true) {
         into "$project.ext.distPath/libs"
         from "$libsDir/" + jar.archiveName
-        rename jar.archiveName, "$jar.baseName." + jar.extension
+        //rename jar.archiveName, "$jar.baseName." + jar.extension
     }
 
     task buildPortableDef(dependsOn: [copyRuntimeLibs, collectJars], overwrite: true) {

@@ -9,12 +9,15 @@ use develnext\filetype\UnknownFileType;
 use develnext\ide\IdeExtension;
 use develnext\ide\IdeManager;
 use develnext\ide\std\filetype\creator\PhpFileCreator;
+use develnext\ide\std\filetype\creator\SwingGuiFormCreator;
 use develnext\ide\std\filetype\GradleFileType;
+use develnext\ide\std\filetype\ImageFileType;
 use develnext\ide\std\filetype\PhpFileType;
 use develnext\ide\std\filetype\SwingFormFileType;
 use develnext\ide\std\filetype\TextFileType;
 use develnext\ide\std\project\type\ConsoleProjectType;
 use develnext\ide\std\project\type\GuiProjectType;
+use php\swing\UICombobox;
 
 class StandardIdeExtension extends IdeExtension {
 
@@ -52,7 +55,16 @@ class StandardIdeExtension extends IdeExtension {
         $manager->addHeadMenuItem('file:open-project', 'images/icons/open16.png');
         $manager->addHeadMenuItem('file:save-all', 'images/icons/save16.png');
         $manager->addHeadMenuSeparator();
+
+        $runCombo = new UICombobox();
+        $runCombo->font = 'Tahoma 11';
+        $runCombo->w = 150;
+
+        $manager->addHeadMenuItem('build:run-configurations', 'images/icons/cog_add.png');
+        $manager->addHeadMenuAny($runCombo);
         $manager->addHeadMenuItem('build:run', 'images/icons/play16.png');
+        $manager->addHeadMenuSeparator();
+
         $manager->addHeadMenuItem('file:settings', 'images/icons/settings16.png');
     }
 
@@ -70,6 +82,7 @@ class StandardIdeExtension extends IdeExtension {
         $manager->registerFileTypeCreator(new DirectoryCreator(), true);
         $manager->addFileTreePopupSeparator('new');
         $manager->registerFileTypeCreator(new PhpFileCreator(), true);
+        $manager->registerFileTypeCreator(new SwingGuiFormCreator(), true);
     }
 
     public function onRegister(IdeManager $manager) {
@@ -90,6 +103,7 @@ class StandardIdeExtension extends IdeExtension {
         $manager->registerFileType(new PhpFileType());
         $manager->registerFileType(new SwingFormFileType());
         $manager->registerFileType(new GradleFileType());
+        $manager->registerFileType(new ImageFileType());
 
         // project types
         $manager->registerProjectType(new ConsoleProjectType());

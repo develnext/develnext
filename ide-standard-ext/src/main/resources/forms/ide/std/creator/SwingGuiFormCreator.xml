@@ -1,0 +1,14 @@
+<ui-dialog size="300, 210" title="{New GUI Form}">
+    <ui-panel padding="10" align="client">
+        <ui-label text="{Name}:" align="top" h="30" var="label" />
+        <ui-edit align="top" h="25" var="form-name" group="ok" />
+        <ui-panel align="top" h="8" />
+
+        <ui-label text="{Type}:" align="top" h="20" />
+        <ui-combobox align="top" h="25" var="form-type"
+                     items="{Form},{Dialog}" selected-index="0">
+        </ui-combobox>
+
+        <include src="forms/misc/.ok_cancel.xml" />
+    </ui-panel>
+</ui-dialog>

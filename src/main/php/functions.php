@@ -32,8 +32,3 @@ function _($code, array $args = []) {
 function __($text) {
     return Manager::getInstance()->localizator->translate($text);
 }
-
-function background(callable $callback) {
-    $th = new Thread($callback, new Environment(Environment::current()));
-    $th->start();
-}

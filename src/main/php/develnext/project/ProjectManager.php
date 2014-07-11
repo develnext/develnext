@@ -26,12 +26,4 @@ class ProjectManager {
         $type->onCreateProject($project);
         return $project;
     }
-
-    public function registerType(ProjectType $type) {
-        if (isset($this->types[$type->getCode()]))
-            throw new \Exception("Project type (" . $type->getCode() . ") already registered");
-
-        $type->onRegister($this);
-        $this->types[ $type->getCode() ] = $type;
-    }
 }

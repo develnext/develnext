@@ -83,14 +83,12 @@ class Manager {
 
         // localization
         $this->localizator = new Localizator($this->config->get('lang', 'en'));
-
-        $this->localizator->append(
-            Stream::of(\ROOT . '/system/languages/messages.' . $this->localizator->getLang())
-        );
-
         foreach (ResourceStream::getResources('i18n/messages.' . $this->localizator->getLang()) as $resource) {
             $this->localizator->append($resource);
         }
+        $this->localizator->append(
+            Stream::of(\ROOT . '/system/languages/messages.' . $this->localizator->getLang())
+        );
 
         $this->projectManager = ProjectManager::getInstance();
     }

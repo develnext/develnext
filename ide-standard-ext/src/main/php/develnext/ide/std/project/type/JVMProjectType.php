@@ -1,6 +1,7 @@
 <?php
 namespace develnext\ide\std\project\type;
 
+use develnext\filetype\creator\Creator;
 use develnext\ide\std\project\dependency\JPHPExtensionDependency;
 use develnext\ide\std\project\dependency\MavenProjectDependency;
 use develnext\project\Project;
@@ -17,6 +18,11 @@ abstract class JVMProjectType extends ProjectType {
         '/resources' => ['{Resources} [/resources]', 'images/icons/filetype/resources.png'],
         '/resources/forms' => ['{Forms}', 'images/icons/filetype/forms.png'],
         '/resources/images' => ['{Images}', 'images/icons/filetype/images.png'],
+    ];
+
+    protected static $availableFileCreatorPaths = [
+        'develnext\ide\std\filetype\creator\PhpFileCreator' => ['/src'],
+        'develnext\ide\std\filetype\creator\SwingGuiFormCreator' => ['/resources/forms'],
     ];
 
     function getDefaultDependencies() {
@@ -62,6 +68,20 @@ abstract class JVMProjectType extends ProjectType {
             return null;
 
         return $file;
+    }
+
+    function isAvailableFileCreator(ProjectFile $file, Creator $creator) {
+        $class = get_class($creator);
+        if ($info = self::$availableFileCreatorPaths[$class]) {
+            foreach($info as $path) {
+                if ($path === $file->getRelPath() || str::startsWith($file->getRelPath(), $path . '/')) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return true;
     }
 
     protected function updateConf(Project $project) {

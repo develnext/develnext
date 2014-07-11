@@ -6,6 +6,7 @@ use php\io\File;
 use php\io\Stream;
 use php\lib\str;
 use php\swing\event\MouseEvent;
+use php\swing\Font;
 use php\swing\Image;
 use php\swing\tree\TreeNode;
 use php\swing\UILabel;
@@ -51,6 +52,10 @@ class FileTreeManager {
 
     public function setTree(UITree $tree) {
         $this->tree = $tree;
+        $tree->expandsSelectedPaths = true;
+        $tree->rowHeight = 22;
+        $tree->dragEnabled = true;
+        $tree->font = new Font('Tahoma', 0, 11);
 
         $tree = $this->getTree();
         $projectType = $this->project->getType();

@@ -1,6 +1,7 @@
 <?php
 namespace develnext\project;
 
+use develnext\filetype\creator\Creator;
 use php\lib\str;
 
 abstract class ProjectType {
@@ -47,5 +48,9 @@ abstract class ProjectType {
 
     function onRenderFileInTree(ProjectFile $file) {
         return $file;
+    }
+
+    function isAvailableFileCreator(ProjectFile $file, Creator $creator) {
+        return true;
     }
 }

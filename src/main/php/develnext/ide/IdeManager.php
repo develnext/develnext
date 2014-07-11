@@ -15,12 +15,14 @@ use php\lang\Process;
 use php\lang\Thread;
 use php\lib\str;
 use php\swing\Color;
+use php\swing\event\SimpleEvent;
 use php\swing\Image;
 use php\swing\SwingUtilities;
 use php\swing\SwingWorker;
 use php\swing\text\Style;
 use php\swing\UIButton;
 use php\swing\UIElement;
+use php\swing\UILabel;
 use php\swing\UIMenu;
 use php\swing\UIMenuBar;
 use php\swing\UIMenuItem;
@@ -51,6 +53,9 @@ class IdeManager {
     /** @var Creator */
     protected $fileTypeCreators = [];
 
+    /** @var Creator */
+    protected $fileTypeCreatorsInMenu = [];
+
     public function __construct(Manager $manager) {
         $this->manager  = $manager;
         $this->mainForm = $this->manager->getSystemForm('MainForm.xml');
@@ -58,6 +63,23 @@ class IdeManager {
         // popup
         $this->fileTreeMenu = new UIPopupMenu();
         $this->mainForm->get('fileTree')->popupMenu = $this->fileTreeMenu;
+
+        $this->fileTreeMenu->on('open', function(){
+            /** @var UIMenu $newMenu */
+            $newMenu = $this->fileTreeMenu->getComponentByGroup('new');
+
+            $projectType = Manager::getInstance()->currentProject->getType();
+            $currentFile = Manager::getInstance()->currentProject->getFileTree()->getCurrentFile();
+            for($i = 0; $i < $newMenu->itemCount; $i++) {
+                $item = $newMenu->getItem($i);
+
+                /** @var Creator $creator */
+                if ($item && $creator = $this->fileTypeCreatorsInMenu[$item->uid]) {
+                    $isAvailable = $projectType->isAvailableFileCreator($currentFile, $creator);
+                    $item->visible = $isAvailable;
+                }
+            }
+        });
     }
 
     public function registerExtension(IdeExtension $extension) {
@@ -78,6 +100,7 @@ class IdeManager {
         $this->fileTypeCreators[] = $creator;
         if ($inMenu) {
             $item = $this->addFileTreePopupItem('new', '', $creator->getDescription(), $creator->getIcon());
+            $this->fileTypeCreatorsInMenu[$item->uid] = $creator;
 
             $item->on('click', function() use ($creator){
                 $manager = Manager::getInstance();
@@ -114,6 +137,18 @@ class IdeManager {
         }
 
         $this->addHeadMenuGap($size);
+    }
+
+    /**
+     * @param UIElement $element
+     */
+    public function addHeadMenuAny(UIElement $element) {
+        $menu = $this->mainForm->get('headMenu');
+        if ($menu) {
+            $element->align = 'left';
+            $menu->add($element);
+            $this->addHeadMenuGap(2);
+        }
     }
 
     /**
@@ -326,6 +361,21 @@ class IdeManager {
         $worker = new IdeManagerLogProcessWorker($this->mainForm->get('console-log'), $process, $onEnd);
         $worker->execute();
     }
+
+    /**
+     * @param $text
+     * @param null|string $icon
+     */
+    public function setStatusBarText($text, $icon = null) {
+        /** @var UIPanel $statusBar */
+        $statusBar = $this->mainForm->get('status-bar');
+
+        /** @var UILabel $status */
+        $status = $statusBar->getComponentByGroup('status');
+
+        $status->text = $text;
+        $status->setIcon(ImageManager::get($icon));
+    }
 }
 
 class IdeManagerLogProcessWorker extends SwingWorker {
@@ -369,5 +419,12 @@ class IdeManagerLogProcessWorker extends SwingWorker {
 
         if (!$values && $this->onEnd)
             call_user_func($this->onEnd);
+    }
+
+    /**
+     * @return IdeManager
+     */
+    public function current() {
+        return Manager::getInstance()->ideManager;
     }
 }

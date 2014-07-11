@@ -2,6 +2,7 @@
 namespace develnext\ide\std\filetype\creator;
 
 use develnext\filetype\creator\Creator;
+use develnext\ide\components\UIMessages;
 use develnext\project\Project;
 use develnext\project\ProjectFile;
 use php\io\File;
@@ -26,7 +27,8 @@ class PhpFileCreator extends Creator {
         $fileName = str::replace($fileName, '\\', '/');
         $file = new File($root->getPath() . '/' . $fileName);
         if (!$file->getParentFile()->exists())
-            $file->getParentFile()->mkdirs();
+            if (!$file->getParentFile()->mkdirs())
+                UIMessages::error(_('Unable to create the directory "{0}"', $file->getParent()));
 
         $writer = new FileStream($file, 'w+');
         $writer->write("<?php \n");
@@ -77,5 +79,10 @@ class PhpFileCreator extends Creator {
 
     function getIcon() {
         return 'images/icons/filetype/php.png';
+    }
+
+    function isAvailable(ProjectFile $parent) {
+        return str::startsWith('/src/', $parent->getRelPath())
+            || $parent->getRelPath() === '/src';
     }
 }

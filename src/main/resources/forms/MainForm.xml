@@ -1,7 +1,16 @@
 <ui-form size="800, 600"
          title="DevelNext 2014" default-close-operation="3" maximized="1">
 
+    <include src="forms/styles.xml" />
+
     <ui-menu-bar var="mainMenu" align="top" h="25" />
+
+    <ui-panel var="status-bar" align="bottom" h="20">
+        <ui-panel align="right" group="additional" w="300" />
+        <ui-label align="client" group="status" font="Tahoma 11" />
+    </ui-panel>
+
+    <ui-panel style="hr" align="bottom" />
 
     <ui-panel align="top" h="30" var="headMenu">
         <ui-panel align="top" h="3" />

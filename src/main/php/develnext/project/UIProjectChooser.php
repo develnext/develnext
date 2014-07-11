@@ -17,6 +17,7 @@ class UIProjectChooser extends UIDirectoryChooser {
 
     public function __construct($forSave = false)  {
         parent::__construct('project' . ($forSave ? 'Save' : 'Load'));
+        $this->setOnlyDirectories(true);
 
         $this->onFetchIcon(function(UIDirectoryChooser $self, File $file){
             $loader = new ProjectLoader();
