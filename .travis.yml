@@ -9,5 +9,6 @@ jdk:
 before_install:
  - gradle wrapper
  - chmod +x gradlew
+ - git clone --depth=50 --branch=master git://github.com/jphp-compiler/jphp.git jphp
 
 script: ./gradlew check
