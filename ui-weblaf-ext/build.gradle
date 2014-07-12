@@ -2,9 +2,7 @@
 
 dependencies {
     compile project(':jphp-swing-ext')
-    compile files('libs/weblaf-1.28.jar')
-
-    compile 'com.thoughtworks.xstream:xstream:1.4.7'
+    compile files('libs/weblaf-complete-1.28.jar')
 }
 
 task dist(dependsOn: buildPortableDef) {
