@@ -3,6 +3,7 @@ package org.develnext.php.ext.classes;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.intern.CDockable;
 import org.develnext.jphp.swing.SwingExtension;
+import org.develnext.jphp.swing.classes.WrapImage;
 import org.develnext.jphp.swing.classes.components.support.UIElement;
 import org.develnext.php.ext.UIDockingExtension;
 import php.runtime.Memory;
@@ -44,32 +45,52 @@ public class WrapSingleCDockable extends WrapCDockable {
     }
 
     @Signature(@Arg("value"))
-    public Memory __setClosable(Environment env, Memory... args) {
+    protected Memory __setClosable(Environment env, Memory... args) {
         dockable.setCloseable(args[0].toBoolean());
         return Memory.NULL;
     }
 
     @Signature(@Arg("value"))
-    public Memory __setExternalizable(Environment env, Memory... args) {
+    protected Memory __setExternalizable(Environment env, Memory... args) {
         dockable.setExternalizable(args[0].toBoolean());
         return Memory.NULL;
     }
 
     @Signature(@Arg("value"))
-    public Memory __setMaximizable(Environment env, Memory... args) {
+    protected Memory __setMaximizable(Environment env, Memory... args) {
         dockable.setMaximizable(args[0].toBoolean());
         return Memory.NULL;
     }
 
     @Signature(@Arg("value"))
-    public Memory __setMinimizable(Environment env, Memory... args) {
+    protected Memory __setMinimizable(Environment env, Memory... args) {
         dockable.setMinimizable(args[0].toBoolean());
         return Memory.NULL;
     }
 
     @Signature(@Arg("value"))
-    public Memory __setTitleShown(Environment env, Memory... args) {
+    protected Memory __setTitleShown(Environment env, Memory... args) {
         dockable.setTitleShown(args[0].toBoolean());
+        return Memory.NULL;
+    }
+
+    @Signature(@Arg("value"))
+    protected Memory __setSingleTabShown(Environment env, Memory... args) {
+        dockable.setSingleTabShown(args[0].toBoolean());
+        return Memory.NULL;
+    }
+
+    @Signature(@Arg("value"))
+    protected Memory __getSingleTabShown(Environment env, Memory... args) {
+        dockable.setSingleTabShown(args[0].toBoolean());
+        return Memory.NULL;
+    }
+
+    @Signature({
+            @Arg(value = "value", nativeType = WrapImage.class, optional = @Optional("null"))
+    })
+    public Memory setTitleIcon(Environment env, Memory... args) {
+        dockable.setTitleIcon(args[0].toObject(WrapImage.class).getImageIcon());
         return Memory.NULL;
     }
 }

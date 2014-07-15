@@ -59,4 +59,14 @@ abstract class CDockable {
      * @var bool
      */
     public $normalizeable;
+
+    /**
+     * @return bool
+     */
+    public function isShowing() { return false; }
+
+    /**
+     * @return bool
+     */
+    public function hasParent() { return false; }
 }

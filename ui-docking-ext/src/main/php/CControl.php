@@ -3,6 +3,7 @@ namespace php\swing\docking;
 
 use php\io\File;
 use php\io\Stream;
+use php\swing\Image;
 use php\swing\UIForm;
 use php\swing\UIUnknown;
 
@@ -58,4 +59,22 @@ class CControl {
      * @param Stream|File|string $stream
      */
     public function readXml($stream) { }
+
+    /**
+     * @param string $name
+     * @param Image $icon
+     */
+    public function setIcon($name, Image $icon) { }
+
+    /**
+     * @param string $name
+     * @param Image $icon
+     */
+    public function setIconTheme($name, Image $icon) { }
+
+    /**
+     * @param string $name
+     * @param Image $icon
+     */
+    public function setIconClient($name, Image $icon) { }
 }

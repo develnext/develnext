@@ -1,5 +1,7 @@
 <?php
 
+use develnext\ide\IdeManager;
+use develnext\ide\ImageManager;
 use php\swing\docking\CControl;
 use php\swing\docking\CGrid;
 use php\swing\docking\SingleCDockable;
@@ -10,6 +12,14 @@ $manager = Manager::getInstance();
 
 /** @var \develnext\IDEForm $form */
 $control = new CControl($form->getWindow());
+
+$control->setIcon("locationmanager.maximize", ImageManager::get('images/docking/maximize.png'));
+$control->setIcon("locationmanager.normalize", ImageManager::get('images/docking/normalize.png'));
+$control->setIcon("locationmanager.unmaximize_externalized", ImageManager::get('images/docking/normalize.png'));
+$control->setIcon("locationmanager.minimize", ImageManager::get('images/docking/minimize.png'));
+$control->setIcon("locationmanager.externalize", ImageManager::get('images/docking/externalize.png'));
+$control->setIcon("locationmanager.unexternalize", ImageManager::get('images/docking/unexternalize.png'));
+
 $contentArea = $control->getContentArea();
 
 $form->get('content')->add($contentArea);
@@ -17,9 +27,8 @@ $form->get('content')->add($contentArea);
 
 $grid = new CGrid($control);
 $grid->add(1, 1, 3, 3, $dContent = new SingleCDockable('content', 'content', $form->get('area')));
-$grid->add(0, 0, 1, 4, $one = new SingleCDockable('editor', 'File Tree', $form->get('fileTreePanel')));
-$grid->add(1, 3, 3, 1, new SingleCDockable('console', 'Console', $form->get('console')));
-
+$grid->add(0, 0, 1, 4, $one = new SingleCDockable('editor', _('File Tree'), $form->get('fileTreePanel')));
+$grid->add(1, 3, 3, 1, new SingleCDockable('console', _('Tools'), $form->get('console')));
 
 $dContent->closable = false;
 $dContent->externalizable = false;
@@ -28,13 +37,13 @@ $dContent->minimizable = false;
 $dContent->titleShown = false;
 
 $contentArea->deploy($grid);
-$control->setTheme('flat');
 
 $configFile = $manager->getConfigFile('dock.xml');
 if ($configFile->exists()) {
     $control->readXml($configFile);
 }
 
+$control->setTheme('develnext');
 $form->loadFromFile($manager->getConfigFile('MainForm.cfg'));
 
 /*$r = new DesignContainer();
@@ -55,21 +64,9 @@ $cm->registerComponent($r);*/
 $button->size = [100, 100];
 $work->getComponent()->add($button);*/
 
-/** @var \php\swing\UIMenuItem $saveAll */
-/*$saveAll = $form->get('menu-save-all');
-$saveAll->accelerator = 'control S';
-$saveAll->on('click', function() {
-    $manager = Manager::getInstance();
-    $manager->currentProject->saveAll();
-});*/
-
-/*
-$form->get('menu-new-project')->on('click', function(){
-    $manager = Manager::getInstance();
-    $manager->getSystemForm('project/NewProject.xml')->showModal();
-});*/
-
 $form->getWindow()->on('windowClosing', function() use ($control, $configFile, $form, $manager) {
+    IdeManager::current()->trigger('close');
+
     $control->writeXml($configFile);
     $form->saveToFile($manager->getConfigFile('MainForm.cfg'));
 });

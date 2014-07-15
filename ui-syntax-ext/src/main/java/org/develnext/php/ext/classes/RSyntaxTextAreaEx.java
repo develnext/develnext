@@ -14,7 +14,9 @@ public class RSyntaxTextAreaEx extends RTextScrollPane
     protected RSyntaxTextArea component;
 
     public RSyntaxTextAreaEx() {
-        super(new RSyntaxTextArea());
+        super();
+        this.setViewportView(new RSyntaxTextArea());
+        //super(new RSyntaxTextArea());
         component = (RSyntaxTextArea) this.getTextArea();
     }
 

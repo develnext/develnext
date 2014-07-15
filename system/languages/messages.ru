@@ -54,3 +54,8 @@ Import a project from other project formats = Импортировать про�
 The last projects = Последние проекты
 
 Error = Ошибка
+
+File Tree = Дерево файлов
+
+Find = Поиск
+Console = Консоль

@@ -8,9 +8,11 @@ import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.theme.CDockThemeFactory;
 import bibliothek.gui.dock.themes.ThemePropertyFactory;
+import bibliothek.gui.dock.util.Priority;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XIO;
 import org.develnext.jphp.swing.SwingExtension;
+import org.develnext.jphp.swing.classes.WrapImage;
 import org.develnext.jphp.swing.classes.components.UIForm;
 import org.develnext.jphp.swing.classes.components.support.RootObject;
 import org.develnext.jphp.swing.support.JFrameX;
@@ -55,6 +57,7 @@ public class WrapCControl extends RootObject {
                 return new DevelNextTheme();
             }
         });
+
         return Memory.NULL;
     }
 
@@ -134,6 +137,39 @@ public class WrapCControl extends RootObject {
                 control.addDockable(args[1].toString(), (MultipleCDockable) dockable);
         }
 
+        return Memory.NULL;
+    }
+
+    @Signature({
+            @Arg("name"),
+            @Arg(value = "icon", nativeType = WrapImage.class, optional = @Optional("null"))
+    })
+    public Memory setIcon(Environment env, Memory... args) {
+        control.getIcons().setIcon(
+                args[0].toString(), Priority.DEFAULT, args[1].toObject(WrapImage.class).getImageIcon()
+        );
+        return Memory.NULL;
+    }
+
+    @Signature({
+            @Arg("name"),
+            @Arg(value = "icon", nativeType = WrapImage.class, optional = @Optional("null"))
+    })
+    public Memory setIconTheme(Environment env, Memory... args) {
+        control.getIcons().setIconTheme(
+                args[0].toString(), args[1].toObject(WrapImage.class).getImageIcon()
+        );
+        return Memory.NULL;
+    }
+
+    @Signature({
+            @Arg("name"),
+            @Arg(value = "icon", nativeType = WrapImage.class, optional = @Optional("null"))
+    })
+    public Memory setIconClient(Environment env, Memory... args) {
+        control.getIcons().setIconClient(
+                args[0].toString(), args[1].toObject(WrapImage.class).getImageIcon()
+        );
         return Memory.NULL;
     }
 }

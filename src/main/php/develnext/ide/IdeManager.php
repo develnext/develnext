@@ -8,9 +8,11 @@ use develnext\lang\Singleton;
 use develnext\Manager;
 use develnext\project\ProjectType;
 use develnext\tool\Tool;
+use develnext\ui\UITabHead;
 use php\io\File;
 use php\io\IOException;
 use php\io\Stream;
+use php\lang\IllegalArgumentException;
 use php\lang\Process;
 use php\lang\Thread;
 use php\lib\str;
@@ -29,6 +31,7 @@ use php\swing\UIMenuItem;
 use php\swing\UIPanel;
 use php\swing\UIPopupMenu;
 use php\swing\UIRichTextArea;
+use php\swing\UITabs;
 use php\swing\UITextArea;
 use php\util\Scanner;
 
@@ -37,7 +40,6 @@ use php\util\Scanner;
  * @package develnext\ide
  */
 class IdeManager {
-
     /** @var Manager */
     protected $manager;
 
@@ -55,6 +57,15 @@ class IdeManager {
 
     /** @var Creator */
     protected $fileTypeCreatorsInMenu = [];
+
+    /** @var IdeTool[] */
+    protected $tools = [];
+
+    /** @var IdeBackgroundTask[] */
+    protected $backgroundTasks;
+
+    /** @var callable[] */
+    protected $handlers = [];
 
     public function __construct(Manager $manager) {
         $this->manager  = $manager;
@@ -107,6 +118,43 @@ class IdeManager {
                 $creator->open($manager->currentProject->getFileTree()->getCurrentFile());
             });
         }
+    }
+
+    public function registerIdeTool($code, IdeTool $tool) {
+        $this->tools[$code] = $tool;
+    }
+
+    public function unRegisterIdeTool($code) {
+        unset($this->tools[$code]);
+    }
+
+    public function openTool($code) {
+        /** @var IdeTool $tool */
+        $tool = $this->tools[$code];
+        if ($tool == null) {
+            throw new IllegalArgumentException("Ide Tool '$code' is not registered'");
+        }
+        // copy
+        $tool = clone $tool;
+
+        $content = $tool->createGui($this);
+        /** @var UITabs $toolTabs */
+        $toolTabs = $this->mainForm->get('tool-tabs');
+
+        $tab = new UIPanel();
+        $tab->add($content);
+
+        $toolTabs->add($tab);
+        $toolTabs->setTabComponentAt(
+            $index = $toolTabs->tabCount - 1,
+            $tabHead = new UITabHead($toolTabs, $tab, $tool->getName(), ImageManager::get($tool->getIcon()))
+        );
+
+        $tabHead->on('close', function() use ($toolTabs, $index) {
+             $toolTabs->removeTabAt($index);
+        });
+
+        return $tool;
     }
 
     /**
@@ -324,42 +372,40 @@ class IdeManager {
     }
 
     public function logTool(Tool $tool, File $directory, array $commands, callable $onEnd = null) {
-        /** @var UIRichTextArea $console */
-        $console = $this->mainForm->get('console-log');
-        $console->text = '';
+        $this->trigger('log-tool', [$tool, $directory, $commands, $onEnd]);
+    }
 
-        $dir = $directory->getPath();
+    public function addBackgroundTask(IdeBackgroundTask $task) {
+        $this->backgroundTasks[] = $task;
+        $task->ideManager = $this;
+        $task->execute();
+    }
 
-        $style = $console->addStyle('run');
-        $style->foreground = Color::decode('#167E16');
+    public function on($event, callable $callback) {
+        $this->handlers[$event][] = $callback;
+    }
 
-        $style = $console->addStyle('std');
-        $style->foreground = Color::decode('#000000');
-
-        $style = $console->addStyle('err');
-        $style->foreground = Color::decode('#C40000');
-
-        $style = $console->addStyle('err-b', $style);
-        $style->bold = true;
-
-        $console->appendText(
-            '> ' . $tool->getName() . ' ' . str::join($commands, ' ') . " (for $dir) ... \n\n",
-            $console->getStyle('run')
-        );
-
-        try {
-            $this->logProcess($tool->execute($directory, $commands, false), $onEnd);
-        } catch (IOException $e) {
-            $console->appendText(_('Error') . ":\n-----------\n", $console->getStyle('err-b'));
-            $console->appendText($e->getMessage() . "\n", $console->getStyle('err'));
-            if ($onEnd)
-                $onEnd();
+    public function trigger($event, array $args = []) {
+        $handlers = (array)$this->handlers[$event];
+        foreach ($handlers as $handler) {
+            call_user_func_array($handler, [$this] + $args);
         }
     }
 
-    public function logProcess(Process $process, callable $onEnd = null) {
-        $worker = new IdeManagerLogProcessWorker($this->mainForm->get('console-log'), $process, $onEnd);
-        $worker->execute();
+    public function cleanUpBackgroundTasks() {
+        $tasks = [];
+        foreach ($this->backgroundTasks as $task) {
+            if (!$task->isDone() && !$task->isCanceled())
+                $tasks[] = $task;
+        }
+        $this->backgroundTasks = $tasks;
+    }
+
+    /**
+     * @return \develnext\ide\IdeBackgroundTask[]
+     */
+    public function getBackgroundTasks() {
+        return $this->backgroundTasks;
     }
 
     /**
@@ -376,55 +422,12 @@ class IdeManager {
         $status->text = $text;
         $status->setIcon(ImageManager::get($icon));
     }
-}
-
-class IdeManagerLogProcessWorker extends SwingWorker {
-    /** @var UIRichTextArea */
-    protected $console;
-
-    /** @var Process */
-    protected $process;
-
-    /** @var callable */
-    protected $onEnd;
-
-    public function __construct(UIElement $console, Process $process, callable $onEnd = null) {
-        $this->console = $console;
-        $this->process = $process;
-        $this->onEnd = $onEnd;
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function doInBackground() {
-        $st = $this->process->getInput();
-        $scanner = new Scanner($st);
-        while ($scanner->hasNextLine()) {
-            $this->publish([$scanner->nextLine()]);
-        }
-
-        $err = $this->process->getError();
-        $scanner2 = new Scanner($err);
-        while ($scanner2->hasNextLine()) {
-            $this->publish([$scanner2->nextLine()]);
-        }
-
-        $this->publish([]);
-    }
-
-    protected function process(array $values) {
-        foreach ($values as $value)
-            $this->console->appendText($value . "\n", $this->console->getStyle('std'));
-
-        if (!$values && $this->onEnd)
-            call_user_func($this->onEnd);
-    }
 
     /**
      * @return IdeManager
      */
-    public function current() {
+    public static function current() {
         return Manager::getInstance()->ideManager;
     }
 }
+

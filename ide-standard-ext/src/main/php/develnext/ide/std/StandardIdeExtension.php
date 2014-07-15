@@ -15,8 +15,11 @@ use develnext\ide\std\filetype\ImageFileType;
 use develnext\ide\std\filetype\PhpFileType;
 use develnext\ide\std\filetype\SwingFormFileType;
 use develnext\ide\std\filetype\TextFileType;
+use develnext\ide\std\ide\ConsoleIdeTool;
 use develnext\ide\std\project\type\ConsoleProjectType;
 use develnext\ide\std\project\type\GuiProjectType;
+use develnext\tool\Tool;
+use php\io\File;
 use php\swing\UICombobox;
 
 class StandardIdeExtension extends IdeExtension {
@@ -95,6 +98,9 @@ class StandardIdeExtension extends IdeExtension {
         $menuHandlers = new StandardIdeMenuHandlers();
         $manager->setMenuHandlers($menuHandlers->getHandlers());
 
+        // tools
+        $manager->registerIdeTool('console', new ConsoleIdeTool());
+
         // file types
         $manager->registerFileType(new UnknownFileType());
         $manager->registerFileType(new DirectoryFileType());
@@ -108,5 +114,13 @@ class StandardIdeExtension extends IdeExtension {
         // project types
         $manager->registerProjectType(new ConsoleProjectType());
         $manager->registerProjectType(new GuiProjectType());
+
+        $manager->on('log-tool', function(IdeManager $manager,
+                                          Tool $tool, File $directory, array $commands, callable $onEnd = null){
+
+            /** @var ConsoleIdeTool $console */
+            $console = $manager->openTool('console');
+            $console->logTool($tool, $directory, $commands, $onEnd);
+        });
     }
 }
