@@ -1,0 +1,7 @@
+<ui-dialog size="600, 600" title="{Settings}">
+  <ui-panel padding="10">
+    <ui-tree root-visible="0" scrolls-on-expand="1" align="left" w="130" var="menu" />
+    <ui-panel align="left" w="10" />
+    <ui-panel align="client" var="content" />
+  </ui-panel>
+</ui-dialog>

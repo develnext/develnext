@@ -3,6 +3,7 @@ namespace develnext\ide;
 
 use develnext\filetype\creator\Creator;
 use develnext\filetype\FileType;
+use develnext\forms\IDEMainForm;
 use develnext\IDEForm;
 use develnext\lang\Singleton;
 use develnext\Manager;
@@ -43,7 +44,7 @@ class IdeManager {
     /** @var Manager */
     protected $manager;
 
-    /** @var IDEForm */
+    /** @var IDEMainForm */
     protected $mainForm;
 
     /** @var UIPopupMenu */
@@ -66,6 +67,12 @@ class IdeManager {
 
     /** @var callable[] */
     protected $handlers = [];
+
+    /** @var IdeSettingsType[] */
+    protected $settingsTypes;
+
+    /** @var IdeSettingsManager */
+    protected $settings;
 
     public function __construct(Manager $manager) {
         $this->manager  = $manager;
@@ -91,6 +98,8 @@ class IdeManager {
                 }
             }
         });
+
+        $this->settings = new IdeSettingsManager($this);
     }
 
     public function registerExtension(IdeExtension $extension) {
@@ -118,6 +127,10 @@ class IdeManager {
                 $creator->open($manager->currentProject->getFileTree()->getCurrentFile());
             });
         }
+    }
+
+    public function registerIdeSettingsType(IdeSettingsType $settingsType) {
+        $this->settingsTypes[] = $settingsType;
     }
 
     public function registerIdeTool($code, IdeTool $tool) {
@@ -150,10 +163,16 @@ class IdeManager {
             $tabHead = new UITabHead($toolTabs, $tab, $tool->getName(), ImageManager::get($tool->getIcon()))
         );
 
-        $tabHead->on('close', function() use ($toolTabs, $index) {
-             $toolTabs->removeTabAt($index);
+        $tabHead->on('close', function() use ($toolTabs, $tab) {
+            $toolTabs->remove($tab);
+            if (!$toolTabs->tabCount) {
+                $this->mainForm->getDockTools()->visible = false;
+            }
         });
 
+        $toolTabs->selectedComponent = $tab;
+        $this->mainForm->getDockTools()->visible = true;
+        $this->mainForm->getDockTools()->setExtendedMode('normalized');
         return $tool;
     }
 
@@ -406,6 +425,28 @@ class IdeManager {
      */
     public function getBackgroundTasks() {
         return $this->backgroundTasks;
+    }
+
+    /**
+     * @return IdeSettingsManager
+     */
+    public function getSettings() {
+        return $this->settings;
+    }
+
+    /**
+     * @return IDEForm
+     */
+    public function getMainForm() {
+        return $this->mainForm;
+    }
+
+    /**
+     * @param $name
+     * @return IDEForm
+     */
+    public function getForm($name) {
+        return $this->manager->getSystemForm($name, true);
     }
 
     /**

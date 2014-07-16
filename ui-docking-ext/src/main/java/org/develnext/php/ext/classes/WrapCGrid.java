@@ -1,7 +1,6 @@
 package org.develnext.php.ext.classes;
 
 import bibliothek.gui.dock.common.CGrid;
-import org.develnext.jphp.swing.SwingExtension;
 import org.develnext.jphp.swing.classes.components.support.RootObject;
 import org.develnext.php.ext.UIDockingExtension;
 import php.runtime.Memory;
@@ -24,7 +23,7 @@ public class WrapCGrid extends RootObject {
     }
 
     @Signature({
-            @Arg(value = "control", typeClass = SwingExtension.NAMESPACE + "docking\\CControl")
+            @Arg(value = "control", nativeType = WrapCControl.class)
     })
     public Memory __construct(Environment env, Memory... args) {
         grid = new CGrid(args[0].toObject(WrapCControl.class).control);
@@ -33,11 +32,28 @@ public class WrapCGrid extends RootObject {
 
     @Signature({
             @Arg("x"), @Arg("y"), @Arg("w"), @Arg("h"),
-            @Arg(value = "dockable", typeClass = SwingExtension.NAMESPACE + "docking\\CDockable")
+            @Arg(value = "dockable", nativeType = WrapCDockable.class)
     })
     public Memory add(Environment env, Memory... args) {
-        grid.add(args[0].toInteger(), args[1].toInteger(), args[2].toInteger(), args[3].toInteger(),
+        grid.add(args[0].toFloat(), args[1].toFloat(), args[2].toFloat(), args[3].toFloat(),
                 args[4].toObject(WrapCDockable.class).getCDockable());
+        return Memory.NULL;
+    }
+
+    @Signature({
+            @Arg("x1"), @Arg("x2"), @Arg("y")
+    })
+    public Memory addHorizontalDivider(Environment env, Memory... args) {
+        grid.addHorizontalDivider(args[0].toDouble(), args[1].toDouble(), args[2].toDouble());
+        return Memory.NULL;
+    }
+
+
+    @Signature({
+            @Arg("x"), @Arg("y1"), @Arg("y2")
+    })
+    public Memory addVerticalDivider(Environment env, Memory... args) {
+        grid.addVerticalDivider(args[0].toDouble(), args[1].toDouble(), args[2].toDouble());
         return Memory.NULL;
     }
 }

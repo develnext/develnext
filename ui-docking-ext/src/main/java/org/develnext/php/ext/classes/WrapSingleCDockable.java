@@ -1,5 +1,6 @@
 package org.develnext.php.ext.classes;
 
+import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.intern.CDockable;
 import org.develnext.jphp.swing.SwingExtension;

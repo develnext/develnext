@@ -1,5 +1,6 @@
 <?php
 namespace php\swing\docking;
+use php\lang\IllegalArgumentException;
 
 /**
  * Class CDockable
@@ -69,4 +70,20 @@ abstract class CDockable {
      * @return bool
      */
     public function hasParent() { return false; }
+
+    /**
+     * @param string $mode - maximized, minimized, normalized, externalized
+     */
+    public function setExtendedMode($mode) { }
+
+    /**
+     * @param CDockable $dockable
+     */
+    public function setLocationsAside(CDockable $dockable) { }
+
+    /**
+     * @param $pos - left, top, right, bottom
+     * @throws IllegalArgumentException
+     */
+    public function setBaseLocation($pos) { }
 }

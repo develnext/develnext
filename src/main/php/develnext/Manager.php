@@ -138,7 +138,17 @@ class Manager {
 
         $window = $this->uiReader->read(Stream::of('res://forms/' . $path));
         try {
-            $form = new IDEForm($window, new Module(Stream::of('res://develnext/forms/' . $path . '.php')), $vars);
+            $name = str::split(str::sub($path, 0, str::lastPos($path, '.xml')), '/');
+            $module = new Module(Stream::of('res://develnext/forms/' . str::join($name, '/') . '.php'));
+
+            $name[sizeof($name) - 1] = 'IDE' . $name[sizeof($name) - 1];
+            $className = 'develnext\\forms\\' . str::join($name, '\\');
+
+            if (class_exists($className, false)) {
+                $form = new $className($window, $module, $vars);
+            } else {
+                $form = new IDEForm($window, $module, $vars);
+            }
         } catch (IOException $e) {
             $form = new IDEForm($window, null, $vars);
         }

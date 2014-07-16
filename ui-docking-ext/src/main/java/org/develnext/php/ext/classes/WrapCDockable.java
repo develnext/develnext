@@ -1,6 +1,8 @@
 package org.develnext.php.ext.classes;
 
+import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import org.develnext.jphp.swing.classes.components.support.RootObject;
 import org.develnext.php.ext.UIDockingExtension;
 import php.runtime.Memory;
@@ -97,5 +99,47 @@ abstract public class WrapCDockable extends RootObject {
     @Signature
     public Memory hasParent(Environment env, Memory... args) {
         return getCDockable().hasParent() ? Memory.TRUE : Memory.FALSE;
+    }
+
+    @Signature(@Arg("mode"))
+    public Memory setExtendedMode(Environment env, Memory... args) {
+        try {
+            getCDockable().setExtendedMode(
+                    (ExtendedMode) ExtendedMode.class.getField(args[0].toString().toUpperCase()).get(null)
+            );
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException(args[0].toString());
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException(args[0].toString());
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException(args[0].toString());
+        }
+        return Memory.NULL;
+    }
+
+    @Signature(@Arg(value = "dockable", nativeType = WrapCDockable.class))
+    public Memory setLocationsAside(Environment env, Memory... args) {
+        getCDockable().setLocationsAside(args[0].toObject(WrapCDockable.class).getCDockable());
+        return Memory.NULL;
+    }
+
+    @Signature({
+            @Arg("pos")
+    })
+    public Memory setBaseLocation(Environment env, Memory... args) {
+        String pos = args[0].toString().toLowerCase();
+
+        if (pos.equals("left"))
+            getCDockable().setLocation(CLocation.base().minimalWest());
+        else if (pos.equals("right"))
+            getCDockable().setLocation(CLocation.base().minimalEast());
+        else if (pos.equals("top"))
+            getCDockable().setLocation(CLocation.base().minimalNorth());
+        else if (pos.equals("bottom"))
+            getCDockable().setLocation(CLocation.base().minimalSouth());
+        else
+            throw new IllegalArgumentException(args[0].toString());
+
+        return Memory.NULL;
     }
 }
