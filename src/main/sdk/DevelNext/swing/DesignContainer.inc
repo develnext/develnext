@@ -8,5 +8,8 @@ use php\swing\UIContainer;
  * @package develnext\swing
  */
 class DesignContainer extends UIContainer {
-
+    /**
+     * @var bool
+     */
+    public $selected;
 }

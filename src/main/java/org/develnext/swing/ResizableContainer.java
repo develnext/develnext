@@ -12,7 +12,7 @@ public class ResizableContainer extends JComponent {
         setLayout(new BorderLayout());
         addMouseListener(resizeListener);
         addMouseMotionListener(resizeListener);
-        setBorder(new ResizableBorder(6));
+        setBorder(new ResizableBorder(2));
     }
 
     private void resize() {

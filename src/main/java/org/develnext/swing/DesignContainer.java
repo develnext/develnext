@@ -10,12 +10,13 @@ import java.awt.image.BufferedImage;
 public class DesignContainer extends JComponent {
 
     protected boolean mouse;
+    protected boolean selected;
     protected BufferedImage lastScreen;
 
     public DesignContainer() {
         setLayout(new GridLayout());
         setOpaque(false);
-        setBorder(new EmptyBorder(6, 6, 6, 6));
+        setSelected(false);
     }
 
     @Override
@@ -36,6 +37,19 @@ public class DesignContainer extends JComponent {
         return img.getSubimage(region.x, region.y, region.width, region.height);
     }
 
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+        if (selected) {
+            setBorder(new ResizableBorder(6));
+        } else {
+            setBorder(new EmptyBorder(6, 6, 6, 6));
+        }
+    }
+
     @Override
     protected void addImpl(final Component comp, Object constraints, int index) {
         super.addImpl(comp, constraints, index);
@@ -46,10 +60,11 @@ public class DesignContainer extends JComponent {
                 lastScreen = componentToImage(comp, new Rectangle(0, 0, comp.getWidth(), comp.getHeight()));
             }
         });
+
         comp.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                setBorder(new ResizableBorder(6));
+                setSelected(true);
             }
 
             @Override

@@ -1,5 +1,6 @@
 <?php
 namespace develnext\ide\std;
+
 use develnext\ide\components\UIDirectoryChooser;
 use develnext\ide\std\dialog\RunConfigurationDialog;
 use develnext\Manager;
