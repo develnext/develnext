@@ -4,6 +4,7 @@ namespace develnext\ide\std;
 use develnext\ide\components\UIDirectoryChooser;
 use develnext\ide\std\dialog\RunConfigurationDialog;
 use develnext\Manager;
+use develnext\project\Project;
 use develnext\project\ProjectFile;
 use develnext\tool\GradleTool;
 use develnext\tool\JavaTool;
@@ -126,15 +127,13 @@ class StandardIdeMenuHandlers {
         $dialog->show();
     }
 
-    public function build_run($e) {
-        $manager = Manager::getInstance();
+    public function build_run() {
+        $runner = Project::current()->getSelectedRunner();
+        if (!$runner->isDone()) {
+            $runner->stop();
+        }
 
-        $gradle = new GradleTool();
-        $e->target->enabled = false;
-
-        $manager->ideManager->logTool($gradle, $manager->currentProject->getDirectory(), ['run'], function() use ($e){
-            $e->target->enabled = true;
-        });
+        $runner->execute();
     }
 
     /**

@@ -56,6 +56,7 @@ class SwingFormEditor extends TextEditor {
     protected function updateForm() {
         $desktop = new UIScrollPanel();
         $desktop->align = 'client';
+        $desktop->border = Border::createEmpty(0,0,0,0);
 
         $this->designer->removeAll();
         $this->designer->add($desktop);
@@ -67,11 +68,6 @@ class SwingFormEditor extends TextEditor {
 
         $panel = new UIPanel();
         $panel->align = 'client';
-
-        /* $panel->border = Border::createCompound(
-            Border::createLine([255, 255, 255], 0),
-            Border::createLine([127, 127, 127], 0)
-        );*/
 
         $cr = new ComponentResizer();
         $cm = new ComponentMover();

@@ -21,14 +21,19 @@ class ProjectLoader {
             return null;
 
         $st = Stream::of($dir->getPath() . '/root.json');
-        $data = $processor->parse($st->readFully());
-        $type = $data['type'];
-        $st->close();
+        try {
+            $data = $processor->parse($st->readFully());
+            $type = $data['type'];
+        } finally {
+            $st->close();
+        }
 
         if (!class_exists($type))
             return null;
 
         $project = new Project(new $type, $directory);
+        $data = $project->getType()->onLoadProject($project, $dir, $data);
+
         $project->setName($data['name']);
 
         foreach($data['dependencies'] as $dep) {
@@ -45,6 +50,18 @@ class ProjectLoader {
 
         foreach($data['file_marks'] as $mark) {
             $project->addFileMark(FileMark::fromArray($mark, $project));
+        }
+
+        $selected = $data['selected_runner_index'];
+
+        foreach($data['runners'] as $i => $runner) {
+            $type = $runner['type'];
+            if (class_exists($type)) {
+                $project->addRunner($el = new ProjectRunner(new $type, $runner['title'], $runner['config']));
+                if ($i == $selected) {
+                    $project->selectRunner($el);
+                }
+            }
         }
 
         return $project;

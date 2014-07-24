@@ -3,14 +3,29 @@ namespace develnext\project;
 
 use php\swing\UIContainer;
 
+/**
+ * Class RunnerType
+ * @package develnext\project
+ */
 abstract class RunnerType {
 
-    abstract public function execute();
+    /**
+     * @return string
+     */
+    abstract public function getName();
+
+    abstract public function execute(ProjectRunner $runner);
+
+    public function stop(ProjectRunner $runner) {
+        if ($runner->getTool())
+            $runner->getTool()->stop();
+    }
 
     /**
-     * @return UIContainer
+     * @param UIContainer $settingsPanel
+     * @return mixed
      */
-    abstract public function createSettingsPanel();
+    abstract public function createSettingsPanel(UIContainer $settingsPanel);
 
     /**
      * @param array $config
@@ -27,5 +42,9 @@ abstract class RunnerType {
 
     public function getIcon() {
         return 'images/icons/play16.png';
+    }
+
+    public function isAvailable(Project $project) {
+        return true;
     }
 }

@@ -2,6 +2,7 @@
 namespace develnext\project;
 
 use develnext\filetype\creator\Creator;
+use php\io\File;
 use php\lib\str;
 
 abstract class ProjectType {
@@ -44,6 +45,14 @@ abstract class ProjectType {
 
     function onUpdateProject(Project $project) {
         // nop
+    }
+
+    function onSaveProject(ProjectFormat $format, array $data) {
+        return $data;
+    }
+
+    function onLoadProject(Project $project, File $directory, array $data) {
+        return $data;
     }
 
     function onRenderFileInTree(ProjectFile $file) {

@@ -8,6 +8,7 @@ use develnext\IDEForm;
 use develnext\lang\Singleton;
 use develnext\Manager;
 use develnext\project\ProjectType;
+use develnext\project\RunnerType;
 use develnext\tool\Tool;
 use develnext\ui\UITabHead;
 use php\io\File;
@@ -24,6 +25,7 @@ use php\swing\SwingUtilities;
 use php\swing\SwingWorker;
 use php\swing\text\Style;
 use php\swing\UIButton;
+use php\swing\UIContainer;
 use php\swing\UIElement;
 use php\swing\UILabel;
 use php\swing\UIMenu;
@@ -61,6 +63,9 @@ class IdeManager {
 
     /** @var IdeTool[] */
     protected $tools = [];
+
+    /** @var RunnerType[] */
+    protected $runnerTypes = [];
 
     /** @var IdeBackgroundTask[] */
     protected $backgroundTasks;
@@ -102,10 +107,26 @@ class IdeManager {
         $this->settings = new IdeSettingsManager($this);
     }
 
+    /**
+     * @param IdeExtension $extension
+     */
     public function registerExtension(IdeExtension $extension) {
         $extension->onRegister($this);
 
         $this->extensions[] = $extension;
+    }
+
+    /**
+     * @param $extensionClass
+     * @return IdeExtension|null
+     */
+    public function getExtension($extensionClass) {
+        $extensionClass = str::lower($extensionClass);
+        foreach($this->extensions as $extension)
+            if (str::lower(get_class($extension)) === $extensionClass)
+                return $extension;
+
+        return null;
     }
 
     public function registerFileType(FileType $fileType) {
@@ -133,6 +154,10 @@ class IdeManager {
         $this->settingsTypes[] = $settingsType;
     }
 
+    public function registerRunnerType(RunnerType $runnerType) {
+        $this->runnerTypes[] = $runnerType;
+    }
+
     public function registerIdeTool($code, IdeTool $tool) {
         $this->tools[$code] = $tool;
     }
@@ -141,7 +166,7 @@ class IdeManager {
         unset($this->tools[$code]);
     }
 
-    public function openTool($code) {
+    public function openTool($code, $title = null, $icon = null) {
         /** @var IdeTool $tool */
         $tool = $this->tools[$code];
         if ($tool == null) {
@@ -160,7 +185,10 @@ class IdeManager {
         $toolTabs->add($tab);
         $toolTabs->setTabComponentAt(
             $index = $toolTabs->tabCount - 1,
-            $tabHead = new UITabHead($toolTabs, $tab, $tool->getName(), ImageManager::get($tool->getIcon()))
+            $tabHead = new UITabHead(
+                $toolTabs, $tab, $title === null ? $tool->getName() : $title,
+                $icon === null ? ImageManager::get($tool->getIcon()) : $icon
+            )
         );
 
         $tabHead->on('close', function() use ($toolTabs, $tab) {
@@ -215,6 +243,18 @@ class IdeManager {
             $element->align = 'left';
             $menu->add($element);
             $this->addHeadMenuGap(2);
+        }
+    }
+
+    /**
+     * @param string $group
+     * @return NULL|UIElement
+     */
+    public function findFromHeadMenu($group) {
+        /** @var UIContainer $menu */
+        $menu = $this->mainForm->get('headMenu');
+        if ($menu) {
+            return $menu->getComponentByGroup($group);
         }
     }
 
@@ -401,7 +441,13 @@ class IdeManager {
     }
 
     public function on($event, callable $callback) {
-        $this->handlers[$event][] = $callback;
+        if (is_array($event)) {
+            foreach ($event as $el) {
+                $this->handlers[$el][] = $callback;
+            }
+        } else {
+            $this->handlers[$event][] = $callback;
+        }
     }
 
     public function trigger($event, array $args = []) {
@@ -432,6 +478,13 @@ class IdeManager {
      */
     public function getSettings() {
         return $this->settings;
+    }
+
+    /**
+     * @return \develnext\project\RunnerType[]
+     */
+    public function getRunnerTypes() {
+        return $this->runnerTypes;
     }
 
     /**

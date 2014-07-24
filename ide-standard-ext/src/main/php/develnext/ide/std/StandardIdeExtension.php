@@ -16,10 +16,14 @@ use develnext\ide\std\filetype\PhpFileType;
 use develnext\ide\std\filetype\SwingFormFileType;
 use develnext\ide\std\filetype\TextFileType;
 use develnext\ide\std\ide\ConsoleIdeTool;
+use develnext\ide\std\project\runner\GradleLauncherRunnerType;
 use develnext\ide\std\project\type\ConsoleProjectType;
 use develnext\ide\std\project\type\GuiProjectType;
+use develnext\project\Project;
 use develnext\tool\Tool;
+use develnext\ui\decorator\UIListDecorator;
 use php\io\File;
+use php\swing\event\ItemEvent;
 use php\swing\UICombobox;
 
 class StandardIdeExtension extends IdeExtension {
@@ -61,7 +65,19 @@ class StandardIdeExtension extends IdeExtension {
 
         $runCombo = new UICombobox();
         $runCombo->font = 'Tahoma 11';
-        $runCombo->w = 150;
+        $runCombo->w = 120;
+        $runCombo->group = 'run-list';
+        $runCombo->readOnly = false;
+
+        $runCombo->on('change', function(ItemEvent $e){
+            if ($e->isSelected()) {
+                /** @var UICombobox $target */
+                $target = $e->target;
+
+                $runner = Project::current()->getRunners()[$target->selectedIndex];
+                Project::current()->selectRunner($runner);
+            }
+        });
 
         $manager->addHeadMenuItem('build:run-configurations', 'images/icons/cog_add.png');
         $manager->addHeadMenuAny($runCombo);
@@ -115,12 +131,34 @@ class StandardIdeExtension extends IdeExtension {
         $manager->registerProjectType(new ConsoleProjectType());
         $manager->registerProjectType(new GuiProjectType());
 
+        $manager->registerRunnerType(new GradleLauncherRunnerType());
+
         $manager->on('log-tool', function(IdeManager $manager,
                                           Tool $tool, File $directory, array $commands, callable $onEnd = null){
-
             /** @var ConsoleIdeTool $console */
             $console = $manager->openTool('console');
             $console->logTool($tool, $directory, $commands, $onEnd);
         });
+
+        $manager->on(['create-project', 'open-project'], function(IdeManager $manager, Project $project) {
+            $this->updateRunnerList($project);
+        });
+    }
+
+    public function updateRunnerList(Project $project) {
+        $list = IdeManager::current()->findFromHeadMenu('run-list');
+
+        if ($list) {
+            $list = new UIListDecorator($list);
+            $list->clear();
+
+            $selectedRunner = $project->getSelectedRunner();
+            foreach($project->getRunners() as $runner) {
+                $list->add($runner->getTitle(), $runner->getType()->getName(), $runner->getType()->getIcon());
+            }
+
+            $project->selectRunner($selectedRunner);
+            $list->getElement()->selectedIndex = $project->getSelectedRunnerIndex();
+        }
     }
 }

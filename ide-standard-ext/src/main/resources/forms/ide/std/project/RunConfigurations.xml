@@ -1,3 +1,41 @@
-<ui-dialog size="500, 400" title="{Run Configuration}">
+<ui-dialog size="700, 500" title="{Run Configurations}">
+  <ui-panel align="client" padding="10">
+    <ui-panel align="left" w="200">
+      <ui-panel align="top" h="30">
+        <ui-button var="btn-add"
+                   align="left" w="100" font="Tahoma bold 11" text="{Add}" cursor="hand" icon="images/icons/plus16.png" />
+        <ui-panel align="left" w="3" />
+        <ui-button var="btn-delete"
+                   align="client" cursor="hand" font="Tahoma 11" icon="images/icons/delete16.png" text="{Delete}" />
+      </ui-panel>
+      <ui-panel align="top" h="5" />
+      <ui-listbox align="client" var="run-list" />
+    </ui-panel>
+    <ui-panel align="left" w="10" />
+    <ui-panel align="client">
+      <ui-panel align="top" h="30">
+        <ui-label align="left" w="60" text="{Name}:" hor-align="right" font="Tahoma 11" />
+        <ui-panel align="left" w="5" />
 
+        <ui-checkbox align="right" w="100" var="field-reload" text="{Reload}" font="Tahoma 11" />
+        <ui-panel align="right" w="5" />
+
+        <ui-edit align="client" var="field-name" />
+      </ui-panel>
+      <ui-panel align="top" h="7" />
+
+      <ui-panel align="bottom" h="30">
+        <ui-button var="btn-save-settings" align="left" text="{Save}" font="Tahoma bold" w="100" cursor="hand" />
+        <ui-panel align="left" w="5" />
+        <ui-button var="btn-cancel-settings" align="left" text="{Close}" w="100" cursor="hand" />
+      </ui-panel>
+      <ui-panel align="bottom" h="10" />
+
+      <ui-scroll-panel align="client" border="line, size:1">
+        <ui-panel var="settings" border="empty" autosize="1" padding="10" background="#FFFFFF" />
+      </ui-scroll-panel>
+
+    </ui-panel>
+  </ui-panel>
+  <ui-popup-menu var="add-menu" />
 </ui-dialog>

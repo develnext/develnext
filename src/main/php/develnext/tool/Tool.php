@@ -2,12 +2,16 @@
 namespace develnext\tool;
 
 use php\lang\Process;
+use php\lib\num;
 
 /**
  * Class Tool
  * @package develnext\tool
  */
 abstract class Tool {
+
+    /** @var Process */
+    protected $lastProcess;
 
     /**
      * @return string
@@ -32,6 +36,13 @@ abstract class Tool {
      */
     public function execute($directory, array $args = [], $wait = true) {
         $process = new Process([$this->getBaseCommand()] + $args, $directory);
-        return $wait ? $process->startAndWait() : $process->start();
+        return $this->lastProcess = $wait ? $process->startAndWait() : $process->start();
+    }
+
+    public function stop() {
+        if ($this->lastProcess) {
+            $this->lastProcess->destroy();
+            $this->lastProcess = null;
+        }
     }
 }

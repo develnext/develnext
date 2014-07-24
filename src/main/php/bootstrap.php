@@ -2,6 +2,7 @@
 namespace {
 
     use develnext\Manager;
+    use php\io\IOException;
     use php\io\Stream;
     use php\lang\Module;
     use php\lib\str;
@@ -18,7 +19,11 @@ namespace {
 
     spl_autoload_register(function($className){
         $name = str::replace($className, '\\', '/') . '.php';
-        $module = new Module(Stream::of('res://' . $name));
+        try {
+            $module = new Module(Stream::of('res://' . $name));
+        } catch (IOException $e) {
+            return false;
+        }
         $module->call();
     });
 

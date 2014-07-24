@@ -3,14 +3,17 @@
 namespace develnext\ui\decorator;
 
 use develnext\ide\ImageManager;
+use php\lang\IllegalArgumentException;
 use php\swing\Border;
 use php\swing\Font;
+use php\swing\Image;
+use php\swing\UICombobox;
 use php\swing\UIElement;
 use php\swing\UILabel;
 use php\swing\UIListbox;
 use php\swing\UIPanel;
 
-class UIListboxDecorator extends UIDecorator {
+class UIListDecorator extends UIDecorator {
     /** @var UIListbox */
     protected $element;
 
@@ -23,11 +26,18 @@ class UIListboxDecorator extends UIDecorator {
     /** @var string */
     protected $hintColor = 'gray';
 
-    public function __construct(UIListbox $element) {
+    /**
+     * @param UIListbox|UICombobox $element
+     * @throws \php\lang\IllegalArgumentException
+     */
+    public function __construct($element) {
         parent::__construct($element);
-        $element->onCellRender(function(UIListbox $list, UILabel $template, $value, $index){
-            $panel = new UIPanel();
-            $panel->setLayout('grid');
+        if (!($element instanceof UIListbox) && !($element instanceof UICombobox))
+            throw new IllegalArgumentException(get_class($element));
+
+        $element->onCellRender(function($list, UILabel $template, $value, $index, $isSelected){
+            $panel = $template;
+            $template->opaque = true;
 
             $item = $this->items[$index];
             $template->text = "<html>$item[title]";
@@ -40,7 +50,6 @@ class UIListboxDecorator extends UIDecorator {
             if ($item['icon'])
                 $template->setIcon($item['icon']);
 
-            $panel->add($template);
             return $panel;
         });
 
@@ -60,7 +69,8 @@ class UIListboxDecorator extends UIDecorator {
 
     public function add($title, $description, $icon = null) {
         $this->items[] = [
-            'title' => $title, 'description' => $description, 'icon' => $icon ? ImageManager::get($icon) : null
+            'title' => $title, 'description' => $description,
+            'icon' => $icon ? ($icon instanceof Image ? $icon : ImageManager::get($icon)) : null
         ];
         $this->element->addItem($title);
     }
@@ -71,5 +81,12 @@ class UIListboxDecorator extends UIDecorator {
 
     public function setDescription($index, $description) {
         $this->items[$index]['description'] = $description;
+    }
+
+    /**
+     * @return UIListbox
+     */
+    public function getElement() {
+        return $this->element;
     }
 }

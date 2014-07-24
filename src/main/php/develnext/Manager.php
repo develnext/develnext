@@ -10,7 +10,7 @@ use develnext\project\Project;
 use develnext\project\ProjectLoader;
 use develnext\project\ProjectManager;
 use develnext\project\ProjectType;
-use develnext\ui\decorator\UIListboxDecorator;
+use develnext\ui\decorator\UIListDecorator;
 use develnext\util\Config;
 use php\io\File;
 use php\io\FileStream;
@@ -247,6 +247,7 @@ class Manager {
 
     public function createProject($name, File $directory, ProjectType $projectType) {
         $this->closeProject();
+        $this->ideManager->trigger('create-project:before', [$name, $directory, $projectType]);
 
         $project = $this->projectManager->createProject($projectType, $directory);
         $project->setName($name);
@@ -257,10 +258,13 @@ class Manager {
 
         $this->currentProject = $project;
         $this->addToLatest($project);
+        $this->ideManager->trigger('create-project', [$project]);
         return $project;
     }
 
     public function openProject(File $directory) {
+        $this->ideManager->trigger('open-project:before', [$directory]);
+
         $loader = new ProjectLoader();
         $project = $loader->load($directory);
         if (!$project)
@@ -273,6 +277,8 @@ class Manager {
         $project->updateTree();
 
         $this->addToLatest($project);
+
+        $this->ideManager->trigger('open-project', [$project]);
         return $project;
     }
 
@@ -300,8 +306,11 @@ class Manager {
     }
 
     public function closeProject() {
-        if ($this->currentProject)
+        if ($this->currentProject) {
+            $this->ideManager->trigger('close-project:before', [$this->currentProject]);
             $this->currentProject->close();
+            $this->ideManager->trigger('close-project', [$this->currentProject]);
+        }
 
         $this->currentProject = null;
     }
@@ -338,7 +347,7 @@ class Manager {
 
             /** @var UIListbox $list */
             $list = $welcome->get('list-latest-projects');
-            $listDecor = new UIListboxDecorator($list);
+            $listDecor = new UIListDecorator($list);
             $listDecor->clear();
 
             foreach($this->latestProjects as $project) {

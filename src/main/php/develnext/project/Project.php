@@ -1,7 +1,9 @@
 <?php
 namespace develnext\project;
 
+use develnext\Manager;
 use php\io\File;
+use php\lang\IllegalArgumentException;
 use php\lib\str;
 use php\swing\UIContainer;
 use php\swing\UITree;
@@ -40,6 +42,9 @@ class Project {
 
     /** @var ProjectRunner[] */
     protected $runners;
+
+    /** @var ProjectRunner */
+    protected $selectedRunner;
 
     function __construct(ProjectType $type, File $directory) {
         $this->type = $type;
@@ -220,11 +225,61 @@ class Project {
         return $this->runners;
     }
 
+    /**
+     * @param ProjectRunner $runner
+     */
     public function addRunner(ProjectRunner $runner) {
         $this->runners[] = $runner;
     }
 
-    public function removeRunner($index) {
-        unset($this->runners[$index]);
+    /**
+     * @param ProjectRunner $runner
+     */
+    public function removeRunner(ProjectRunner $runner) {
+        foreach($this->runners as $i => $el) {
+            if ($runner === $el) {
+                unset($this->runners[$i]);
+                break;
+            }
+        }
+        if ($this->selectedRunner === $runner) {
+            list($value) = $this->runners;
+            if ($value)
+                $this->selectRunner($value);
+            else
+                $this->selectedRunner = null;
+        }
+    }
+
+    /**
+     * @param ProjectRunner $runner
+     */
+    public function selectRunner(ProjectRunner $runner) {
+        $this->selectedRunner = $runner;
+    }
+
+    /**
+     * @return ProjectRunner
+     */
+    public function getSelectedRunner() {
+        return $this->selectedRunner;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSelectedRunnerIndex() {
+        foreach($this->runners as $i => $runner){
+            if ($runner === $this->selectedRunner)
+                return $i;
+        }
+        return -1;
+    }
+
+    /**
+     * @return Project
+     */
+    public static function current() {
+        return Manager::getInstance()->currentProject;
     }
 }

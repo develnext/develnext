@@ -4,8 +4,10 @@ namespace develnext\ide\std\project\type;
 use develnext\filetype\creator\Creator;
 use develnext\ide\std\project\dependency\JPHPExtensionDependency;
 use develnext\ide\std\project\dependency\MavenProjectDependency;
+use develnext\ide\std\project\runner\GradleLauncherRunnerType;
 use develnext\project\Project;
 use develnext\project\ProjectFile;
+use develnext\project\ProjectRunner;
 use develnext\project\ProjectType;
 use php\io\File;
 use php\io\FileStream;
@@ -33,6 +35,14 @@ abstract class JVMProjectType extends ProjectType {
     }
 
     function onCreateProject(Project $project) {
+        $project->addRunner($run = new ProjectRunner(new GradleLauncherRunnerType(), 'Launcher', []));
+        $run->setSingleton(true);
+
+        $project->addRunner($distZip = new ProjectRunner(new GradleLauncherRunnerType(), 'Dist Zip', [
+            'show_dialog_after_building' => true
+        ]));
+        $distZip->setSingleton(true);
+
         $project->setFileMark($project->getProjectFile('.develnext/'), 'hidden');
         $project->setFileMark($project->getProjectFile('build/'), 'hidden');
         $project->setFileMark($project->getProjectFile('.gradle/'), 'hidden');
