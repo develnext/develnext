@@ -159,6 +159,8 @@ class StandardIdeExtension extends IdeExtension {
 
             $project->selectRunner($selectedRunner);
             $list->getElement()->selectedIndex = $project->getSelectedRunnerIndex();
+
+            IdeManager::current()->findFromHeadMenu('build:run')->enabled = !!($selectedRunner);
         }
     }
 }

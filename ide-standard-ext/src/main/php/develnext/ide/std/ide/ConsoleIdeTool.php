@@ -3,6 +3,7 @@ namespace develnext\ide\std\ide;
 
 use develnext\ide\IdeManager;
 use develnext\ide\IdeTool;
+use develnext\ide\ImageManager;
 use develnext\tool\Tool;
 use php\io\File;
 use php\io\IOException;
@@ -11,14 +12,18 @@ use php\lib\str;
 use php\swing\Border;
 use php\swing\Color;
 use php\swing\SwingWorker;
+use php\swing\UIButton;
 use php\swing\UIElement;
+use php\swing\UIPanel;
 use php\swing\UIRichTextArea;
 use php\util\Scanner;
 
 class ConsoleIdeTool extends IdeTool {
-
     /** @var UIRichTextArea */
     protected $console;
+
+    /** @var UIPanel */
+    protected $buttons;
 
     public function getName() {
         return _('Console');
@@ -28,21 +33,83 @@ class ConsoleIdeTool extends IdeTool {
         return 'images/icons/script_go.png';
     }
 
-    public function createGui(IdeManager $manager) {
-        $console = new UIRichTextArea();
-        $console->align = 'client';
-        $console->border = Border::createEmpty(0, 0, 0, 0);
+    public function triggerClose() {
 
-        $this->console = $console;
-        return $console;
+    }
+
+    public function createGui(IdeManager $manager) {
+        /** @var UIPanel $panel */
+        $panel = $manager->newElement(<<<'EL'
+<ui-panel align="client">
+    <ui-panel align="left" w="36" padding="3" group="buttons" />
+    <ui-rich-textarea align="client" border="empty" group="console" />
+</ui-panel>
+EL
+);
+        $this->console = $panel->getComponentByGroup('console');
+        $this->buttons = $panel->getComponentByGroup('buttons');
+
+        $this->addButton('run', ImageManager::get('images/icons/play16.png'));
+        $this->addSeparator();
+
+        $this->addButton('stop', ImageManager::get('images/icons/stop16.png'));
+        $this->addButton('restart', ImageManager::get('images/icons/arrow_refresh16.png'));
+        return $panel;
+    }
+
+    /**
+     * @param $group
+     * @param $icon
+     * @param string $hint
+     * @return UIButton
+     */
+    public function addButton($group, $icon, $hint = '') {
+        $btn = new UIButton();
+        $btn->setIcon($icon);
+        $btn->group = $group;
+        $btn->align = 'top';
+        $btn->h = 30;
+        $btn->cursor = 'hand';
+        $btn->tooltipText = $hint;
+
+        $this->buttons->add($btn);
+        return $btn;
+    }
+
+    /**
+     * @param $group
+     * @return NULL|UIButton
+     */
+    public function getButton($group) {
+        return $this->buttons->getComponentByGroup($group);
+    }
+
+    public function addSeparator() {
+        $hr = new UIPanel();
+        $hr->align = 'top';
+        $hr->h = 3;
+        $this->buttons->add($hr);
+
+        $hr = new UIPanel();
+        $hr->align = 'top';
+        $hr->h = 1;
+        $hr->background = Color::decode('#9E9E9E');
+        $this->buttons->add($hr);
+
+        $hr = new UIPanel();
+        $hr->align = 'top';
+        $hr->h = 3;
+        $this->buttons->add($hr);
     }
 
     public function logProcess(Process $process, callable $onEnd = null) {
-        $worker = new IdeManagerLogProcessWorker($this->console, $process, $onEnd);
+        $worker = new ConsoleIdeTool_LogProcessWorker($this, $process, $onEnd);
         $worker->execute();
     }
 
     public function logTool(Tool $tool, File $directory, array $commands, callable $onEnd = null) {
+        $this->getButton('run')->enabled = false;
+
         $console = $this->console;
 
         $console->text = '';
@@ -75,11 +142,20 @@ class ConsoleIdeTool extends IdeTool {
                 $onEnd();
         }
     }
+
+    public function appendText($text, $class = 'std') {
+        $this->console->appendText($text, $this->console->getStyle($class));
+    }
+
+    public function doFinish() {
+        $this->getButton('run')->enabled = true;
+        $this->getButton('stop')->enabled = false;
+    }
 }
 
-class IdeManagerLogProcessWorker extends SwingWorker {
-    /** @var UIRichTextArea */
-    protected $console;
+class ConsoleIdeTool_LogProcessWorker extends SwingWorker {
+    /** @var ConsoleIdeTool */
+    protected $tool;
 
     /** @var Process */
     protected $process;
@@ -87,8 +163,8 @@ class IdeManagerLogProcessWorker extends SwingWorker {
     /** @var callable */
     protected $onEnd;
 
-    public function __construct(UIRichTextArea $console, Process $process, callable $onEnd = null) {
-        $this->console = $console;
+    public function __construct(ConsoleIdeTool $tool, Process $process, callable $onEnd = null) {
+        $this->tool = $tool;
         $this->process = $process;
         $this->onEnd = $onEnd;
     }
@@ -114,9 +190,12 @@ class IdeManagerLogProcessWorker extends SwingWorker {
 
     protected function process(array $values) {
         foreach ($values as $value)
-            $this->console->appendText($value . "\n", $this->console->getStyle('std'));
+            $this->tool->appendText($value . "\n", 'std');
 
         if (!$values && $this->onEnd)
             call_user_func($this->onEnd);
+
+        if (!$values)
+            $this->tool->doFinish();
     }
 }

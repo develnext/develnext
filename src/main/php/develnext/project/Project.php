@@ -4,6 +4,7 @@ namespace develnext\project;
 use develnext\Manager;
 use php\io\File;
 use php\lang\IllegalArgumentException;
+use php\lib\items;
 use php\lib\str;
 use php\swing\UIContainer;
 use php\swing\UITree;
@@ -249,12 +250,13 @@ class Project {
             else
                 $this->selectedRunner = null;
         }
+        $this->runners = items::toArray($this->runners);
     }
 
     /**
      * @param ProjectRunner $runner
      */
-    public function selectRunner(ProjectRunner $runner) {
+    public function selectRunner(ProjectRunner $runner = null) {
         $this->selectedRunner = $runner;
     }
 

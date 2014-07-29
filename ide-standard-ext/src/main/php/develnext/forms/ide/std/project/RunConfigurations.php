@@ -1,6 +1,7 @@
 <?php
 namespace develnext\forms\ide\std\project;
 
+use develnext\ide\components\UIMessages;
 use develnext\ide\IdeExtension;
 use develnext\ide\IdeManager;
 use develnext\ide\ImageManager;
@@ -13,6 +14,7 @@ use develnext\ui\decorator\UIListDecorator;
 use php\lang\Module;
 use php\swing\event\MouseEvent;
 use php\swing\UIContainer;
+use php\swing\UIDialog;
 use php\swing\UIListbox;
 use php\swing\UIMenuItem;
 use php\swing\UIPopupMenu;
@@ -31,11 +33,6 @@ class IDERunConfigurations extends IDEForm {
         $this->runList = new UIListDecorator($this->get('run-list'));
         $this->addMenu = $this->get('add-menu');
 
-        $this->getWindow()->on('windowOpen', function(){
-            $this->reloadProjectRunners();
-            $this->selectProjectRunner(Project::current()->getSelectedRunner());
-        });
-
         $this->runList->getElement()->on('mouseRelease', function(){
             if ($this->runList->getElement()->selectedIndex >= 0) {
                 $this->selectProjectRunner(
@@ -47,6 +44,16 @@ class IDERunConfigurations extends IDEForm {
         $this->get('btn-add')->on('click', function(MouseEvent $e){
             $this->reloadRunnerTypes();
             $this->addMenu->show($e->target, 0, $e->target->h);
+        });
+
+        $this->get('btn-delete')->on('click', function(){
+            $runner = Project::current()->getRunners()[$this->runList->getElement()->selectedIndex];
+
+            if ($runner && UIDialog::confirm(_('Are you sure?'), _('Question')) === UIDialog::YES_OPTION) {
+                Project::current()->removeRunner($runner);
+                $this->reloadProjectRunners();
+                $this->selectProjectRunner(Project::current()->getSelectedRunner());
+            }
         });
 
         $this->get('btn-save-settings')->on('click', function(){
@@ -61,6 +68,12 @@ class IDERunConfigurations extends IDEForm {
         $this->get('btn-cancel-settings')->on('click', function(){
             $this->hide();
         });
+    }
+
+    public function show($centered = true) {
+        $this->reloadProjectRunners();
+        $this->selectProjectRunner(Project::current()->getSelectedRunner());
+        return parent::show($centered);
     }
 
     public function reloadRunnerTypes() {

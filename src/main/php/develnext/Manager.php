@@ -97,6 +97,13 @@ class Manager {
         $this->config->save();
     }
 
+    /**
+     * @return UIReader
+     */
+    public function getUiReader() {
+        return $this->uiReader;
+    }
+
     public function showSplash() {
         $form = $this->getSystemForm('SplashForm.xml');
         $form = $form->getWindow();

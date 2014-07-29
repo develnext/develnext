@@ -13,6 +13,8 @@ use php\io\FileStream;
 use php\lang\System;
 use php\lib\str;
 use php\swing\event\ComponentEvent;
+use php\swing\event\MouseEvent;
+use php\swing\event\SimpleEvent;
 use php\swing\UIDialog;
 
 /**
@@ -34,7 +36,12 @@ class StandardIdeMenuHandlers {
             $handler = str::replace($el, ':', '_');
             $handler = str::replace($handler, '-', '');
 
-            $this->handlers[$el] = [$this, $handler];
+            $this->handlers[$el] = function($e) use ($handler) {
+                $handle = [$this, $handler];
+                if ($e->target->enabled) {
+                    call_user_func($handle, $handle, $e);
+                }
+            };
         }
     }
 

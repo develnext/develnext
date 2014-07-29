@@ -13,6 +13,7 @@ use develnext\tool\Tool;
 use develnext\ui\UITabHead;
 use php\io\File;
 use php\io\IOException;
+use php\io\MemoryStream;
 use php\io\Stream;
 use php\lang\IllegalArgumentException;
 use php\lang\Process;
@@ -166,6 +167,21 @@ class IdeManager {
         unset($this->tools[$code]);
     }
 
+    public function closeTool(IdeTool $tool, $withTrigger = true) {
+        if (!$tool->getUiTab())
+            throw new IllegalArgumentException("Tool '" . $tool->getName() . "' is not opened");
+
+        /** @var UITabs $toolTabs */
+        $toolTabs = $this->mainForm->get('tool-tabs');
+
+        if (!$withTrigger || $tool->triggerClose()) {
+            $toolTabs->remove($tool->getUiTab());
+            if (!$toolTabs->tabCount) {
+                $this->mainForm->getDockTools()->visible = false;
+            }
+        }
+    }
+
     public function openTool($code, $title = null, $icon = null) {
         /** @var IdeTool $tool */
         $tool = $this->tools[$code];
@@ -191,16 +207,16 @@ class IdeManager {
             )
         );
 
-        $tabHead->on('close', function() use ($toolTabs, $tab) {
-            $toolTabs->remove($tab);
-            if (!$toolTabs->tabCount) {
-                $this->mainForm->getDockTools()->visible = false;
-            }
+        $tabHead->on('close', function() use ($tool) {
+            $this->closeTool($tool, true);
         });
 
         $toolTabs->selectedComponent = $tab;
         $this->mainForm->getDockTools()->visible = true;
         $this->mainForm->getDockTools()->setExtendedMode('normalized');
+
+        $tool->setUiTab($tab);
+        $tool->setUiTabHead($tabHead);
         return $tool;
     }
 
@@ -515,6 +531,13 @@ class IdeManager {
 
         $status->text = $text;
         $status->setIcon(ImageManager::get($icon));
+    }
+
+    public function newElement($xml) {
+        $st = new MemoryStream();
+        $st->write($xml);
+        $st->seek(0);
+        return $this->manager->getUiReader()->read($st);
     }
 
     /**
