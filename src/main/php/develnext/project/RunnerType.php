@@ -17,8 +17,7 @@ abstract class RunnerType {
     abstract public function execute(ProjectRunner $runner);
 
     public function stop(ProjectRunner $runner) {
-        if ($runner->getTool())
-            $runner->getTool()->stop();
+
     }
 
     /**

@@ -9,6 +9,11 @@ use php\swing\UIPanel;
 use php\swing\UITabs;
 
 class UITabHead extends UIPanel {
+    /** @var UILabel */
+    protected $xLabel;
+
+    /** @var UILabel */
+    protected $xButton;
 
     function __construct(UITabs $tabs, $tab, $object, Image $icon = null) {
         parent::__construct();
@@ -17,7 +22,7 @@ class UITabHead extends UIPanel {
         $this->setLayout('flow');
         $this->opaque = false;
 
-        $xLabel = new UILabel();
+        $xLabel = $this->xLabel = new UILabel();
         $xLabel->text = (string)$object;
         $xLabel->font = 'Tahoma 11';
         $xLabel->setIcon($icon);
@@ -43,5 +48,17 @@ class UITabHead extends UIPanel {
 
         $this->add($xLabel);
         $this->add($xButton);
+    }
+
+    function setIcon(Image $icon) {
+        $this->xLabel->setIcon($icon);
+    }
+
+    function setTitle($title) {
+        $this->xLabel->text = $title;
+    }
+
+    function setCloseVisible($visible) {
+        $this->xButton->visible = $visible;
     }
 }

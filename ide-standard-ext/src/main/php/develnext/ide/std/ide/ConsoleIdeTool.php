@@ -1,6 +1,7 @@
 <?php
 namespace develnext\ide\std\ide;
 
+use develnext\ide\components\UIMessages;
 use develnext\ide\IdeManager;
 use develnext\ide\IdeTool;
 use develnext\ide\ImageManager;
@@ -16,6 +17,7 @@ use php\swing\UIButton;
 use php\swing\UIElement;
 use php\swing\UIPanel;
 use php\swing\UIRichTextArea;
+use php\util\Flow;
 use php\util\Scanner;
 
 class ConsoleIdeTool extends IdeTool {
@@ -25,16 +27,15 @@ class ConsoleIdeTool extends IdeTool {
     /** @var UIPanel */
     protected $buttons;
 
+    /** @var Process */
+    protected $process;
+
     public function getName() {
         return _('Console');
     }
 
     public function getIcon() {
         return 'images/icons/script_go.png';
-    }
-
-    public function triggerClose() {
-
     }
 
     public function createGui(IdeManager $manager) {
@@ -49,11 +50,6 @@ EL
         $this->console = $panel->getComponentByGroup('console');
         $this->buttons = $panel->getComponentByGroup('buttons');
 
-        $this->addButton('run', ImageManager::get('images/icons/play16.png'));
-        $this->addSeparator();
-
-        $this->addButton('stop', ImageManager::get('images/icons/stop16.png'));
-        $this->addButton('restart', ImageManager::get('images/icons/arrow_refresh16.png'));
         return $panel;
     }
 
@@ -73,6 +69,9 @@ EL
         $btn->tooltipText = $hint;
 
         $this->buttons->add($btn);
+        $btn->on('click', function($e) use ($group) {
+            $this->trigger("btn-$group", [$e]);
+        });
         return $btn;
     }
 
@@ -102,14 +101,14 @@ EL
         $this->buttons->add($hr);
     }
 
-    public function logProcess(Process $process, callable $onEnd = null) {
-        $worker = new ConsoleIdeTool_LogProcessWorker($this, $process, $onEnd);
+    public function logProcess(Process $process) {
+        $this->process = $process;
+        $worker = new ConsoleIdeTool_LogProcessWorker($this, $process);
+        $this->trigger('log');
         $worker->execute();
     }
 
-    public function logTool(Tool $tool, File $directory, array $commands, callable $onEnd = null) {
-        $this->getButton('run')->enabled = false;
-
+    public function logTool(Tool $tool, File $directory, array $commands) {
         $console = $this->console;
 
         $console->text = '';
@@ -134,22 +133,27 @@ EL
         );
 
         try {
-            $this->logProcess($tool->execute($directory, $commands, false), $onEnd);
+            $this->logProcess($tool->execute($directory, $commands, false));
         } catch (IOException $e) {
-            $console->appendText(_('Error') . ":\n-----------\n", $console->getStyle('err-b'));
-            $console->appendText($e->getMessage() . "\n", $console->getStyle('err'));
-            if ($onEnd)
-                $onEnd();
+            if ($this->trigger('exception', $e)) {
+                $console->appendText(_('Error') . ":\n-----------\n", $console->getStyle('err-b'));
+                $console->appendText($e->getMessage() . "\n", $console->getStyle('err'));
+            } else
+                $this->trigger('finish');
         }
     }
 
     public function appendText($text, $class = 'std') {
         $this->console->appendText($text, $this->console->getStyle($class));
+        if ($this->process->getExitValue() !== NULL)
+            $this->trigger('finish');
     }
 
-    public function doFinish() {
-        $this->getButton('run')->enabled = true;
-        $this->getButton('stop')->enabled = false;
+    /**
+     * @return Process
+     */
+    public function getProcess() {
+        return $this->process;
     }
 }
 
@@ -176,26 +180,29 @@ class ConsoleIdeTool_LogProcessWorker extends SwingWorker {
         $st = $this->process->getInput();
         $scanner = new Scanner($st);
         while ($scanner->hasNextLine()) {
-            $this->publish([$scanner->nextLine()]);
+            $this->publish([['std', $scanner->nextLine()]]);
         }
 
         $err = $this->process->getError();
         $scanner2 = new Scanner($err);
         while ($scanner2->hasNextLine()) {
-            $this->publish([$scanner2->nextLine()]);
+            $this->publish([['err', $scanner2->nextLine()]]);
         }
 
         $this->publish([]);
     }
 
     protected function process(array $values) {
-        foreach ($values as $value)
-            $this->tool->appendText($value . "\n", 'std');
+        if ($values) {
+            foreach ($values as $value) {
+                if (is_array($value))
+                    $this->tool->appendText($value[1] . "\n", $value[0]);
+                else
+                    $this->tool->appendText($value . "\n", 'std');
+            }
+        }
 
         if (!$values && $this->onEnd)
             call_user_func($this->onEnd);
-
-        if (!$values)
-            $this->tool->doFinish();
     }
 }

@@ -1,5 +1,6 @@
 <?php
 namespace develnext\project;
+use develnext\ide\IdeTool;
 use develnext\tool\Tool;
 
 /**
@@ -19,8 +20,8 @@ class ProjectRunner {
     /** @var array */
     protected $config;
 
-    /** @var Tool */
-    protected $tool;
+    /** @var mixed */
+    protected $userData;
 
     /** @var bool */
     protected $done = true;
@@ -89,17 +90,17 @@ class ProjectRunner {
     }
 
     /**
-     * @return Tool
+     * @return mixed
      */
-    public function getTool() {
-        return $this->tool;
+    public function getUserData() {
+        return $this->userData;
     }
 
     /**
-     * @param Tool $tool
+     * @param mixed $userData
      */
-    public function setTool($tool) {
-        $this->tool = $tool;
+    public function setUserData($userData) {
+        $this->userData = $userData;
     }
 
     /**

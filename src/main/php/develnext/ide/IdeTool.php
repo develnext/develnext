@@ -1,10 +1,13 @@
 <?php
 namespace develnext\ide;
 
+use develnext\lang\EventContainer;
 use develnext\ui\UITabHead;
 use php\swing\UIPanel;
 
 abstract class IdeTool {
+    use EventContainer;
+
     /** @var UITabHead */
     protected $uiTabHead;
 
@@ -18,10 +21,6 @@ abstract class IdeTool {
     }
 
     abstract public function createGui(IdeManager $manager);
-
-    public function triggerClose() {
-        return true;
-    }
 
     /**
      * @param mixed $uiTab

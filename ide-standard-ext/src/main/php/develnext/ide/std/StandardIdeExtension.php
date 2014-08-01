@@ -76,6 +76,8 @@ class StandardIdeExtension extends IdeExtension {
 
                 $runner = Project::current()->getRunners()[$target->selectedIndex];
                 Project::current()->selectRunner($runner);
+
+                IdeManager::current()->findFromHeadMenu('build:run')->enabled = !!($runner);
             }
         });
 

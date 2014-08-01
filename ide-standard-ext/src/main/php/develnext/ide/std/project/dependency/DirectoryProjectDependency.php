@@ -35,4 +35,11 @@ class DirectoryProjectDependency extends ProjectDependency {
     function fromString($string) {
         $this->directory = new File($string);
     }
+
+    /**
+     * @return File
+     */
+    public function getDirectory() {
+        return $this->directory;
+    }
 }

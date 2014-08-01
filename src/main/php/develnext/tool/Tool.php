@@ -2,6 +2,7 @@
 namespace develnext\tool;
 
 use php\lang\Process;
+use php\lib\items;
 use php\lib\num;
 
 /**
@@ -35,7 +36,7 @@ abstract class Tool {
      * @return Process
      */
     public function execute($directory, array $args = [], $wait = true) {
-        $process = new Process([$this->getBaseCommand()] + $args, $directory);
+        $process = new Process(items::toList($this->getBaseCommand(), $args), $directory);
         return $this->lastProcess = $wait ? $process->startAndWait() : $process->start();
     }
 

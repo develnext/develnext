@@ -1,6 +1,7 @@
 <?php
 namespace develnext\ide\std\project\runner;
 
+use develnext\ide\components\UIMessages;
 use develnext\ide\IdeManager;
 use develnext\ide\ImageManager;
 use develnext\ide\std\ide\ConsoleIdeTool;
@@ -11,6 +12,7 @@ use develnext\project\ProjectRunner;
 use develnext\project\RunnerType;
 use develnext\tool\GradleTool;
 use php\lib\items;
+use php\lib\str;
 use php\swing\UICheckbox;
 use php\swing\UICombobox;
 use php\swing\UIContainer;
@@ -31,25 +33,63 @@ class GradleLauncherRunnerType extends RunnerType {
     }
 
     public function execute(ProjectRunner $runner) {
+        /** @var ConsoleIdeTool $console */
+        if ($runner->isSingleton()) {
+            $console = $runner->getUserData();
+        }
         $runner->setDone(false);
 
-        $manager = Manager::getInstance();
-        $gradle = new GradleTool();
+        if (!$console) {
+            $manager = Manager::getInstance();
+            $gradle = new GradleTool();
+            $console = IdeManager::current()->openTool(
+                'console', $runner->getTitle(), ImageManager::get($runner->getType()->getIcon())
+            );
 
-        /** @var ConsoleIdeTool $console */
-        $console = IdeManager::current()->openTool(
-            'console', $runner->getTitle(), ImageManager::get($runner->getType()->getIcon())
-        );
-
-        $console->logTool(
-            $gradle,
-            $manager->currentProject->getDirectory(),
-            [$runner->getConfig()['command']],
-            function() use ($runner) {
-                $runner->setDone(true);
+            if ($runner->getConfig()['command'] === 'distZip') {
+                $console->getUiTabHead()->setIcon(ImageManager::get('images/icons/lorry_box16.png'));
             }
-        );
-        $runner->setTool($gradle);
+
+            // buttons
+            $console->addButton('run', ImageManager::get('images/icons/play16.png'));
+            $console->addSeparator();
+            $console->addButton('stop', ImageManager::get('images/icons/stop16.png'));
+            $console->addButton('restart', ImageManager::get('images/icons/arrow_refresh16.png'));
+
+            $console->on('log', function (ConsoleIdeTool $self) {
+                $self->getButton('run')->enabled = false;
+                $self->getButton('stop')->enabled = true;
+                $self->getButton('restart')->enabled = true;
+            });
+            $console->on('finish', function (ConsoleIdeTool $self) use ($runner) {
+                $self->getButton('run')->enabled = true;
+                $self->getButton('stop')->enabled = false;
+                $self->getButton('restart')->enabled = false;
+                $runner->setDone(true);
+            });
+
+            $onRun = function () use ($console, $gradle, $manager, $runner) {
+                $args = items::toList(
+                    $runner->getConfig()['command'],
+                    str::split($runner->getConfig()['program_arguments'], ' ')
+                );
+                $console->logTool(
+                    $gradle,
+                    $manager->currentProject->getDirectory(),
+                    $args
+                );
+            };
+            $console->on('btn-run', $onRun);
+
+            $console->on('close', function (ConsoleIdeTool $self) use ($runner) {
+                $runner->setUserData(null);
+                return true;
+            });
+
+            $runner->setUserData($console);
+        }
+
+        $console->trigger('btn-run');
     }
 
     /**
@@ -78,10 +118,23 @@ class GradleLauncherRunnerType extends RunnerType {
         $hr->background = [0,0,0,0];
         $settingsPanel->add($hr);
 
+        $label = new UILabel();
+        $label->align = 'top';
+        $label->h = 25;
+        $label->text = __('{Program arguments}:');
+
+        $edit = new UIEdit();
+        $edit->align = 'top';
+        $edit->group = 'program-arguments';
+        $edit->h = 30;
+
+        $settingsPanel->add($label);
+        $settingsPanel->add($edit);
+
         $showBuildDialog = new UICheckbox();
         $showBuildDialog->align = 'top';
         $showBuildDialog->text = _('Show dialog after building');
-        $showBuildDialog->h = 25;
+        $showBuildDialog->h = 35;
         $showBuildDialog->group = 'show-dialog-after-building';
         $settingsPanel->add($showBuildDialog);
     }
@@ -94,6 +147,10 @@ class GradleLauncherRunnerType extends RunnerType {
     public function loadConfig(array $config, UIContainer $settingsPanel) {
         /** @var UIListbox $edit */
         $edit = $settingsPanel->getComponentByGroup('command');
+
+        /** @var UIEdit $programArguments */
+        $programArguments = $settingsPanel->getComponentByGroup('program-arguments');
+        $programArguments->text = $config['program_arguments'];
 
         if (self::$commands[$config['command']]) {
             $i = 0;
@@ -121,9 +178,13 @@ class GradleLauncherRunnerType extends RunnerType {
 
         /** @var UICheckbox $showDialog */
         $showDialog = $settingsPanel->getComponentByGroup('show-dialog-after-building');
+
+        /** @var UIEdit $programArguments */
+        $programArguments = $settingsPanel->getComponentByGroup('program-arguments');
         return [
             'command' => Flow::of(self::$commands)->skip($edit->selectedIndex)->current(),
-            'show_dialog_after_building' => $showDialog->selected
+            'show_dialog_after_building' => $showDialog->selected,
+            'program_arguments' => $programArguments->text
         ];
     }
 

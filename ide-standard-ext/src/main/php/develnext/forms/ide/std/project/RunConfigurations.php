@@ -58,11 +58,14 @@ class IDERunConfigurations extends IDEForm {
 
         $this->get('btn-save-settings')->on('click', function(){
             $runner = $this->getSelectedProjectRunner();
-            $runner->setTitle($this->get('field-name')->text);
-            $runner->setSingleton($this->get('field-reload')->selected);
-            $runner->setConfig( $runner->getType()->fetchConfig($this->get('settings')) );
+            if ($runner) {
+                $runner->setTitle($this->get('field-name')->text);
+                $runner->setSingleton($this->get('field-reload')->selected);
+                $runner->setConfig($runner->getType()->fetchConfig($this->get('settings')));
 
-            $this->updateProjectRunner($runner);
+                $this->updateProjectRunner($runner);
+            }
+            Project::current()->saveAll();
         });
 
         $this->get('btn-cancel-settings')->on('click', function(){
@@ -88,6 +91,9 @@ class IDERunConfigurations extends IDEForm {
 
                 $item->on('click', function () use ($type, $project) {
                     $project->addRunner($runner = new ProjectRunner($type, 'Unnamed', []));
+                    if (sizeof($project->getRunners()) === 1)
+                        $project->selectRunner($runner);
+
                     $this->reloadProjectRunners();
                     $this->selectProjectRunner($runner);
                 });

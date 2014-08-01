@@ -2,6 +2,7 @@
 namespace develnext\ide\std\project\type;
 
 use develnext\filetype\creator\Creator;
+use develnext\ide\std\project\dependency\DirectoryProjectDependency;
 use develnext\ide\std\project\dependency\JPHPExtensionDependency;
 use develnext\ide\std\project\dependency\MavenProjectDependency;
 use develnext\ide\std\project\runner\GradleLauncherRunnerType;
@@ -30,15 +31,18 @@ abstract class JVMProjectType extends ProjectType {
     function getDefaultDependencies() {
         return [
             new MavenProjectDependency('org.develnext', 'jphp-core', '0.4-SNAPSHOT'),
-            new JPHPExtensionDependency('spl')
+            new JPHPExtensionDependency('spl'),
+            new DirectoryProjectDependency(new File('.develnext/resources'))
         ];
     }
 
     function onCreateProject(Project $project) {
-        $project->addRunner($run = new ProjectRunner(new GradleLauncherRunnerType(), 'Launcher', []));
+        $project->addRunner($run = new ProjectRunner(new GradleLauncherRunnerType(), 'Launcher', ['command' => 'run']));
         $run->setSingleton(true);
+        $project->selectRunner($run);
 
         $project->addRunner($distZip = new ProjectRunner(new GradleLauncherRunnerType(), 'Dist Zip', [
+            'command' => 'distZip',
             'show_dialog_after_building' => true
         ]));
         $distZip->setSingleton(true);
@@ -48,9 +52,11 @@ abstract class JVMProjectType extends ProjectType {
         $project->setFileMark($project->getProjectFile('.gradle/'), 'hidden');
 
         $this->updateBuildScript($project);
+        $this->updateLauncherScript($project);
 
         $project->getFile('src/')->mkdirs();
         $project->getFile('resources/')->mkdirs();
+        $project->getFile('.develnext/resources')->mkdirs();
 
         $project->getFile('resources/JPHP-INF')->mkdirs();
 
@@ -63,6 +69,7 @@ abstract class JVMProjectType extends ProjectType {
 
     function onUpdateProject(Project $project) {
         $this->updateBuildScript($project);
+        $this->updateLauncherScript($project);
         $this->updateConf($project);
     }
 
@@ -108,17 +115,38 @@ abstract class JVMProjectType extends ProjectType {
 
         $conf->write('env.extensions = ' . str::join($jphpExtensions, ', ') . "\n\n");
 
-        $conf->write("bootstrap.file = bootstrap.php\n\n");
+        $conf->write("bootstrap.file = .app_bootstrap.php\n\n");
         $conf->close();
+    }
+
+    protected function updateLauncherScript(Project $project) {
+        $file = $project->getFile('.develnext/resources/.app_bootstrap.php');
+        $file->getParentFile()->mkdirs();
+
+        $out = new FileStream($file, 'w+');
+        try {
+            $out->write('<?php
+                import(Stream::of("res://bootstrap.php"));
+            ');
+        } finally {
+            $out->close();
+        }
     }
 
     protected function updateBuildScript(Project $project) {
         $out = new FileStream($project->getDirectory()->getPath() . '/build.gradle', 'w+');
+        try {
+            $version = "1.0";
+            $name = $project->getName();
 
-        $version = "1.0";
-        $name = $project->getName();
+            $dirDeps = '';
+            foreach ($project->getDependencies() as $dep) {
+                if ($dep instanceof DirectoryProjectDependency) {
+                    $dirDeps .= 'srcDir \'' . str::replace($dep->getDirectory()->getPath(), '\\', '/') . "'\n";
+                }
+            }
 
-$out->write(<<<"DOC"
+            $out->write(<<<"DOC"
 allprojects {
     apply plugin: 'java'
     apply plugin: 'application'
@@ -141,6 +169,7 @@ allprojects {
             resources {
                 srcDir 'src'
                 srcDir 'resources'
+                $dirDeps
             }
         }
     }
@@ -148,20 +177,22 @@ allprojects {
 
 
 DOC
-);
+            );
 
-        $out->write("dependencies {\n");
+            $out->write("dependencies {\n");
 
-        foreach($project->getDependencies() as $dep) {
-            if ($dep instanceof MavenProjectDependency) {
-                $out->write(
-                    "\t\t compile '"
-                    . $dep->getGroupId() . ':' . $dep->getArtifactId() . ':' . $dep->getVersion() . "'\n"
-                );
+            foreach ($project->getDependencies() as $dep) {
+                if ($dep instanceof MavenProjectDependency) {
+                    $out->write(
+                        "\t\t compile '"
+                        . $dep->getGroupId() . ':' . $dep->getArtifactId() . ':' . $dep->getVersion() . "'\n"
+                    );
+                }
             }
-        }
 
-        $out->write("}\n");
-        $out->close();
+            $out->write("}\n");
+        } finally {
+            $out->close();
+        }
     }
 }

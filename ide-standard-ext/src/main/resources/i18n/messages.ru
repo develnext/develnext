@@ -41,3 +41,5 @@ Run Configurations = Настройки запуска
 
 Command = Комманда
 Show dialog after building = Показать диалог после сборки
+
+Program arguments = Аргументы программы

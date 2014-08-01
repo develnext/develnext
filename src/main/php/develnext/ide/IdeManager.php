@@ -18,6 +18,7 @@ use php\io\Stream;
 use php\lang\IllegalArgumentException;
 use php\lang\Process;
 use php\lang\Thread;
+use php\lib\items;
 use php\lib\str;
 use php\swing\Color;
 use php\swing\event\SimpleEvent;
@@ -174,7 +175,7 @@ class IdeManager {
         /** @var UITabs $toolTabs */
         $toolTabs = $this->mainForm->get('tool-tabs');
 
-        if (!$withTrigger || $tool->triggerClose()) {
+        if (!$withTrigger || $tool->trigger('close')) {
             $toolTabs->remove($tool->getUiTab());
             if (!$toolTabs->tabCount) {
                 $this->mainForm->getDockTools()->visible = false;
@@ -469,7 +470,7 @@ class IdeManager {
     public function trigger($event, array $args = []) {
         $handlers = (array)$this->handlers[$event];
         foreach ($handlers as $handler) {
-            call_user_func_array($handler, [$this] + $args);
+            call_user_func_array($handler, items::toList($this, $args));
         }
     }
 
