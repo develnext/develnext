@@ -8,6 +8,7 @@ use php\lib\str;
 abstract class ProjectType {
 
     abstract function getName();
+    abstract function getVersion();
 
     function getCode() {
         return str::replace(' ', '_', str::lower($this->getName()));

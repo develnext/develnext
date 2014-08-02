@@ -3,8 +3,8 @@ dependencies {
     compile project(':jphp-core')
     compile project(':jphp-swing-ext')
 
-    compile 'com.fifesoft:rsyntaxtextarea:2.5.3'
-    compile 'com.fifesoft:autocomplete:2.5.0'
+    compile files('libs/rsyntaxtextarea-2.5.3.jar')
+    compile files('libs/autocomplete-2.5.3.jar')
 }
 
 task dist(dependsOn: buildPortableDef) {

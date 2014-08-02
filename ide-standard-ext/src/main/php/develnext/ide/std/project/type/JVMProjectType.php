@@ -28,6 +28,10 @@ abstract class JVMProjectType extends ProjectType {
         'develnext\ide\std\filetype\creator\SwingGuiFormCreator' => ['/resources/forms'],
     ];
 
+    function getVersion() {
+        return 20140802;
+    }
+
     function getDefaultDependencies() {
         return [
             new MavenProjectDependency('org.develnext', 'jphp-core', '0.4-SNAPSHOT'),
@@ -126,6 +130,8 @@ abstract class JVMProjectType extends ProjectType {
         $out = new FileStream($file, 'w+');
         try {
             $out->write('<?php
+                use php\io\Stream;
+
                 import(Stream::of("res://bootstrap.php"));
             ');
         } finally {

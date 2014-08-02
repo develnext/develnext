@@ -135,11 +135,11 @@ EL
         try {
             $this->logProcess($tool->execute($directory, $commands, false));
         } catch (IOException $e) {
-            if ($this->trigger('exception', $e)) {
+            if ($this->trigger('exception', [$e])) {
                 $console->appendText(_('Error') . ":\n-----------\n", $console->getStyle('err-b'));
                 $console->appendText($e->getMessage() . "\n", $console->getStyle('err'));
-            } else
-                $this->trigger('finish');
+            }
+            $this->trigger('finish');
         }
     }
 
