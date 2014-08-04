@@ -40,16 +40,33 @@ abstract class JVMProjectType extends ProjectType {
         ];
     }
 
-    function onCreateProject(Project $project) {
-        $project->addRunner($run = new ProjectRunner(new GradleLauncherRunnerType(), 'Launcher', ['command' => 'run']));
-        $run->setSingleton(true);
-        $project->selectRunner($run);
+    function onCorrectProject(Project $project) {
+        $launcher = null;
+        $distZip = null;
+        foreach($project->getRunners() as $runner) {
+            if ($runner->getType() instanceof GradleLauncherRunnerType) {
+                if ($launcher == null && $runner->getConfig()['command'] == 'run')
+                    $launcher = $runner;
 
-        $project->addRunner($distZip = new ProjectRunner(new GradleLauncherRunnerType(), 'Dist Zip', [
-            'command' => 'distZip',
-            'show_dialog_after_building' => true
-        ]));
-        $distZip->setSingleton(true);
+                if ($distZip == null && $runner->getConfig()['command'] == 'distZip')
+                    $distZip = $runner;
+            }
+        }
+
+        if (!$launcher) {
+            $project->addRunner($run = new ProjectRunner(new GradleLauncherRunnerType(), 'Launcher', ['command' => 'run']));
+            $run->setSingleton(true);
+            if (!$project->getSelectedRunner())
+                $project->selectRunner($run);
+        }
+
+        if (!$distZip) {
+            $project->addRunner($distZip = new ProjectRunner(new GradleLauncherRunnerType(), 'Dist Zip', [
+                'command' => 'distZip',
+                'show_dialog_after_building' => true
+            ]));
+            $distZip->setSingleton(true);
+        }
 
         $project->setFileMark($project->getProjectFile('.develnext/'), 'hidden');
         $project->setFileMark($project->getProjectFile('build/'), 'hidden');
@@ -57,6 +74,11 @@ abstract class JVMProjectType extends ProjectType {
 
         $this->updateBuildScript($project);
         $this->updateLauncherScript($project);
+        $this->updateConf($project);
+    }
+
+    function onCreateProject(Project $project) {
+        $this->onCorrectProject($project);
 
         $project->getFile('src/')->mkdirs();
         $project->getFile('resources/')->mkdirs();
@@ -65,10 +87,11 @@ abstract class JVMProjectType extends ProjectType {
         $project->getFile('resources/JPHP-INF')->mkdirs();
 
         $bootstrap = new FileStream($project->getPath('src/bootstrap.php'), 'w+');
-        $bootstrap->write('<?php ');
-        $bootstrap->close();
-
-        $this->updateConf($project);
+        try {
+            $bootstrap->write('<?php ');
+        } finally {
+            $bootstrap->close();
+        }
     }
 
     function onUpdateProject(Project $project) {
@@ -131,8 +154,10 @@ abstract class JVMProjectType extends ProjectType {
         try {
             $out->write('<?php
                 use php\io\Stream;
+                use php\lang\Module;
 
-                import(Stream::of("res://bootstrap.php"));
+                $module = new Module(Stream::of("res://bootstrap.php"));
+                $module->call();
             ');
         } finally {
             $out->close();
@@ -181,6 +206,12 @@ allprojects {
     }
 }
 
+run {
+    if (System.getProperty('debug', 'false') == 'true') {
+        jvmArgs '-Xdebug',
+            '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=' + System.getProperty('debugPort', '9009')
+    }
+}
 
 DOC
             );

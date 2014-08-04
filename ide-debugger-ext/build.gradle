@@ -1,0 +1,10 @@
+
+
+dependencies {
+    compile project(':jphp-core')
+    compile files('libs/tools.jar')
+}
+
+task dist(dependsOn: buildPortableDef) {
+    // ...
+}

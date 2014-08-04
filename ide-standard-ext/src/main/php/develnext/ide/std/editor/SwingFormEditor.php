@@ -63,35 +63,39 @@ class SwingFormEditor extends TextEditor {
 
         $reader = new UIReader();
 
-        /** @var UIContainer $form */
-        $form = $reader->read($this->file);
+        try {
+            /** @var UIContainer $form */
+            $form = $reader->read($this->file);
 
-        $panel = new UIPanel();
-        $panel->align = 'client';
+            $panel = new UIPanel();
+            $panel->align = 'client';
 
-        $cr = new ComponentResizer();
-        $cm = new ComponentMover();
+            $cr = new ComponentResizer();
+            $cm = new ComponentMover();
 
-        foreach($form->getComponents() as $component) {
-            $r = new DesignContainer();
-            $r->size = $component->size;
-            $r->position = $component->position;
-            $r->add($component);
+            foreach ($form->getComponents() as $component) {
+                $r = new DesignContainer();
+                $r->size = $component->size;
+                $r->position = $component->position;
+                $r->add($component);
 
-            $panel->add($r);
+                $panel->add($r);
 
-            $cr->registerComponent($r);
-            $cm->registerComponent($r);
-        }
-
-        $desktop->add($panel);
-
-        $panel->on('click', function() use ($panel) {
-            /** @var DesignContainer $r */
-            foreach($panel->getComponents() as $r) {
-                $r->selected = false;
+                $cr->registerComponent($r);
+                $cm->registerComponent($r);
             }
-        });
+
+            $desktop->add($panel);
+
+            $panel->on('click', function () use ($panel) {
+                /** @var DesignContainer $r */
+                foreach ($panel->getComponents() as $r) {
+                    $r->selected = false;
+                }
+            });
+        } catch (\Exception $e) {
+
+        }
     }
 
     protected function onLoad() {

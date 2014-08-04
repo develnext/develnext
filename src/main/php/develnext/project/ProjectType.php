@@ -48,6 +48,10 @@ abstract class ProjectType {
         // nop
     }
 
+    function onCorrectProject(Project $project) {
+
+    }
+
     function onSaveProject(ProjectFormat $format, array $data) {
         return $data;
     }

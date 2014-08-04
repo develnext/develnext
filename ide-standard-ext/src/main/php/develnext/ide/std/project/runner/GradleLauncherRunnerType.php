@@ -86,6 +86,11 @@ class GradleLauncherRunnerType extends RunnerType {
                 return true;
             });
 
+            $console->on('btn-stop', function() use ($console, $gradle) {
+                $console->appendText('Stopping... ', 'err-b');
+                $gradle->stop();
+            });
+
             $runner->setUserData($console);
         }
 

@@ -284,6 +284,7 @@ class Manager {
         $project->updateTree();
 
         $this->addToLatest($project);
+        $project->getType()->onCorrectProject($project);
 
         $this->ideManager->trigger('open-project', [$project]);
         return $project;

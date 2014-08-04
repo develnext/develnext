@@ -5,10 +5,12 @@ use develnext\lang\Singleton;
 use php\io\FileStream;
 use php\io\IOException;
 use php\lib\char;
+use php\lib\str;
 use php\swing\Border;
 use php\swing\event\KeyEvent;
 use php\swing\UIContainer;
 use php\swing\UISyntaxTextArea;
+use php\util\Scanner;
 
 /**
  * Class TextEditor
@@ -18,8 +20,14 @@ class TextEditor extends Editor {
     /** @var UISyntaxTextArea */
     protected $syntaxArea;
 
+    /** @var string */
+    protected $content;
+
     /** @var array */
     protected $textHistory = [];
+
+    /** @var string */
+    protected $encoding = 'UTF-8';
 
     protected function onCreate() {
         $syntaxArea = new UISyntaxTextArea();
@@ -46,8 +54,11 @@ class TextEditor extends Editor {
         $content = '';
         if ($this->file->exists()) {
             $st = new FileStream($this->file, 'r');
-            $content = $st->readFully();
-            $st->close();
+            try {
+                $content = $this->content = $st->readFully();
+            } finally {
+                $st->close();
+            }
         }
 
         $this->syntaxArea->text = $content;
@@ -56,14 +67,14 @@ class TextEditor extends Editor {
     protected function onSave() {
         $st = new FileStream($this->file, 'w+');
         try {
-            $st->write($this->syntaxArea->text);
-            $st->close();
-        } catch (IOException $e) {
+            $st->write($this->content = $this->syntaxArea->text);
+        } finally {
             $st->close();
         }
     }
 
     protected function onDestroy() {
         $this->syntaxArea->text = '';
+        $this->content = '';
     }
 }
