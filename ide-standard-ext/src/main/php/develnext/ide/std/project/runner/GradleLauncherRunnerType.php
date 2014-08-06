@@ -6,6 +6,7 @@ use develnext\ide\IdeManager;
 use develnext\ide\ImageManager;
 use develnext\ide\std\ide\ConsoleIdeTool;
 use develnext\ide\std\project\type\JVMProjectType;
+use develnext\jdi\VirtualMachine;
 use develnext\Manager;
 use develnext\project\Project;
 use develnext\project\ProjectRunner;
@@ -88,7 +89,9 @@ class GradleLauncherRunnerType extends RunnerType {
 
             $console->on('btn-stop', function() use ($console, $gradle) {
                 $console->appendText('Stopping... ', 'err-b');
-                $gradle->stop();
+                $vm = VirtualMachine::of('localhost:9009');
+                $vm->resume();
+                $vm->halt(0);
             });
 
             $runner->setUserData($console);

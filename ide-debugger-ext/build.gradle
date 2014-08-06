@@ -5,6 +5,15 @@ dependencies {
     compile files('libs/tools.jar')
 }
 
+jar {
+    manifest.attributes(
+        'Agent-Class': 'org.develnext.ide.DevelnextDebugAgent',
+        'PreMain-Class': 'org.develnext.ide.DevelnextDebugAgent',
+        'Can-Redefine-Classes': true,
+        'Can-Retransform-Classes': true
+    )
+}
+
 task dist(dependsOn: buildPortableDef) {
     // ...
 }

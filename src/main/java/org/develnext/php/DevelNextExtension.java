@@ -1,5 +1,6 @@
 package org.develnext.php;
 
+import org.develnext.jphp.debugger.DevelnextJDIExtension;
 import org.develnext.jphp.http.HttpExtension;
 import org.develnext.jphp.json.JsonExtension;
 import org.develnext.jphp.swing.SwingExtension;
@@ -25,6 +26,7 @@ public class DevelNextExtension extends SwingExtension {
     @Override
     public String[] getRequiredExtensions() {
         return new String[]{
+                DevelnextJDIExtension.class.getName(),
                 SwingExtension.class.getName(),
                 HttpExtension.class.getName(),
                 JsonExtension.class.getName(),
