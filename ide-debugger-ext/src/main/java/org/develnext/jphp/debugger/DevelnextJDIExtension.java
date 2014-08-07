@@ -1,6 +1,8 @@
 package org.develnext.jphp.debugger;
 
 import com.sun.jdi.connect.spi.TransportService;
+import org.develnext.jphp.debugger.classes.WrapObjectReference;
+import org.develnext.jphp.debugger.classes.WrapThreadReference;
 import org.develnext.jphp.debugger.classes.WrapVirtualMachine;
 import php.runtime.env.CompileScope;
 import php.runtime.ext.support.Extension;
@@ -16,6 +18,9 @@ public class DevelnextJDIExtension extends Extension {
     @Override
     synchronized public void onRegister(CompileScope scope) {
         registerNativeClass(scope, WrapVirtualMachine.class);
+        registerNativeClass(scope, WrapObjectReference.class);
+        registerNativeClass(scope, WrapThreadReference.class);
+
         if (ts == null) {
             try {
                 Class c = Class.forName("com.sun.tools.jdi.SocketTransportService");
