@@ -47,6 +47,13 @@ class UIDirectoryChooser_File {
  * @package develnext\ide\components
  */
 class UIDirectoryChooser {
+
+    /** @var File */
+    protected $selectedFile;
+
+    /** @var File[] */
+    protected $selectedFiles;
+
     /** @var \develnext\IDEForm */
     protected $form;
 
@@ -55,12 +62,6 @@ class UIDirectoryChooser {
 
     /** @var callable */
     protected $onFetchIcon;
-
-    /** @var File */
-    protected $selectedFile;
-
-    /** @var File[] */
-    protected $selectedFiles;
 
     /** @var bool */
     protected $isOnlyDirectories = false;
@@ -78,7 +79,7 @@ class UIDirectoryChooser {
             $this->form = $manager->getSystemForm('ide/components/DirectoryChooser.xml', false);
             self::$forms[$cachedGroup] = $this->form;
         } else {
-            return;
+
         }
 
         /** @var UITree $tree */

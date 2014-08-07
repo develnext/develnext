@@ -4,6 +4,7 @@ namespace develnext\project;
 
 use php\format\JsonProcessor;
 use php\io\File;
+use php\io\IOException;
 use php\io\Stream;
 use php\lib\str;
 
@@ -20,12 +21,16 @@ class ProjectLoader {
         if (!$dir->isDirectory())
             return null;
 
-        $st = Stream::of($dir->getPath() . '/root.json');
         try {
-            $data = $processor->parse($st->readFully());
-            $type = $data['type'];
-        } finally {
-            $st->close();
+            $st = Stream::of($dir->getPath() . '/root.json');
+            try {
+                $data = $processor->parse($st->readFully());
+                $type = $data['type'];
+            } finally {
+                $st->close();
+            }
+        } catch (IOException $e) {
+            return null;
         }
 
         if (!class_exists($type))

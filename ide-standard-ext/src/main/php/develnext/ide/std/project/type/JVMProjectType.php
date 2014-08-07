@@ -129,7 +129,10 @@ abstract class JVMProjectType extends ProjectType {
     }
 
     protected function updateConf(Project $project) {
-        $conf = new FileStream($project->getPath('resources/JPHP-INF/launcher.conf'), 'w+');
+        $file = $project->getFile('resources/JPHP-INF/launcher.conf');
+        $file->createNewFile(true);
+
+        $conf = new FileStream($file, 'w+');
 
         $conf->write("env.debug = 0\n\n");
 
