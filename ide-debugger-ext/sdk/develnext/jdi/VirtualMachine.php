@@ -67,6 +67,17 @@ class VirtualMachine {
     public function allThreads() { return []; }
 
     /**
+     * @param string $name
+     * @return ReferenceType[]
+     */
+    public function classesByName($name) { return []; }
+
+    /**
+     * @return ReferenceType[]
+     */
+    public function allClasses() { return []; }
+
+    /**
      * @param int $mode - self::TRACE_* constants
      */
     public function setDebugTraceMode($mode) { }

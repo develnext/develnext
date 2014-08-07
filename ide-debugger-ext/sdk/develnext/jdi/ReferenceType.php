@@ -31,4 +31,45 @@ class ReferenceType {
      * @return ObjectReference[]
      */
     public function instances($count) { return []; }
+
+    /**
+     * @return bool
+     */
+    public function isAbstract() { return false; }
+
+    /**
+     * @return bool
+     */
+    public function isFinal() { return false; }
+
+    /**
+     * @return bool
+     */
+    public function isInitialized() { return false; }
+
+    /**
+     * @return bool
+     */
+    public function isPrepared() { return false; }
+
+    /**
+     * @return bool
+     */
+    public function isStatic() { return false; }
+
+    /**
+     * @return Method[]
+     */
+    public function methods() { return []; }
+
+    /**
+     * @return Method[]
+     */
+    public function visibleMethods() { return []; }
+
+    /**
+     * @param string $name
+     * @return Method[]
+     */
+    public function methodsByName($name) { return []; }
 }

@@ -1,9 +1,7 @@
 package org.develnext.jphp.debugger;
 
 import com.sun.jdi.connect.spi.TransportService;
-import org.develnext.jphp.debugger.classes.WrapObjectReference;
-import org.develnext.jphp.debugger.classes.WrapThreadReference;
-import org.develnext.jphp.debugger.classes.WrapVirtualMachine;
+import org.develnext.jphp.debugger.classes.*;
 import php.runtime.env.CompileScope;
 import php.runtime.ext.support.Extension;
 
@@ -20,6 +18,9 @@ public class DevelnextJDIExtension extends Extension {
         registerNativeClass(scope, WrapVirtualMachine.class);
         registerNativeClass(scope, WrapObjectReference.class);
         registerNativeClass(scope, WrapThreadReference.class);
+        registerNativeClass(scope, WrapReferenceType.class);
+        registerNativeClass(scope, WrapLocation.class);
+        registerNativeClass(scope, WrapMethod.class);
 
         if (ts == null) {
             try {

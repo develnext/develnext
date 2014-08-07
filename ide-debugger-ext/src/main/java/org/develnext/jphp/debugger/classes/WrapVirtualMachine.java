@@ -104,6 +104,28 @@ public class WrapVirtualMachine extends BaseObject {
         return r.toConstant();
     }
 
+    @Signature
+    public Memory allClasses(Environment env, Memory... args) {
+        ArrayMemory r = new ArrayMemory();
+
+        for(ReferenceType rt : vm.allClasses()) {
+            r.add(new WrapReferenceType(env, rt));
+        }
+
+        return r.toConstant();
+    }
+
+    @Signature(@Arg("name"))
+    public Memory classesByName(Environment env, Memory... args) {
+        ArrayMemory r = new ArrayMemory();
+
+        for(ReferenceType rt : vm.classesByName(args[0].toString())) {
+            r.add(new WrapReferenceType(env, rt));
+        }
+
+        return r.toConstant();
+    }
+
     @Signature({
             @Arg("address"),
             @Arg(value = "timeout", optional = @Optional("5000"))
