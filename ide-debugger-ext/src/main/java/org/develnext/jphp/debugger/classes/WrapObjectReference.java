@@ -17,6 +17,8 @@ import static php.runtime.annotation.Reflection.*;
 
 @Name("develnext\\jdi\\ObjectReference")
 public class WrapObjectReference extends WrapValue<ObjectReference> {
+    public static final int INVOKE_SINGLE_THREADED = 1;
+    public static final int INVOKE_NONVIRTUAL = 2;
 
     public WrapObjectReference(Environment env, ObjectReference value) {
         super(env, value);

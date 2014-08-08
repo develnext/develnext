@@ -6,6 +6,8 @@ namespace develnext\jdi;
  * @package develnext\jdi
  */
 class ObjectReference extends Value {
+    const INVOKE_SINGLE_THREADED = 1;
+    const INVOKE_NONVIRTUAL = 2;
 
     /**
      * Returns a unique identifier for this ObjectReference.

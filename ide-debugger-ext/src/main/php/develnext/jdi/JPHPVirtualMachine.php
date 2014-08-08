@@ -1,5 +1,6 @@
 <?php
 namespace develnext\jdi;
+use php\lang\Thread;
 
 /**
  * Class JPHPVirtualMachine
@@ -23,19 +24,33 @@ class JPHPVirtualMachine {
      */
     public function __construct(VirtualMachine $vm) {
         $this->vm = $vm;
-        $this->launcherType = $vm->classesByName('php.runtime.launcher.Launcher');
+        while (!$this->launcherType) {
+            $this->launcherType = $vm->classesByName('php.runtime.launcher.Launcher')[0];
+            Thread::sleep(100);
+        }
+        $vm->suspend();
 
         $method = $this->launcherType->methodsByName('current')[0];
         $instance = $this->launcherType->instances(1)[0];
 
-        $thread = $vm->allThreads()[0];
-        $this->launcher = $instance->invokeMethod($thread, $method, [], 0);
+        $thread = null;
+        foreach($vm->allThreads() as $th) {
+            dump($th->name());
+            if ($th->name() === 'main') {
+                $thread = $th; break;
+            }
+        }
 
+        $thread->resume();
+
+        $this->launcher = $instance->invokeMethod($thread, $method, [], ObjectReference::INVOKE_SINGLE_THREADED);
         $this->compileScope = $this->launcher->invokeMethod(
             $thread,
             $this->launcherType->methodsByName('getCompileScope')[0],
             [], 0
         );
+
+        $thread->suspend();
     }
 
     /**
