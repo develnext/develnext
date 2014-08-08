@@ -5,7 +5,7 @@ namespace develnext\jdi;
  * Class ObjectReference
  * @package develnext\jdi
  */
-class ObjectReference {
+class ObjectReference extends Value {
 
     /**
      * Returns a unique identifier for this ObjectReference.
@@ -63,4 +63,15 @@ class ObjectReference {
      * @return VirtualMachine
      */
     public function virtualMachine() { }
+
+    /**
+     * @param ThreadReference $thread
+     * @param Method $method
+     * @param Value[] $arguments
+     * @param int $options
+     * @return Value
+     */
+    public function invokeMethod(ThreadReference $thread, Method $method, array $arguments, $options) {
+        return new Value();
+    }
 }

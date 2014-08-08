@@ -1,13 +1,11 @@
 package org.develnext.jphp.debugger.classes;
 
-import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.Method;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ReferenceType;
+import com.sun.jdi.*;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
 import php.runtime.lang.BaseObject;
 import php.runtime.memory.ArrayMemory;
+import php.runtime.memory.ObjectMemory;
 import php.runtime.memory.StringMemory;
 import php.runtime.memory.TrueMemory;
 import php.runtime.reflection.ClassEntity;
@@ -115,6 +113,33 @@ public class WrapReferenceType extends BaseObject {
         }
 
         return r.toConstant();
+    }
+
+    @Signature
+    public Memory fields(Environment env, Memory... args) {
+        ArrayMemory r = new ArrayMemory();
+        for(Field f : rt.fields())
+            r.add(new WrapField(env, f));
+
+        return r.toConstant();
+    }
+
+    @Signature
+    public Memory visibleFields(Environment env, Memory... args) {
+        ArrayMemory r = new ArrayMemory();
+        for(Field f : rt.visibleFields())
+            r.add(new WrapField(env, f));
+
+        return r.toConstant();
+    }
+
+    @Signature
+    public Memory fieldByName(Environment env, Memory... args) {
+        Field field = rt.fieldByName(args[0].toString());
+        if (field == null)
+            return Memory.NULL;
+
+        return new ObjectMemory(new WrapField(env, field));
     }
 }
 

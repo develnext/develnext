@@ -1,9 +1,6 @@
 package org.develnext.jphp.debugger.classes;
 
-import com.sun.jdi.Bootstrap;
-import com.sun.jdi.ReferenceType;
-import com.sun.jdi.ThreadReference;
-import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.*;
 import com.sun.jdi.connect.spi.Connection;
 import com.sun.jdi.connect.spi.TransportService;
 import org.develnext.jphp.debugger.DevelnextJDIExtension;
@@ -136,5 +133,55 @@ public class WrapVirtualMachine extends BaseObject {
 
         VirtualMachine vm = Bootstrap.virtualMachineManager().createVirtualMachine(connection);
         return new ObjectMemory(new WrapVirtualMachine(env, vm));
+    }
+
+    @Signature(@Arg("arg"))
+    public Memory newStringValue(Environment env, Memory... args) {
+        return new ObjectMemory(new WrapValue<StringReference>(env, vm.mirrorOf(args[0].toString())));
+    }
+
+    @Signature(@Arg("arg"))
+    public Memory newLongValue(Environment env, Memory... args) {
+        return new ObjectMemory(new WrapValue<LongValue>(env, vm.mirrorOf(args[0].toLong())));
+    }
+
+    @Signature(@Arg("arg"))
+    public Memory newDoubleValue(Environment env, Memory... args) {
+        return new ObjectMemory(new WrapValue<DoubleValue>(env, vm.mirrorOf(args[0].toDouble())));
+    }
+
+    @Signature(@Arg("arg"))
+    public Memory newBooleanValue(Environment env, Memory... args) {
+        return new ObjectMemory(new WrapValue<BooleanValue>(env, vm.mirrorOf(args[0].toBoolean())));
+    }
+
+    @Signature(@Arg("arg"))
+    public Memory newIntegerValue(Environment env, Memory... args) {
+        return new ObjectMemory(new WrapValue<IntegerValue>(env, vm.mirrorOf(args[0].toInteger())));
+    }
+
+    @Signature(@Arg("arg"))
+    public Memory newFloatValue(Environment env, Memory... args) {
+        return new ObjectMemory(new WrapValue<FloatValue>(env, vm.mirrorOf(args[0].toFloat())));
+    }
+
+    @Signature(@Arg("arg"))
+    public Memory newCharValue(Environment env, Memory... args) {
+        return new ObjectMemory(new WrapValue<CharValue>(env, vm.mirrorOf(args[0].toChar())));
+    }
+
+    @Signature(@Arg("arg"))
+    public Memory newShortValue(Environment env, Memory... args) {
+        return new ObjectMemory(new WrapValue<ShortValue>(env, vm.mirrorOf((short)args[0].toInteger())));
+    }
+
+    @Signature(@Arg("arg"))
+    public Memory newByteValue(Environment env, Memory... args) {
+        return new ObjectMemory(new WrapValue<ByteValue>(env, vm.mirrorOf((byte)args[0].toInteger())));
+    }
+
+    @Signature
+    public Memory newVoidValue(Environment env, Memory... args) {
+        return new ObjectMemory(new WrapValue<VoidValue>(env, vm.mirrorOfVoid()));
     }
 }

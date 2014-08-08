@@ -24,7 +24,7 @@ public class WrapThreadReference extends WrapObjectReference {
     protected ThreadReference tr;
 
     public WrapThreadReference(Environment env, ThreadReference tr) {
-        super(env);
+        super(env, tr);
         this.tr = tr;
     }
 

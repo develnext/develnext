@@ -72,4 +72,20 @@ class ReferenceType {
      * @return Method[]
      */
     public function methodsByName($name) { return []; }
+
+    /**
+     * @return Field[]
+     */
+    public function fields() { return []; }
+
+    /**
+     * @return array
+     */
+    public function visibleFields() { return []; }
+
+    /**
+     * @param $name
+     * @return Field[]
+     */
+    public function fieldByName($name) { return []; }
 }

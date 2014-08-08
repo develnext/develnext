@@ -3,6 +3,7 @@ package org.develnext.jphp.debugger.classes;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
+import com.sun.jdi.TypeComponent;
 import php.runtime.Memory;
 import php.runtime.env.Environment;
 import php.runtime.lang.BaseObject;
@@ -14,7 +15,7 @@ import php.runtime.reflection.ClassEntity;
 import static php.runtime.annotation.Reflection.*;
 
 @Name("develnext\\jdi\\Method")
-public class WrapMethod extends BaseObject {
+public class WrapMethod extends WrapTypeComponent {
     protected Method method;
 
     public WrapMethod(Environment env, Method method) {
@@ -24,6 +25,11 @@ public class WrapMethod extends BaseObject {
 
     public WrapMethod(Environment env, ClassEntity clazz) {
         super(env, clazz);
+    }
+
+    @Override
+    protected TypeComponent getTypeComponent() {
+        return method;
     }
 
     @Signature
@@ -100,11 +106,6 @@ public class WrapMethod extends BaseObject {
     @Signature
     public Memory isVarArgs(Environment env, Memory... args) {
         return method.isVarArgs() ? Memory.TRUE : Memory.FALSE;
-    }
-
-    @Signature
-    public Memory isStatic(Environment env, Memory... args) {
-        return method.isStatic() ? Memory.TRUE : Memory.FALSE;
     }
 
     @Signature(@Arg("line"))

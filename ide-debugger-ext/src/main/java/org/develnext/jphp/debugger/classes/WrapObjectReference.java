@@ -1,31 +1,25 @@
 package org.develnext.jphp.debugger.classes;
 
-import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ThreadReference;
+import com.sun.jdi.*;
 import php.runtime.Memory;
+import php.runtime.common.HintType;
 import php.runtime.env.Environment;
-import php.runtime.lang.BaseObject;
 import php.runtime.memory.ArrayMemory;
 import php.runtime.memory.LongMemory;
 import php.runtime.memory.ObjectMemory;
 import php.runtime.memory.TrueMemory;
 import php.runtime.reflection.ClassEntity;
 
-import static php.runtime.annotation.Reflection.Name;
-import static php.runtime.annotation.Reflection.Signature;
+import java.util.ArrayList;
+import java.util.List;
+
+import static php.runtime.annotation.Reflection.*;
 
 @Name("develnext\\jdi\\ObjectReference")
-public class WrapObjectReference extends BaseObject {
-    private ObjectReference obj;
+public class WrapObjectReference extends WrapValue<ObjectReference> {
 
-    protected WrapObjectReference(Environment env) {
-        super(env);
-    }
-
-    public WrapObjectReference(Environment env, ObjectReference obj) {
-        super(env);
-        this.obj = obj;
+    public WrapObjectReference(Environment env, ObjectReference value) {
+        super(env, value);
     }
 
     public WrapObjectReference(Environment env, ClassEntity clazz) {
@@ -33,7 +27,7 @@ public class WrapObjectReference extends BaseObject {
     }
 
     protected ObjectReference getObjectReference() {
-        return obj;
+        return value;
     }
 
     @Signature
@@ -89,5 +83,27 @@ public class WrapObjectReference extends BaseObject {
             r.add(new WrapThreadReference(env, tr));
         }
         return r.toConstant();
+    }
+
+    @Signature({
+            @Arg(value = "thread", nativeType = WrapThreadReference.class),
+            @Arg(value = "method", nativeType = WrapMethod.class),
+            @Arg(value = "args", type = HintType.ARRAY),
+            @Arg("options")
+    })
+    public Memory invokeMethod(Environment env, Memory... args)
+            throws InvocationException, InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException {
+
+        List<Value> arguments = new ArrayList<Value>();
+        for(WrapValue value : args[2].toValue(ArrayMemory.class).toObjectArray(WrapValue.class)) {
+            arguments.add(value.getValue());
+        }
+
+        return new ObjectMemory(new WrapValue<Value>(env, getObjectReference().invokeMethod(
+                args[0].toObject(WrapThreadReference.class).tr,
+                args[1].toObject(WrapMethod.class).method,
+                arguments,
+                args[3].toInteger()
+        )));
     }
 }
