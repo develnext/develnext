@@ -14,6 +14,9 @@ include 'ide-components-ext', 'ide-standard-ext', 'ide-debugger-ext';
 include 'jphp'
 project(':jphp').projectDir = jphpDir;*/
 
+include 'jphp-runtime'
+project(':jphp-runtime').projectDir = new File(jphpDir, "/jphp-runtime");
+
 include 'jphp-core'
 project(':jphp-core').projectDir = new File(jphpDir, "/jphp-core");
 
